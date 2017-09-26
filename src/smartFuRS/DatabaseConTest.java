@@ -11,7 +11,7 @@ public class DatabaseConTest {
 	private static Connection con;
 	private static boolean hasData = false;
 	
-	public ResultSet displayUsers() throws SQLException, ClassNotFoundException {
+	public ResultSet displayUsers() throws Exception {
 		if(con==null) {
 			getConnection();
 		}
@@ -21,27 +21,23 @@ public class DatabaseConTest {
 		return res;
 	}
 
-	private void getConnection() throws SQLException, ClassNotFoundException {
+	private void getConnection() throws Exception{
 		// TODO Auto-generated method stub
 		Class.forName("org.sqlite.JDBC");
 		con = DriverManager.getConnection("jdbc:sqlite:FuRSDB.sqlite");
 		initialise();
 	}
 
-	private void initialise() throws SQLException {
+	private void initialise() throws Exception {
 		// TODO Auto-generated method stub
 		if(!hasData) {
 			hasData = true;
 			
 			Statement state = con.createStatement();
-			ResultSet res = state.executeQuery("SELECT * FROM CampApplication");
+			ResultSet res = state.executeQuery("SELECT * FROM AppUser");
 			while (res.next()) {              
 		        
-		        System.out.println(res.getString("id"));
-		        System.out.println(res.getString("firstname"));
-		        System.out.println(res.getString("lastname"));                    
-		        System.out.println(res.getString("age"));
-		        System.out.println(res.getString("gender"));
+		        System.out.println(res.getString("username"));
 		}
 			
 		}
@@ -57,7 +53,7 @@ public class DatabaseConTest {
 		}
 		catch(Exception e)
 		{
-			
+			System.out.println(e.getMessage());
 		}
     }
 

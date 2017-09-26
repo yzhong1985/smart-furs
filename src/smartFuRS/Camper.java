@@ -10,11 +10,19 @@ import java.util.Date;
  *
  */
 public class Camper {
+	private int id;
 	private String firstname;
 	private String lastname;
 	private Date birthday;
-	private Boolean gender;
+	private String gender;
 	private String instrument;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getFirstname() {
 		return firstname;
 	}
@@ -33,10 +41,10 @@ public class Camper {
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
-	public Boolean getGender() {
+	public String getGender() {
 		return gender;
 	}
-	public void setGender(Boolean gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 	public String getInstrument() {

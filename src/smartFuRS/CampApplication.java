@@ -11,6 +11,7 @@ import java.util.Date;
  */
 public class CampApplication {
 
+	private int id;
 	private Camper camper;
 	private String applicationStatus;
 	private Date receivedDate;
@@ -22,6 +23,14 @@ public class CampApplication {
 	private String depositFilePath;
 	private String rejectReason;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public Camper getCamper() {
 		return camper;
 	}

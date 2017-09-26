@@ -11,9 +11,17 @@ import java.util.Date;
  */
 public class CamperNotification {
 
+	private int id;
 	private Camper camper;
 	private Date sendDate;
 	private String notificationMsg;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public Camper getCamper() {
 		return camper;
 	}

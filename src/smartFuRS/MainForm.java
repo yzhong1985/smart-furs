@@ -12,6 +12,8 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainForm {
 
@@ -60,6 +62,10 @@ public class MainForm {
 		applicationPanel.setLayout(null);
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
 		btnSave.setBounds(10, 431, 89, 23);
 		applicationPanel.add(btnSave);
 		

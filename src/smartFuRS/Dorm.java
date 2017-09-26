@@ -10,6 +10,8 @@ import java.util.ArrayList;
  *
  */
 public class Dorm {
+	private int id;
+
 	private ArrayList<Camper> dormCampers;
 	private String dormName;
 	
@@ -28,6 +30,15 @@ public class Dorm {
 		return dormCampers;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	
 	public String getDormName() {
 		return dormName;
 	}
