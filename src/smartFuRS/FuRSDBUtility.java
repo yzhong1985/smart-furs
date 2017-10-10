@@ -66,7 +66,7 @@ public class FuRSDBUtility {
 		if(!isConnected) {
 			getConnection();
 		}
-		String sql = "SELECT firstname, lastname, birthday, gender FROM Camper";
+		String sql = "SELECT firstname, lastname, birthday, gender, instrument FROM Camper";
 		PreparedStatement pst = con.prepareStatement(sql);
 		ResultSet rs = pst.executeQuery();
 		return rs;
@@ -76,7 +76,13 @@ public class FuRSDBUtility {
 		if(!isConnected) {
 			getConnection();
 		}
+		String sql = "INSERT INTO Camper (firstname, lastname, birthday, gender, instrument) VALUES ('%s','%s','%s','%s','%s')";
+		sql = String.format(sql, camper.getFirstname(), camper.getLastname(), camper.getBirthdayText(), camper.getGender(), camper.getInstrument());
 		
+		PreparedStatement pst = con.prepareStatement(sql);
+		pst.execute();
+		pst.close();
+
 		
 	}
 	

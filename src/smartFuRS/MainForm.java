@@ -29,10 +29,12 @@ import net.proteanit.sql.DbUtils;
 import javax.swing.JScrollPane;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
+import java.awt.Color;
+import java.awt.SystemColor;
 
 public class MainForm {
 
-	private JFrame frame;
+	private JFrame frmSmartFursCamper;
 	private JTextField firstnameTextField;
 	private JTextField lastnameTextField;
 	private JTextField dobTextField;
@@ -59,7 +61,7 @@ public class MainForm {
 			public void run() {
 				try {
 					MainForm window = new MainForm();
-					window.frame.setVisible(true);
+					window.frmSmartFursCamper.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -69,7 +71,7 @@ public class MainForm {
 
 	public void Display() {
 		
-		frame.setVisible(true);
+		frmSmartFursCamper.setVisible(true);
 	}
 	
 	/**
@@ -109,7 +111,22 @@ public class MainForm {
 	}
 	
 	private void AddCamper(){
+		try {
+		Camper camperToAdd = new Camper();
+		camperToAdd.setFirstname(firstnameTextField.getText());
+		camperToAdd.setLastname(lastnameTextField.getText());
+		camperToAdd.setBirthday(dobTextField.getText());
+		camperToAdd.setInstrument("Singer");
+		if(maleRadioButton.isSelected()) {
+			camperToAdd.setGender("Male");
+		} else {
+			camperToAdd.setGender("Female");
+		}
 		
+		FuRSDBUtility.addCamper(camperToAdd);
+		} catch (Exception ex) {
+			System.out.println(ex.getStackTrace());
+		}
 		
 	}
 	
@@ -117,18 +134,22 @@ public class MainForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setType(Type.UTILITY);
-		frame.setResizable(false);
-		frame.setBounds(100, 100, 629, 526);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmSmartFursCamper = new JFrame();
+		frmSmartFursCamper.setTitle("Smart FuRS Camper Tool");
+		frmSmartFursCamper.setForeground(SystemColor.menu);
+		frmSmartFursCamper.setType(Type.UTILITY);
+		frmSmartFursCamper.setResizable(false);
+		frmSmartFursCamper.setBounds(100, 100, 770, 526);
+		frmSmartFursCamper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmSmartFursCamper.getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 11, 613, 482);
-		frame.getContentPane().add(tabbedPane);
+		tabbedPane.setBackground(SystemColor.window);
+		tabbedPane.setBounds(0, 11, 764, 482);
+		frmSmartFursCamper.getContentPane().add(tabbedPane);
 		
 		applicationPanel = new JPanel();
+		applicationPanel.setBackground(SystemColor.control);
 		tabbedPane.addTab("Applications", (Icon) null, applicationPanel, null);
 		applicationPanel.setLayout(null);
 		
@@ -136,6 +157,7 @@ public class MainForm {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				AddCamper();
+				LoadCampers();
 			}
 		});
 		btnAdd.setBounds(17, 367, 73, 39);
@@ -194,7 +216,7 @@ public class MainForm {
 		applicationPanel.add(lblInstrument);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(280, 11, 318, 395);
+		scrollPane.setBounds(280, 11, 469, 395);
 		applicationPanel.add(scrollPane);
 		
 		camperTable = new JTable();

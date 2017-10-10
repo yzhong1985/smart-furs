@@ -3,7 +3,10 @@
  */
 package smartFuRS;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author Yang Zhong
@@ -13,12 +16,13 @@ public class Camper {
 	private int id;
 	private String firstname;
 	private String lastname;
-	private Date birthday;
+	private Calendar birthday;
+	private String birthdayText;
 	private String gender;
 	private String instrument;
 	private int talentLevel;
 	private String applicationStatus;
-	private Date receivedDate;
+	private Calendar receivedDate;
 	private Boolean hasPersonalEssay;
 	private String personalEssayFilePath;
 	private Boolean hasRecording;
@@ -45,12 +49,25 @@ public class Camper {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	public Date getBirthday() {
+	public Calendar getBirthday() {
 		return birthday;
 	}
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
+	
+	public void setBirthday(String birthday) {
+		try {
+			this.birthdayText = birthday;
+			this.birthday = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy", Locale.ENGLISH);
+			this.birthday.setTime(sdf.parse(birthday));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
+	
+	public String getBirthdayText() {
+		return birthdayText;
+	}
+	
 	public String getGender() {
 		return gender;
 	}
@@ -78,12 +95,18 @@ public class Camper {
 		this.applicationStatus = applicationStatus;
 	}
 
-	public Date getReceivedDate() {
+	public Calendar getReceivedDate() {
 		return receivedDate;
 	}
 
-	public void setReceivedDate(Date receivedDate) {
-		this.receivedDate = receivedDate;
+	public void setReceivedDate(String receivedDate) {
+		try {
+			this.receivedDate = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy", Locale.ENGLISH);
+			this.receivedDate.setTime(sdf.parse(receivedDate));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 
 	public Boolean getHasPersonalEssay() {
