@@ -1,12 +1,14 @@
 package smartFuRS;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class AppUser {
 	
 	private String username;
 	private String password;
-	private Date lastLogon;
+	private Calendar lastLogon;
 	private String role;
 	
 	public String getUsername() {
@@ -21,11 +23,20 @@ public class AppUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Date getLastLogon() {
+	public Calendar getLastLogon() {
 		return lastLogon;
 	}
-	public void setLastLogon(Date lastLogon) {
+	public void setLastLogon(Calendar lastLogon) {
 		this.lastLogon = lastLogon;
+	}
+	public void setLastLogon(String lastLogon) {
+		try {
+			this.lastLogon = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy", Locale.ENGLISH);
+			this.lastLogon.setTime(sdf.parse(lastLogon));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 	public String getRole() {
 		return role;

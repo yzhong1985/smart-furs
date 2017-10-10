@@ -13,14 +13,44 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
+import java.awt.Window.Type;
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTable;
+import java.awt.List;
+import javax.swing.table.DefaultTableModel;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JScrollPane;
+import javax.swing.JCheckBox;
+import javax.swing.SwingConstants;
 
 public class MainForm {
 
 	private JFrame frame;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField firstnameTextField;
+	private JTextField lastnameTextField;
+	private JTextField dobTextField;
+	private JTable camperTable;
 
+	//defines five panels
+	private JPanel applicationPanel;
+	private JPanel mailingPanel;
+	private JPanel checkinPanel;
+	private JPanel dormAsnPanel;
+	private JPanel bandAsnPanel;
+	
+	private JRadioButton maleRadioButton;
+	private JRadioButton femaleRadioButton;
+	private ButtonGroup genderBtnGroup;
+	
+	private JComboBox<String> instrumentDropdown;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -37,6 +67,11 @@ public class MainForm {
 		});
 	}
 
+	public void Display() {
+		
+		frame.setVisible(true);
+	}
+	
 	/**
 	 * Create the application.
 	 */
@@ -44,77 +79,138 @@ public class MainForm {
 		initialize();
 	}
 
+	private void LoadCampers() {
+		try {
+			ResultSet rs =FuRSDBUtility.getCampers();
+		    camperTable.setModel( DbUtils.resultSetToTableModel(rs));
+		    
+		    JCheckBox hasEssayCheckBox = new JCheckBox("Personal Essay");
+		    hasEssayCheckBox.setBounds(17, 175, 131, 31);
+		    applicationPanel.add(hasEssayCheckBox);
+		    
+		    JCheckBox hasRecordingCheckBox = new JCheckBox("Recording");
+		    hasRecordingCheckBox.setBounds(150, 175, 120, 31);
+		    applicationPanel.add(hasRecordingCheckBox);
+		    
+		    JCheckBox hasPaymentCheckBox = new JCheckBox("Payment");
+		    hasPaymentCheckBox.setBounds(17, 209, 140, 31);
+		    applicationPanel.add(hasPaymentCheckBox);
+		    
+		    JButton btnSave = new JButton("Save");
+		    btnSave.setBounds(100, 367, 73, 39);
+		    applicationPanel.add(btnSave);
+		    
+		    JButton btnDelete = new JButton("Delete");
+		    btnDelete.setBounds(183, 367, 73, 39);
+		    applicationPanel.add(btnDelete);
+			} catch(Exception ex) {
+				System.out.println(ex.getStackTrace());
+		}
+	}
+	
+	private void AddCamper(){
+		
+		
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 629, 553);
+		frame.setType(Type.UTILITY);
+		frame.setResizable(false);
+		frame.setBounds(100, 100, 629, 526);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 0, 613, 493);
+		tabbedPane.setBounds(0, 11, 613, 482);
 		frame.getContentPane().add(tabbedPane);
 		
-		JPanel applicationPanel = new JPanel();
-		tabbedPane.addTab("Applications", null, applicationPanel, null);
+		applicationPanel = new JPanel();
+		tabbedPane.addTab("Applications", (Icon) null, applicationPanel, null);
 		applicationPanel.setLayout(null);
 		
-		JButton btnSave = new JButton("Save");
-		btnSave.addActionListener(new ActionListener() {
+		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				AddCamper();
 			}
 		});
-		btnSave.setBounds(10, 431, 89, 23);
-		applicationPanel.add(btnSave);
+		btnAdd.setBounds(17, 367, 73, 39);
+		applicationPanel.add(btnAdd);
 		
-		textField = new JTextField();
-		textField.setBounds(85, 11, 140, 20);
-		applicationPanel.add(textField);
-		textField.setColumns(10);
+		firstnameTextField = new JTextField();
+		firstnameTextField.setBounds(104, 11, 140, 20);
+		applicationPanel.add(firstnameTextField);
+		firstnameTextField.setColumns(10);
 		
 		JLabel lblFirstName = new JLabel("First Name");
-		lblFirstName.setBounds(17, 11, 58, 14);
+		lblFirstName.setBounds(17, 11, 89, 14);
 		applicationPanel.add(lblFirstName);
 		
 		JLabel lblLastName = new JLabel("Last Name");
-		lblLastName.setBounds(17, 46, 58, 14);
+		lblLastName.setBounds(17, 46, 89, 14);
 		applicationPanel.add(lblLastName);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(85, 42, 140, 20);
-		applicationPanel.add(textField_1);
+		lastnameTextField = new JTextField();
+		lastnameTextField.setColumns(10);
+		lastnameTextField.setBounds(104, 42, 140, 20);
+		applicationPanel.add(lastnameTextField);
 		
 		JLabel lblGender = new JLabel("Gender");
-		lblGender.setBounds(17, 83, 58, 14);
+		lblGender.setBounds(17, 83, 89, 14);
 		applicationPanel.add(lblGender);
 		
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("Male");
-		rdbtnNewRadioButton.setBounds(85, 79, 58, 23);
-		applicationPanel.add(rdbtnNewRadioButton);
+		maleRadioButton = new JRadioButton("Male");
+		maleRadioButton.setBounds(104, 79, 58, 23);
+		applicationPanel.add(maleRadioButton);
 		
-		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("Female");
-		rdbtnNewRadioButton_1.setBounds(145, 79, 73, 23);
-		applicationPanel.add(rdbtnNewRadioButton_1);
+		femaleRadioButton = new JRadioButton("Female");
+		femaleRadioButton.setBounds(164, 79, 73, 23);
+		applicationPanel.add(femaleRadioButton);
 		
-		JPanel mailingPanel = new JPanel();
+		genderBtnGroup = new ButtonGroup();
+		genderBtnGroup.add(femaleRadioButton);
+		genderBtnGroup.add(maleRadioButton);
+		
+		dobTextField = new JTextField();
+		dobTextField.setBounds(104, 109, 140, 20);
+		applicationPanel.add(dobTextField);
+		dobTextField.setColumns(10);
+		
+		JLabel lblDob = new JLabel("DOB");
+		lblDob.setBounds(17, 112, 89, 14);
+		applicationPanel.add(lblDob);
+		
+		instrumentDropdown = new JComboBox<String>();
+		instrumentDropdown.setModel(new DefaultComboBoxModel<String>());
+		instrumentDropdown.setBounds(104, 140, 140, 20);
+		applicationPanel.add(instrumentDropdown);
+		
+		JLabel lblInstrument = new JLabel("Instrument");
+		lblInstrument.setBounds(17, 143, 89, 14);
+		applicationPanel.add(lblInstrument);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(280, 11, 318, 395);
+		applicationPanel.add(scrollPane);
+		
+		camperTable = new JTable();
+		scrollPane.setViewportView(camperTable);
+		LoadCampers();
+
+		mailingPanel = new JPanel();
 		tabbedPane.addTab("Mailing Notification", null, mailingPanel, null);
 		
-		JPanel checkinPanel = new JPanel();
+		checkinPanel = new JPanel();
 		tabbedPane.addTab("Camper Checkin", null, checkinPanel, null);
 		
-		JPanel dormAsnPanel = new JPanel();
+		dormAsnPanel = new JPanel();
 		tabbedPane.addTab("Dorm Assignment", null, dormAsnPanel, null);
 		
-		JPanel bandAsnPanel = new JPanel();
+		bandAsnPanel = new JPanel();
 		tabbedPane.addTab("Band Assignment", null, bandAsnPanel, null);
-		
-		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
-		
-		JMenu mnHelp = new JMenu("Help");
-		menuBar.add(mnHelp);
 	}
 }
