@@ -45,9 +45,6 @@ public class Login extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
-					//FuRSDBUtility.getConnection();
-					
 					Login frame = new Login();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -131,7 +128,7 @@ public class Login extends JFrame {
 		contentPane.add(messageLabel);
 		
 		JLabel bgImgLabel = new JLabel("");
-		Image img = new ImageIcon(this.getClass().getResource("../logo-bg.png")).getImage();
+		Image img = new ImageIcon(this.getClass().getResource("../logo-design.png")).getImage();
 		bgImgLabel.setIcon(new ImageIcon(img));
 		bgImgLabel.setBounds(75, 23, 553, 178);
 		contentPane.add(bgImgLabel);
@@ -156,38 +153,25 @@ public class Login extends JFrame {
 		char[] pass = passwordField.getPassword();
 		String user = usernameTextbox.getText();
 		String psw = "";
-		for(char c: pass) {
-			psw += c;
-		}
-		
-		System.out.println(psw);
-		 
+		for(char c: pass) {psw += c;}
+				 
 		//check if these are empty or not
-		if(pass.length==0 || user == "") {
-			
+		if(pass.length==0 || user == "") {		
 			messageLabel.setText("Username/password cannot be blank");
 			return false;
 		}
 		
-		try {
-		
-			//check if has the user in database
-			AppUser appuser = null;
-			appuser = FuRSDBUtility.getAppUser(user, psw);
-			if(appuser == null) {
-				messageLabel.setText("Wrong username or password");
-				return false;
-			}
-			else {
-				//if has user, return true
-				messageLabel.setText("");
-				return true;
-			}
-		
-		}
-		catch(Exception e) {
-			//should log the exception here
+		//check if has the user in database
+		AppUser appuser = null;
+		appuser = FuRSDBUtility.getAppUser(user, psw);
+		if(appuser == null) {
+			messageLabel.setText("Wrong username or password");
 			return false;
+		}
+		else {
+			//if has user, return true
+			messageLabel.setText("");
+			return true;
 		}
 		
 	} 

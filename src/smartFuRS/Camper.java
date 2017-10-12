@@ -23,11 +23,12 @@ public class Camper {
 	private int talentLevel;
 	private String applicationStatus;
 	private Calendar receivedDate;
-	private Boolean hasPersonalEssay;
+	private String receivedDateText;
+	private String hasPersonalEssay;
 	private String personalEssayFilePath;
-	private Boolean hasRecording;
+	private String hasRecording;
 	private String recordingFilePath;
-	private Boolean hasDepositPayment;
+	private String hasDepositPayment;
 	private String depositFilePath;
 	private String rejectReason;
 	
@@ -68,6 +69,17 @@ public class Camper {
 		return birthdayText;
 	}
 	
+	public int getAge() {
+		if(birthday == null) {
+			return -1;
+		}
+		Calendar today = Calendar.getInstance();
+		int days = CalculationUtility.daysBetween(today, birthday);
+		int year = days/365;
+		return year;
+		
+	}
+	
 	public String getGender() {
 		return gender;
 	}
@@ -101,6 +113,7 @@ public class Camper {
 
 	public void setReceivedDate(String receivedDate) {
 		try {
+			this.receivedDateText = receivedDate;
 			this.receivedDate = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy", Locale.ENGLISH);
 			this.receivedDate.setTime(sdf.parse(receivedDate));
@@ -108,12 +121,16 @@ public class Camper {
 			System.out.println(ex.getMessage());
 		}
 	}
+	
+	public String getReceivedDateText() {
+		return receivedDateText;
+	}
 
-	public Boolean getHasPersonalEssay() {
+	public String getHasPersonalEssay() {
 		return hasPersonalEssay;
 	}
 
-	public void setHasPersonalEssay(Boolean hasPersonalEssay) {
+	public void setHasPersonalEssay(String hasPersonalEssay) {
 		this.hasPersonalEssay = hasPersonalEssay;
 	}
 
@@ -125,11 +142,11 @@ public class Camper {
 		this.personalEssayFilePath = personalEssayFilePath;
 	}
 
-	public Boolean getHasRecording() {
+	public String getHasRecording() {
 		return hasRecording;
 	}
 
-	public void setHasRecording(Boolean hasRecording) {
+	public void setHasRecording(String hasRecording) {
 		this.hasRecording = hasRecording;
 	}
 
@@ -141,11 +158,11 @@ public class Camper {
 		this.recordingFilePath = recordingFilePath;
 	}
 
-	public Boolean getHasDepositPayment() {
+	public String getHasDepositPayment() {
 		return hasDepositPayment;
 	}
 
-	public void setHasDepositPayment(Boolean hasDepositPayment) {
+	public void setHasDepositPayment(String hasDepositPayment) {
 		this.hasDepositPayment = hasDepositPayment;
 	}
 
