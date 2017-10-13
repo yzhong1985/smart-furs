@@ -311,6 +311,7 @@ public class MainForm {
 			JOptionPane.showMessageDialog(null, camperfullname + " has been updated.");
 			//update the table
 			reloadApplicationTable();
+			reloadMailingCampersTable();
 			//clean the inputs
 			cancelApplicationEdit();
 		}
@@ -340,6 +341,7 @@ public class MainForm {
 		    	idLabel.setVisible(false);
 		    	cleanApplicationInputs();
 				reloadApplicationTable();
+				reloadMailingCampersTable();
 			}
 		}
 	}
