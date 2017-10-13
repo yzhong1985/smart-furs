@@ -31,6 +31,8 @@ public class Camper {
 	private String hasDepositPayment;
 	private String depositFilePath;
 	private String rejectReason;
+	private String category;
+
 	
 	public int getId() {
 		return id;
@@ -97,6 +99,13 @@ public class Camper {
 	}
 	public void setTalentLevel(int talentLevel) {
 		this.talentLevel = talentLevel;
+	}
+	public void setTalentLevel(String talentLeveltxt) {
+		try {
+			this.talentLevel = Integer.parseInt(talentLeveltxt);
+		} catch (Exception ex) {
+			
+		}
 	}
 
 	public String getApplicationStatus() {
@@ -180,6 +189,12 @@ public class Camper {
 
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	
 	

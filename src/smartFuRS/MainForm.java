@@ -14,6 +14,11 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
@@ -24,15 +29,18 @@ import javax.swing.JComboBox;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
-import java.awt.List;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-import net.proteanit.sql.DbUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import javax.swing.JScrollPane;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
@@ -84,8 +92,21 @@ public class MainForm {
 	private JButton btnDelete;
 	private JButton btnCancel;
 	private JScrollPane applicationScrollPane;
+	private JTextPane txtpnMail;
 	
 	private Boolean isApplicationEditMode = false;
+	
+	private JLabel lblMailingFname;
+	private JComboBox<String> statusDropdown;
+	private JSpinner spinnerTelentLvl;
+	private JComboBox<String> dropdownCategory;
+	private JButton btnMailingCancel;
+	private JButton btnGenerateMail;
+	private JLabel lblNewLabel;
+	private JButton btnMailingSave;
+	
+	private JLabel labelMailingTotalBoy;
+	private JLabel labelMailingTotalGril;
 	
 	/**
 	 * Launch the application.
@@ -115,6 +136,10 @@ public class MainForm {
 		initialize();
 	}
 
+	
+	/**
+	 * #### USER STORY 1 Methods: Log applications ###
+	 */
 	private void reloadApplicationTable() {
 		ArrayList<Camper> applicationCampers =FuRSDBUtility.getApplicationCampers();
 	    DefaultTableModel model = (DefaultTableModel)camperTable.getModel();
@@ -239,6 +264,8 @@ public class MainForm {
 			JOptionPane.showMessageDialog(null, camperfullname + " has been added into our candidate list.");
 			//update the table
 			reloadApplicationTable();
+			//update mailing table too
+			reloadMailingCampersTable();
 			//clean the inputs
 			cleanApplicationInputs();
 		}
@@ -374,18 +401,196 @@ public class MainForm {
     	}
     	
 	}
+	/**
+	 * ####### END USER STORY 1 Methods ###
+	 */
+	
+	/**
+	 * #### USER STORY 2 Methods: Mailing notifications ###
+	 */
+	private void openWordMailTemplate() {
+		try {
+			XWPFDocument document = new XWPFDocument();
+			FileOutputStream out = new FileOutputStream(new File("notification.docx"));
+			String content = txtpnMail.getText();
+			String[] paraArray = content.split("\r\n");
+			for(String p:paraArray) {
+				XWPFParagraph paragraph = document.createParagraph();
+				XWPFRun run = paragraph.createRun();
+				run.setText(p);
+			}
+			document.write(out);
+			out.close();
+			//display word
+			Desktop desktop = null;
+		    if (Desktop.isDesktopSupported()) {
+		        desktop = Desktop.getDesktop();
+		    }
+
+		    desktop.open(new File("notification.docx"));
+						
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} 
+	}	
+	
+	private void reloadMailingCampersTable() {
+		ArrayList<Camper> mailCampers =FuRSDBUtility.getMailingCampers();
+	    DefaultTableModel model = (DefaultTableModel)mailingTable.getModel();
+	    model.setRowCount(0);
+	    Object rowData[] = new Object[12];
+	    for(int i=0; i<mailCampers.size();i++) {
+	    	rowData[0] = mailCampers.get(i).getId();
+	    	rowData[1] = mailCampers.get(i).getApplicationStatus();
+	    	rowData[2] = mailCampers.get(i).getFirstname();
+	    	rowData[3] = mailCampers.get(i).getLastname();
+	    	rowData[4] = mailCampers.get(i).getAge();
+	    	rowData[5] = mailCampers.get(i).getGender();
+	    	rowData[6] = mailCampers.get(i).getInstrument();
+	    	rowData[7] = mailCampers.get(i).getCategory();
+	    	rowData[8] = mailCampers.get(i).getTalentLevel();
+	    	rowData[9] = mailCampers.get(i).getHasPersonalEssay();
+	    	rowData[10] = mailCampers.get(i).getHasRecording();
+	    	rowData[11] = mailCampers.get(i).getHasDepositPayment();
+	    	model.addRow(rowData);
+	    }
+	    
+	    int totalgirls = getAcceptGender("Girl",mailCampers);
+	    int totalboys = getAcceptGender("Boy",mailCampers);
+	    labelMailingTotalGril.setText(totalgirls + "/24");
+	    labelMailingTotalBoy.setText(totalboys + "/24");
+	}
+	
+	private void populateMailingFields() {
+		
+		btnMailingSave.setVisible(true);
+		btnMailingCancel.setVisible(true);
+		btnGenerateMail.setVisible(true);
+		statusDropdown.setEnabled(true);
+		dropdownCategory.setEnabled(true);
+		
+    	String fname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 2).toString();
+    	String status = "";
+    	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 1) !=null) {
+    		status	= mailingTable.getValueAt(mailingTable.getSelectedRow(), 1).toString();
+    	}
+    	String talentlvltxt = "";
+    	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 8) !=null) {
+    		talentlvltxt	= mailingTable.getValueAt(mailingTable.getSelectedRow(), 8).toString();
+    	}
+    	String category = "";
+    	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 7) !=null) {
+    		category	= mailingTable.getValueAt(mailingTable.getSelectedRow(), 7).toString();
+    	}
+    	
+    	//set to controls
+    	lblMailingFname.setText(fname);
+    	if(status.equals("Accept")||status.equals("Deny")) {
+    		statusDropdown.setSelectedItem(status);
+    	} else {
+    		statusDropdown.setSelectedItem("Undecided");
+    	}
+    	
+    	int talentlvl = 0;   	
+    	try{
+    		talentlvl = Integer.parseInt(talentlvltxt);
+    	} catch (Exception ex) {
+    		ex.printStackTrace();
+    	}
+    	spinnerTelentLvl.setValue(talentlvl);
+    	
+    	if(category!=null ||!category.isEmpty()) {
+    		dropdownCategory.setSelectedItem(category);
+    	}
+    	else {
+    		dropdownCategory.setSelectedItem("Not Assigned");
+    	}
+	}
+	
+	private void mailingStatusChange() {
+		String selStatus = statusDropdown.getSelectedItem().toString();
+		String content = "";
+		String fname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 2).toString();
+		String lname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 3).toString();
+		if(selStatus.equals("Accept")) {
+			content = String.format(FuRSDBUtility.AcceptMailContent, fname, lname);
+		} else if(selStatus.equals("Deny")) {
+			content = String.format(FuRSDBUtility.DenyMailContent, fname, lname);
+		} else {
+			content = "";
+		}
+		txtpnMail.setText(content);
+	}
+	
+	private void clearMailingFields(boolean isStart) {
+		btnMailingSave.setVisible(false);
+		btnMailingCancel.setVisible(false);
+		btnGenerateMail.setVisible(false);
+		statusDropdown.setEnabled(false);
+		dropdownCategory.setEnabled(false);
+		spinnerTelentLvl.setValue(5);
+		
+		txtpnMail.setText("");
+		lblMailingFname.setText("");
+		if(!isStart) {
+			dropdownCategory.setSelectedIndex(0);
+			statusDropdown.setSelectedIndex(0);
+		}
+	}
+	
+	private int getAcceptGender(String boyorgirl, ArrayList<Camper> campers) {
+		int total = 0;
+		for (Camper camp:campers){
+			String status = camp.getApplicationStatus();
+			String gender = camp.getGender();
+			if(status==null ||status.isEmpty()) {
+				continue;
+			}
+				
+			if(status.equals("Accept") && gender.equals(boyorgirl)) {
+				total ++;
+			}
+		}
+		return total;
+	}
+	
+	private void saveCamperStatus() {
+		
+		Camper camperToUpdate = new Camper();
+		String idstr = camperTable.getValueAt(mailingTable.getSelectedRow(), 0).toString();
+	    int id =Integer.parseInt(idstr);
+		camperToUpdate.setId(id);
+		camperToUpdate.setCategory(dropdownCategory.getSelectedItem().toString());
+		camperToUpdate.setApplicationStatus(statusDropdown.getSelectedItem().toString());
+		camperToUpdate.setTalentLevel(spinnerTelentLvl.getValue().toString());
+		
+		if(FuRSDBUtility.updateCamperStatus(camperToUpdate)) {
+			//show success msg
+			String fname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 2).toString();
+			String lname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 3).toString();
+			String camperfullname = fname + " " + lname;
+			JOptionPane.showMessageDialog(null, camperfullname + " has been updated.");
+			//update the table
+			reloadMailingCampersTable();
+			//clean the inputs
+			clearMailingFields(true);
+		}
+		
+	}
+	
 	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frmSmartFursCamper = new JFrame();
-		frmSmartFursCamper.getContentPane().setBackground(SystemColor.window);
-		frmSmartFursCamper.getContentPane().setForeground(SystemColor.desktop);
+		frmSmartFursCamper.getContentPane().setFont(new Font("Calibri", Font.PLAIN, 14));
+		frmSmartFursCamper.getContentPane().setBackground(new Color(255, 255, 255));
+		frmSmartFursCamper.getContentPane().setForeground(new Color(0, 0, 0));
 		frmSmartFursCamper.setForeground(SystemColor.menu);
 		frmSmartFursCamper.setType(Type.UTILITY);
 		frmSmartFursCamper.setResizable(false);
-		frmSmartFursCamper.setBounds(100, 100, 977, 645);
+		frmSmartFursCamper.setBounds(100, 100, 1100, 645);
 		frmSmartFursCamper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmSmartFursCamper.getContentPane().setLayout(null);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -393,18 +598,18 @@ public class MainForm {
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setFont(new Font("Calibri", Font.PLAIN, 18));
-		tabbedPane.setForeground(SystemColor.desktop);
-		tabbedPane.setBackground(SystemColor.window);
-		tabbedPane.setBounds(10, 106, 952, 507);
+		tabbedPane.setForeground(new Color(0, 0, 0));
+		tabbedPane.setBackground(new Color(255, 255, 255));
+		tabbedPane.setBounds(10, 106, 1074, 507);
 		frmSmartFursCamper.getContentPane().add(tabbedPane);
 		
 		applicationPanel = new JPanel();
-		applicationPanel.setBackground(SystemColor.window);
+		applicationPanel.setBackground(new Color(255, 255, 255));
 		tabbedPane.addTab("Applications", (Icon) null, applicationPanel, null);
 		applicationPanel.setLayout(null);
 		
 		btnAdd = new JButton("Add");
-		btnAdd.setForeground(SystemColor.desktop);
+		btnAdd.setForeground(new Color(0, 0, 0));
 		btnAdd.setBackground(SystemColor.control);
 		btnAdd.setFont(new Font("Calibri", Font.PLAIN, 16));
 		btnAdd.addActionListener(new ActionListener() {
@@ -418,7 +623,7 @@ public class MainForm {
 		
 		firstnameTextField = new JTextField();
 		firstnameTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-		firstnameTextField.setBackground(SystemColor.window);
+		firstnameTextField.setBackground(new Color(255, 255, 255));
 		firstnameTextField.setBounds(121, 99, 156, 29);
 		applicationPanel.add(firstnameTextField);
 		firstnameTextField.setColumns(10);
@@ -437,7 +642,7 @@ public class MainForm {
 		
 		lastnameTextField = new JTextField();
 		lastnameTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lastnameTextField.setBackground(SystemColor.window);
+		lastnameTextField.setBackground(new Color(255, 255, 255));
 		lastnameTextField.setColumns(10);
 		lastnameTextField.setBounds(121, 139, 156, 29);
 		applicationPanel.add(lastnameTextField);
@@ -467,7 +672,7 @@ public class MainForm {
 		dobTextField = new JTextField();
 		dobTextField.setToolTipText("Please follow format mm/dd/yyyy");
 		dobTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-		dobTextField.setBackground(SystemColor.window);
+		dobTextField.setBackground(new Color(255, 255, 255));
 		dobTextField.setBounds(121, 217, 156, 29);
 		applicationPanel.add(dobTextField);
 		dobTextField.setColumns(10);
@@ -485,7 +690,7 @@ public class MainForm {
 		applicationPanel.add(lblInstrument);
 		
 		applicationScrollPane = new JScrollPane();
-		applicationScrollPane.setBounds(313, 11, 630, 448);
+		applicationScrollPane.setBounds(345, 11, 714, 448);
 		applicationPanel.add(applicationScrollPane);
 		
 		camperTable = new JTable();
@@ -567,7 +772,7 @@ public class MainForm {
 	    recvdayTextField.setToolTipText("Please follow format mm/dd/yyyy");
 	    recvdayTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
 	    recvdayTextField.setColumns(10);
-	    recvdayTextField.setBackground(Color.WHITE);
+	    recvdayTextField.setBackground(new Color(255, 255, 255));
 	    recvdayTextField.setBounds(121, 59, 156, 29);
 	    applicationPanel.add(recvdayTextField);
 	    
@@ -575,7 +780,7 @@ public class MainForm {
 	    instrumentTextField.setToolTipText("");
 	    instrumentTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
 	    instrumentTextField.setColumns(10);
-	    instrumentTextField.setBackground(Color.WHITE);
+	    instrumentTextField.setBackground(new Color(255, 255, 255));
 	    instrumentTextField.setBounds(121, 257, 156, 29);
 	    applicationPanel.add(instrumentTextField);
 	    
@@ -592,7 +797,7 @@ public class MainForm {
 	    		cancelApplicationEdit();
 	    	}
 	    });
-	    btnCancel.setForeground(Color.BLACK);
+	    btnCancel.setForeground(new Color(0, 0, 0));
 	    btnCancel.setFont(new Font("Calibri", Font.PLAIN, 16));
 	    btnCancel.setBackground(SystemColor.menu);
 	    btnCancel.setBounds(222, 410, 79, 41);
@@ -600,53 +805,81 @@ public class MainForm {
 	    applicationPanel.add(btnCancel);
 		
 		mailingPanel = new JPanel();
-		mailingPanel.setBackground(SystemColor.window);
+		mailingPanel.setBackground(new Color(255, 255, 255));
 		tabbedPane.addTab("Mailing Notification", null, mailingPanel, null);
 		mailingPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(327, 46, 610, 413);
+		scrollPane.setBounds(371, 46, 688, 413);
 		mailingPanel.add(scrollPane);
 		
 		mailingTable = new JTable();
+		mailingTable.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+					"Id", "Status", "FName", "LName", "Age", "Gender", "Instrument", "Category", "Talnt", "Esy", "Rec", "Dps"
+			}
+		));
 		mailingTable.setFont(new Font("Calibri", Font.PLAIN, 16));
 		scrollPane.setViewportView(mailingTable);
 		mailingTable.setRowHeight(21);
+		mailingTable.getColumnModel().getColumn(0).setPreferredWidth(15);
+		mailingTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+		mailingTable.getColumnModel().getColumn(2).setPreferredWidth(60);
+		mailingTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+		mailingTable.getColumnModel().getColumn(4).setPreferredWidth(20);
+		mailingTable.getColumnModel().getColumn(5).setPreferredWidth(40);
+		mailingTable.getColumnModel().getColumn(6).setPreferredWidth(80);
+		mailingTable.getColumnModel().getColumn(7).setPreferredWidth(100);
+		mailingTable.getColumnModel().getColumn(8).setPreferredWidth(30);
+		mailingTable.getColumnModel().getColumn(9).setPreferredWidth(30);
+		mailingTable.getColumnModel().getColumn(10).setPreferredWidth(30);
+		mailingTable.getColumnModel().getColumn(11).setPreferredWidth(30);
+		ListSelectionModel selMailingModel = mailingTable.getSelectionModel(); 
+		selMailingModel.addListSelectionListener(new ListSelectionListener(){
+	        @Override
+			public void valueChanged(ListSelectionEvent event) {
+	            if(!selMailingModel.isSelectionEmpty()) {populateMailingFields();}
+	        }
+	    });
 		
-		JButton btnGenerateMail = new JButton("Generate Mail");
+		
+		btnGenerateMail = new JButton("Generate Mail");
+		btnGenerateMail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openWordMailTemplate();
+			}
+		});
 		btnGenerateMail.setForeground(Color.BLACK);
 		btnGenerateMail.setFont(new Font("Calibri", Font.PLAIN, 18));
 		btnGenerateMail.setBackground(SystemColor.menu);
-		btnGenerateMail.setBounds(151, 393, 156, 66);
+		btnGenerateMail.setBounds(103, 416, 158, 43);
 		mailingPanel.add(btnGenerateMail);
 		
-		JLabel lblNewLabel = new JLabel("Please Select the Decision for");
+		lblNewLabel = new JLabel("Please Select the Decision for");
 		lblNewLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
 		lblNewLabel.setBounds(16, 12, 202, 32);
 		mailingPanel.add(lblNewLabel);
 		
-		JLabel lblJustin = new JLabel("Justin");
-		lblJustin.setFont(new Font("Calibri", Font.BOLD, 16));
-		lblJustin.setBounds(214, 12, 146, 32);
-		mailingPanel.add(lblJustin);
+		lblMailingFname = new JLabel("");
+		lblMailingFname.setFont(new Font("Calibri", Font.BOLD, 16));
+		lblMailingFname.setBounds(214, 12, 146, 32);
+		mailingPanel.add(lblMailingFname);
 		
 		JLabel lblDecision = new JLabel("Decision:");
 		lblDecision.setFont(new Font("Calibri", Font.PLAIN, 16));
 		lblDecision.setBackground(Color.WHITE);
-		lblDecision.setBounds(16, 46, 90, 29);
+		lblDecision.setBounds(16, 48, 90, 29);
 		mailingPanel.add(lblDecision);
 		
-		JComboBox<String> comboBox = new JComboBox<String>();
-		comboBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-		comboBox.setBackground(Color.WHITE);
-		comboBox.setBounds(127, 46, 180, 29);
-		mailingPanel.add(comboBox);
-		
-		JComboBox<String> comboBox_1 = new JComboBox<String>();
-		comboBox_1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		comboBox_1.setBackground(Color.WHITE);
-		comboBox_1.setBounds(127, 86, 180, 29);
-		mailingPanel.add(comboBox_1);
+		dropdownCategory = new JComboBox<String>();
+		dropdownCategory.setEnabled(false);
+		dropdownCategory.setModel(new DefaultComboBoxModel(new String[] {"Not Assigned", "Singer", "Guitarist", "Drummer", "Bassist", "Keyboardist", "Instrumentalist"}));
+		dropdownCategory.setFont(new Font("Calibri", Font.PLAIN, 16));
+		dropdownCategory.setBackground(Color.WHITE);
+		dropdownCategory.setBounds(127, 86, 180, 29);
+		mailingPanel.add(dropdownCategory);
 		
 		JLabel lblCategory = new JLabel("Category:");
 		lblCategory.setFont(new Font("Calibri", Font.PLAIN, 16));
@@ -654,12 +887,17 @@ public class MainForm {
 		lblCategory.setBounds(16, 86, 90, 29);
 		mailingPanel.add(lblCategory);
 		
-		JButton btnSave_1 = new JButton("Save");
-		btnSave_1.setForeground(Color.BLACK);
-		btnSave_1.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnSave_1.setBackground(SystemColor.menu);
-		btnSave_1.setBounds(16, 393, 113, 66);
-		mailingPanel.add(btnSave_1);
+		btnMailingSave = new JButton("Save");
+		btnMailingSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveCamperStatus();
+			}
+		});
+		btnMailingSave.setForeground(Color.BLACK);
+		btnMailingSave.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnMailingSave.setBackground(SystemColor.menu);
+		btnMailingSave.setBounds(16, 416, 77, 43);
+		mailingPanel.add(btnMailingSave);
 		
 		JLabel lblSkillLevel = new JLabel("Talent Level:");
 		lblSkillLevel.setFont(new Font("Calibri", Font.PLAIN, 16));
@@ -667,11 +905,11 @@ public class MainForm {
 		lblSkillLevel.setBounds(16, 126, 90, 29);
 		mailingPanel.add(lblSkillLevel);
 		
-		JSpinner spinner = new JSpinner();
-		spinner.setFont(new Font("Calibri", Font.PLAIN, 16));
-		spinner.setModel(new SpinnerNumberModel(5, 0, 10, 1));
-		spinner.setBounds(127, 126, 65, 29);
-		mailingPanel.add(spinner);
+		spinnerTelentLvl = new JSpinner();
+		spinnerTelentLvl.setFont(new Font("Calibri", Font.PLAIN, 16));
+		spinnerTelentLvl.setModel(new SpinnerNumberModel(5, 0, 10, 1));
+		spinnerTelentLvl.setBounds(127, 126, 65, 29);
+		mailingPanel.add(spinnerTelentLvl);
 		
 		JLabel lblNewLabel_1 = new JLabel("Accepted Grils:");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -679,10 +917,10 @@ public class MainForm {
 		lblNewLabel_1.setBounds(455, 12, 120, 23);
 		mailingPanel.add(lblNewLabel_1);
 		
-		JLabel label = new JLabel("0/24");
-		label.setFont(new Font("Calibri", Font.BOLD, 16));
-		label.setBounds(585, 12, 65, 23);
-		mailingPanel.add(label);
+		labelMailingTotalGril = new JLabel("0/24");
+		labelMailingTotalGril.setFont(new Font("Calibri", Font.BOLD, 16));
+		labelMailingTotalGril.setBounds(585, 12, 65, 23);
+		mailingPanel.add(labelMailingTotalGril);
 		
 		JLabel lblAcceptedBoys = new JLabel("Accepted Boys:");
 		lblAcceptedBoys.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -690,10 +928,48 @@ public class MainForm {
 		lblAcceptedBoys.setBounds(686, 12, 146, 23);
 		mailingPanel.add(lblAcceptedBoys);
 		
-		JLabel label_2 = new JLabel("0/24");
-		label_2.setFont(new Font("Calibri", Font.BOLD, 16));
-		label_2.setBounds(842, 12, 65, 23);
-		mailingPanel.add(label_2);
+		labelMailingTotalBoy = new JLabel("0/24");
+		labelMailingTotalBoy.setFont(new Font("Calibri", Font.BOLD, 16));
+		labelMailingTotalBoy.setBounds(842, 12, 65, 23);
+		mailingPanel.add(labelMailingTotalBoy);
+		
+		JPanel panel_14 = new JPanel();
+		panel_14.setBorder(new TitledBorder(null, "Mail Content", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_14.setBounds(15, 166, 346, 239);
+		mailingPanel.add(panel_14);
+		panel_14.setLayout(null);
+		
+		txtpnMail = new JTextPane();
+		txtpnMail.setText("");
+		txtpnMail.setBounds(6, 16, 330, 212);
+		panel_14.add(txtpnMail);
+		txtpnMail.setFont(new Font("Calibri", Font.PLAIN, 14));
+		
+		statusDropdown = new JComboBox<String>();
+		statusDropdown.setEnabled(false);
+		statusDropdown.setModel(new DefaultComboBoxModel(new String[] {"Undecided", "Accept", "Deny"}));
+		statusDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		statusDropdown.setBackground(Color.WHITE);
+		statusDropdown.setBounds(127, 50, 180, 29);
+		statusDropdown.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		        mailingStatusChange();
+		    }
+		});
+		
+		mailingPanel.add(statusDropdown);
+		
+		btnMailingCancel = new JButton("Cancel");
+		btnMailingCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				clearMailingFields(false);
+			}
+		});
+		btnMailingCancel.setForeground(Color.BLACK);
+		btnMailingCancel.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnMailingCancel.setBackground(SystemColor.menu);
+		btnMailingCancel.setBounds(271, 416, 90, 43);
+		mailingPanel.add(btnMailingCancel);
 		
 		checkinPanel = new JPanel();
 		checkinPanel.setBackground(SystemColor.window);
@@ -770,6 +1046,13 @@ public class MainForm {
 		list_4.setFont(new Font("Calibri", Font.PLAIN, 14));
 		list_4.setBounds(6, 16, 179, 176);
 		panel_5.add(list_4);
+		
+		JButton btnAutoAssignDorm = new JButton("Auto Assign");
+		btnAutoAssignDorm.setForeground(Color.BLACK);
+		btnAutoAssignDorm.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnAutoAssignDorm.setBackground(SystemColor.menu);
+		btnAutoAssignDorm.setBounds(620, 17, 160, 43);
+		dormAsnPanel.add(btnAutoAssignDorm);
 		
 		bandAsnPanel = new JPanel();
 		bandAsnPanel.setBackground(SystemColor.window);
@@ -864,11 +1147,13 @@ public class MainForm {
 		list_12.setBounds(6, 16, 179, 176);
 		panel_13.add(list_12);
 		
-		JLabel topImgbgLabel = new JLabel("");
-		topImgbgLabel.setBounds(0, 0, 971, 102);
+		JButton button = new JButton("Auto Assign");
+		button.setForeground(Color.BLACK);
+		button.setFont(new Font("Calibri", Font.PLAIN, 18));
+		button.setBackground(SystemColor.menu);
+		button.setBounds(822, 22, 160, 43);
+		bandAsnPanel.add(button);
 		Image img = new ImageIcon(this.getClass().getResource("../nlogo-bg-2.png")).getImage();
-		topImgbgLabel.setIcon(new ImageIcon(img));
-		frmSmartFursCamper.getContentPane().add(topImgbgLabel);
 		
 		JLabel welcomeLabel = new JLabel("Welcome, Yang");
 		welcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -877,5 +1162,7 @@ public class MainForm {
 		frmSmartFursCamper.getContentPane().add(welcomeLabel);
 		
 		reloadApplicationTable();
+		reloadMailingCampersTable();
+		clearMailingFields(true);
 	}
 }

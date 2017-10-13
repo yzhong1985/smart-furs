@@ -63,7 +63,7 @@ public class Login extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 656, 456);
 		contentPane = new JPanel();
-		contentPane.setBackground(SystemColor.window);
+		contentPane.setBackground(new Color(255, 255, 255));
 		contentPane.setBorder(new CompoundBorder());
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
