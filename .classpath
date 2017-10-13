@@ -3,7 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="img"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/SQLite/sqlite-jdbc-3.20.0.jar" sourcepath="C:/SQLite/sqlite-jdbc-3.20.0.jar"/>
-	<classpathentry kind="lib" path="resources/rs2xml.jar"/>
+	<classpathentry kind="lib" path="externalLib/curvesapi-1.04.jar"/>
+	<classpathentry kind="lib" path="externalLib/poi-3.17.jar"/>
+	<classpathentry kind="lib" path="externalLib/poi-excelant-3.17.jar"/>
+	<classpathentry kind="lib" path="externalLib/poi-ooxml-3.17.jar"/>
+	<classpathentry kind="lib" path="externalLib/poi-ooxml-schemas-3.17.jar"/>
+	<classpathentry kind="lib" path="externalLib/poi-scratchpad-3.17.jar"/>
+	<classpathentry kind="lib" path="externalLib/sqlite-jdbc-3.20.0.jar"/>
+	<classpathentry kind="lib" path="externalLib/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

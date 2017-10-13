@@ -108,6 +108,8 @@ public class MainForm {
 	private JLabel labelMailingTotalBoy;
 	private JLabel labelMailingTotalGril;
 	
+	private JButton btnAutoAssignDorm;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -985,76 +987,109 @@ public class MainForm {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Grils Dorm #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(20, 17, 191, 203);
+		panel.setBounds(20, 17, 207, 203);
 		dormAsnPanel.add(panel);
 		panel.setLayout(null);
 		
-		JList listDorm1 = new JList();
-		listDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listDorm1.setBounds(6, 16, 179, 176);
-		panel.add(listDorm1);
+		JList listGirlDorm1 = new JList();
+		listGirlDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
+		listGirlDorm1.setBounds(6, 16, 191, 176);
+		panel.add(listGirlDorm1);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(null, "Grils Dorm #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(220, 17, 191, 203);
+		panel_1.setBounds(248, 17, 207, 203);
 		dormAsnPanel.add(panel_1);
 		
-		JList list = new JList();
-		list.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list.setBounds(6, 16, 179, 176);
-		panel_1.add(list);
+		JList listGirlDorm2 = new JList();
+		listGirlDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		listGirlDorm2.setBounds(6, 16, 191, 176);
+		panel_1.add(listGirlDorm2);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setLayout(null);
 		panel_2.setBorder(new TitledBorder(null, "Grils Dorm #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_2.setBounds(420, 17, 191, 203);
+		panel_2.setBounds(478, 17, 207, 203);
 		dormAsnPanel.add(panel_2);
 		
-		JList list_1 = new JList();
-		list_1.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_1.setBounds(6, 16, 179, 176);
-		panel_2.add(list_1);
+		JList listGirlDorm3 = new JList();
+		listGirlDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
+		listGirlDorm3.setBounds(6, 16, 191, 176);
+		panel_2.add(listGirlDorm3);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setLayout(null);
 		panel_3.setBorder(new TitledBorder(null, "Boys Dorm #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_3.setBounds(20, 238, 191, 203);
+		panel_3.setBounds(20, 238, 207, 203);
 		dormAsnPanel.add(panel_3);
 		
-		JList list_2 = new JList();
-		list_2.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_2.setBounds(6, 16, 179, 176);
-		panel_3.add(list_2);
+		JList listBoyDorm1 = new JList();
+		listBoyDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
+		listBoyDorm1.setBounds(6, 16, 191, 176);
+		panel_3.add(listBoyDorm1);
 		
 		JPanel panel_4 = new JPanel();
 		panel_4.setLayout(null);
 		panel_4.setBorder(new TitledBorder(null, "Boys Dorm #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_4.setBounds(220, 238, 191, 203);
+		panel_4.setBounds(248, 238, 207, 203);
 		dormAsnPanel.add(panel_4);
 		
-		JList list_3 = new JList();
-		list_3.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_3.setBounds(6, 16, 179, 176);
-		panel_4.add(list_3);
+		JList listBoyDorm2 = new JList();
+		listBoyDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		listBoyDorm2.setBounds(6, 16, 191, 176);
+		panel_4.add(listBoyDorm2);
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setLayout(null);
 		panel_5.setBorder(new TitledBorder(null, "Boys Dorm #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_5.setBounds(420, 238, 191, 203);
+		panel_5.setBounds(478, 238, 207, 203);
 		dormAsnPanel.add(panel_5);
 		
-		JList list_4 = new JList();
-		list_4.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_4.setBounds(6, 16, 179, 176);
-		panel_5.add(list_4);
+		JList listBoyDorm3 = new JList();
+		listBoyDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
+		listBoyDorm3.setBounds(6, 16, 191, 176);
+		panel_5.add(listBoyDorm3);
 		
-		JButton btnAutoAssignDorm = new JButton("Auto Assign");
+		btnAutoAssignDorm = new JButton("Auto Assign");
 		btnAutoAssignDorm.setForeground(Color.BLACK);
 		btnAutoAssignDorm.setFont(new Font("Calibri", Font.PLAIN, 18));
 		btnAutoAssignDorm.setBackground(SystemColor.menu);
-		btnAutoAssignDorm.setBounds(620, 17, 160, 43);
+		btnAutoAssignDorm.setBounds(714, 17, 129, 43);
 		dormAsnPanel.add(btnAutoAssignDorm);
+		
+		JLabel lblRequestSwitchDorm = new JLabel("Switch Dorm");
+		lblRequestSwitchDorm.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblRequestSwitchDorm.setBounds(714, 322, 129, 32);
+		dormAsnPanel.add(lblRequestSwitchDorm);
+		
+		JComboBox<String> comboBox = new JComboBox<String>();
+		comboBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		comboBox.setEnabled(false);
+		comboBox.setBackground(Color.WHITE);
+		comboBox.setBounds(714, 365, 191, 29);
+		dormAsnPanel.add(comboBox);
+		
+		JComboBox<String> comboBox_1 = new JComboBox<String>();
+		comboBox_1.setFont(new Font("Calibri", Font.PLAIN, 16));
+		comboBox_1.setEnabled(false);
+		comboBox_1.setBackground(Color.WHITE);
+		comboBox_1.setBounds(714, 412, 191, 29);
+		dormAsnPanel.add(comboBox_1);
+		
+		JButton btnRequest = new JButton("Request");
+		btnRequest.setForeground(Color.BLACK);
+		btnRequest.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnRequest.setBackground(SystemColor.menu);
+		btnRequest.setBounds(928, 398, 119, 43);
+		dormAsnPanel.add(btnRequest);
+		
+		JButton btnSave_1 = new JButton("Save Assignment");
+		btnSave_1.setForeground(Color.BLACK);
+		btnSave_1.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnSave_1.setBackground(SystemColor.menu);
+		btnSave_1.setBounds(879, 17, 168, 43);
+		dormAsnPanel.add(btnSave_1);
 		
 		bandAsnPanel = new JPanel();
 		bandAsnPanel.setBackground(SystemColor.window);
@@ -1075,7 +1110,7 @@ public class MainForm {
 		JPanel panel_7 = new JPanel();
 		panel_7.setLayout(null);
 		panel_7.setBorder(new TitledBorder(null, "Band #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_7.setBounds(210, 22, 191, 203);
+		panel_7.setBounds(221, 22, 191, 203);
 		bandAsnPanel.add(panel_7);
 		
 		JList list_6 = new JList();
@@ -1086,7 +1121,7 @@ public class MainForm {
 		JPanel panel_8 = new JPanel();
 		panel_8.setLayout(null);
 		panel_8.setBorder(new TitledBorder(null, "Band #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_8.setBounds(410, 22, 191, 203);
+		panel_8.setBounds(431, 22, 191, 203);
 		bandAsnPanel.add(panel_8);
 		
 		JList list_7 = new JList();
@@ -1108,7 +1143,7 @@ public class MainForm {
 		JPanel panel_10 = new JPanel();
 		panel_10.setLayout(null);
 		panel_10.setBorder(new TitledBorder(null, "Band #6", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_10.setBounds(210, 243, 191, 203);
+		panel_10.setBounds(221, 243, 191, 203);
 		bandAsnPanel.add(panel_10);
 		
 		JList list_9 = new JList();
@@ -1119,7 +1154,7 @@ public class MainForm {
 		JPanel panel_11 = new JPanel();
 		panel_11.setLayout(null);
 		panel_11.setBorder(new TitledBorder(null, "Band #7", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_11.setBounds(410, 243, 191, 203);
+		panel_11.setBounds(431, 243, 191, 203);
 		bandAsnPanel.add(panel_11);
 		
 		JList list_10 = new JList();
@@ -1130,7 +1165,7 @@ public class MainForm {
 		JPanel panel_12 = new JPanel();
 		panel_12.setLayout(null);
 		panel_12.setBorder(new TitledBorder(null, "Band #4", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_12.setBounds(611, 22, 191, 203);
+		panel_12.setBounds(642, 22, 191, 203);
 		bandAsnPanel.add(panel_12);
 		
 		JList list_11 = new JList();
@@ -1141,7 +1176,7 @@ public class MainForm {
 		JPanel panel_13 = new JPanel();
 		panel_13.setLayout(null);
 		panel_13.setBorder(new TitledBorder(null, "Band #8", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_13.setBounds(611, 243, 191, 203);
+		panel_13.setBounds(642, 243, 191, 203);
 		bandAsnPanel.add(panel_13);
 		
 		JList list_12 = new JList();
@@ -1153,8 +1188,41 @@ public class MainForm {
 		button.setForeground(Color.BLACK);
 		button.setFont(new Font("Calibri", Font.PLAIN, 18));
 		button.setBackground(SystemColor.menu);
-		button.setBounds(822, 22, 160, 43);
+		button.setBounds(886, 22, 160, 43);
 		bandAsnPanel.add(button);
+		
+		JButton btnSaveBand = new JButton("Save Band");
+		btnSaveBand.setForeground(Color.BLACK);
+		btnSaveBand.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnSaveBand.setBackground(SystemColor.menu);
+		btnSaveBand.setBounds(886, 76, 160, 43);
+		bandAsnPanel.add(btnSaveBand);
+		
+		JLabel lblSwitchBand = new JLabel("Switch Band");
+		lblSwitchBand.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblSwitchBand.setBounds(855, 273, 129, 32);
+		bandAsnPanel.add(lblSwitchBand);
+		
+		JComboBox<String> comboBox_2 = new JComboBox<String>();
+		comboBox_2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		comboBox_2.setEnabled(false);
+		comboBox_2.setBackground(Color.WHITE);
+		comboBox_2.setBounds(855, 316, 191, 29);
+		bandAsnPanel.add(comboBox_2);
+		
+		JComboBox<String> comboBox_3 = new JComboBox<String>();
+		comboBox_3.setFont(new Font("Calibri", Font.PLAIN, 16));
+		comboBox_3.setEnabled(false);
+		comboBox_3.setBackground(Color.WHITE);
+		comboBox_3.setBounds(855, 363, 191, 29);
+		bandAsnPanel.add(comboBox_3);
+		
+		JButton button_1 = new JButton("Request");
+		button_1.setForeground(Color.BLACK);
+		button_1.setFont(new Font("Calibri", Font.PLAIN, 18));
+		button_1.setBackground(SystemColor.menu);
+		button_1.setBounds(855, 403, 119, 43);
+		bandAsnPanel.add(button_1);
 		Image img = new ImageIcon(this.getClass().getResource("../nlogo-bg-2.png")).getImage();
 		
 		JLabel welcomeLabel = new JLabel("Welcome, Yang");
