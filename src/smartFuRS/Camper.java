@@ -32,8 +32,10 @@ public class Camper {
 	private String depositFilePath;
 	private String rejectReason;
 	private String category;
-
 	
+	//0 means no dorm assigned
+	private int dormNum=0;
+
 	public int getId() {
 		return id;
 	}
@@ -80,6 +82,17 @@ public class Camper {
 		int year = days/365;
 		return year;
 		
+	}
+	
+	public int getAgeGroup() {
+		int age = getAge();
+		if(age<=14) {
+			return 1;
+		} else if(age==15||age==16) {
+			return 2;
+		} else {
+			return 3;
+		}
 	}
 	
 	public String getGender() {
@@ -195,6 +208,12 @@ public class Camper {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public int getDormNum() {
+		return dormNum;
+	}
+	public void setDormNum(int dormNum) {
+		this.dormNum = dormNum;
 	}
 	
 	

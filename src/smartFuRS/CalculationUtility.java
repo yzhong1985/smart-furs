@@ -1,6 +1,7 @@
 package smartFuRS;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -53,5 +54,44 @@ public class CalculationUtility {
 		}
 		
 	}
+	
+	public static ArrayList<Camper> getCampersByGender(String gender, ArrayList<Camper> campers){
+		ArrayList<Camper> outputList = new ArrayList<Camper>();
+		for(Camper c: campers) {
+			if(c.getGender().equals(gender)) {
+				outputList.add(c);
+			}
+		}
+		return outputList;
+		
+	}
+	
+	public static int getDormFewestGroup(ArrayList<Camper> campers) {
+		
+		int g1=0;
+		int g2=0;
+		int g3=0;
+		
+		for(Camper c: campers) {
+			if(c.getDormNum()==1) {
+				g1++;
+			} else if(c.getDormNum()==2) {
+				g2++;
+			} else if(c.getDormNum()==3) {
+				g3++;
+			}
+		}
+		
+		if(g2<g1) {
+			return 2;
+		}
+		if(g3<g2) {
+			return 3;
+		}		
+		return 1;
+
+	}
+		
+	
 	
 }
