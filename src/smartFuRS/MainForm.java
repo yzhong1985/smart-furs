@@ -28,8 +28,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JTable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -109,7 +112,29 @@ public class MainForm {
 	private JLabel labelMailingTotalGril;
 	
 	private JButton btnAutoAssignDorm;
+	private JList<DormItem> listGirlDorm1;
+	private JList<DormItem> listGirlDorm2;
+	private JList<DormItem> listGirlDorm3;
+	private JList<DormItem> listBoyDorm1;
+	private JList<DormItem> listBoyDorm2;
+	private JList<DormItem> listBoyDorm3;
 	
+	private DefaultListModel<DormItem> girlDorm1Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> girlDorm2Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> girlDorm3Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> boyDorm1Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> boyDorm2Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> boyDorm3Model = new DefaultListModel<DormItem>();
+	
+	private JButton btnRequest;
+	private JComboBox<DormItem> camperDropdownSwaper1;
+	private JComboBox<DormItem> camperDropdownSwaper2;
+	
+	private DefaultComboBoxModel<DormItem> dormSwaper1Model = new DefaultComboBoxModel<DormItem>();
+	private DefaultComboBoxModel<DormItem> dormSwaper2Model = new DefaultComboBoxModel<DormItem>();
+	
+	private ArrayList<Camper> allDormCampers = new ArrayList<Camper>();
+	private boolean isDormAssigned = false;
 	/**
 	 * Launch the application.
 	 */
@@ -465,6 +490,7 @@ public class MainForm {
 	    labelMailingTotalBoy.setText(totalboys + "/24");
 	}
 	
+	@SuppressWarnings("null")
 	private void populateMailingFields() {
 		
 		btnMailingSave.setVisible(true);
@@ -484,7 +510,7 @@ public class MainForm {
     	}
     	String category = "";
     	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 7) !=null) {
-    		category	= mailingTable.getValueAt(mailingTable.getSelectedRow(), 7).toString();
+    		category = mailingTable.getValueAt(mailingTable.getSelectedRow(), 7).toString();
     	}
     	
     	//set to controls
@@ -582,6 +608,214 @@ public class MainForm {
 		
 	}
 	
+	//####  USER STORY DORM ASSIGNMENT  #################
+	private void autoAssnDorm() {
+		
+		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
+		
+		//check the number of boys and girls are both 24
+		int numBoys = getAcceptGender("Boy", allAcceptCampers);
+		int numGirls = getAcceptGender("Girl", allAcceptCampers);
+		String errmsg = "";
+		if(numBoys!=24) {
+			errmsg += "Number of boys is not correct. please have 24 boys\r\n";
+		}
+		if(numGirls!=24) {
+			errmsg += "Number of boys is not correct. please have 24 boys";
+		}
+		if(!errmsg.equals("")) {
+			JOptionPane.showMessageDialog(null, errmsg);
+			return;
+		}
+		
+		ArrayList<Camper> ageGroupA = new ArrayList<Camper>();
+		ArrayList<Camper> ageGroupB = new ArrayList<Camper>();
+		ArrayList<Camper> ageGroupC = new ArrayList<Camper>();
+		
+		for(Camper c: allAcceptCampers) {
+			int age = c.getAge();
+			if(age<=14) {
+				ageGroupA.add(c);
+			} else if(age==15||age==16) {
+				ageGroupB.add(c);
+			} else if(age>=17) {
+				ageGroupC.add(c);
+			}
+		}
+		//assign girls dorm
+		ArrayList<Camper> girlGroup = CalculationUtility.getCampersByGender("Girl", allAcceptCampers);
+		ArrayList<Camper> ageAGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupA);
+		ArrayList<Camper> ageBGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupB);
+		ArrayList<Camper> ageCGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupC);
+		
+		int fewest = 1;
+		//split ageAGirlGroup into 3
+		for(int i=0;i<ageAGirlGroup.size();i++) {
+			int groupNum = (i+fewest) %3;
+			if(groupNum==0) { groupNum = 3; }
+			ageAGirlGroup.get(i).setDormNum(groupNum);
+		}
+		fewest = CalculationUtility.getDormFewestGroup(girlGroup);
+		for(int i=0;i<ageBGirlGroup.size();i++) {
+			int groupNum = (i+fewest) %3;
+			if(groupNum==0) { groupNum = 3; }
+			ageBGirlGroup.get(i).setDormNum(groupNum);
+		}
+		fewest = CalculationUtility.getDormFewestGroup(girlGroup);
+		for(int i=0;i<ageCGirlGroup.size();i++) {
+			int groupNum = (i+fewest) %3;
+			if(groupNum==0) { groupNum = 3; }
+			ageCGirlGroup.get(i).setDormNum(groupNum);
+		}
+		
+		ArrayList<Camper> boyGroup = CalculationUtility.getCampersByGender("Boy", allAcceptCampers);
+		ArrayList<Camper> ageABoyGroup = CalculationUtility.getCampersByGender("Boy", ageGroupA);
+		ArrayList<Camper> ageBBoyGroup = CalculationUtility.getCampersByGender("Boy", ageGroupB);
+		ArrayList<Camper> ageCBoyGroup = CalculationUtility.getCampersByGender("Boy", ageGroupC);
+		
+		fewest = 1;
+		//split ageAGirlGroup into 3
+		for(int i=0;i<ageABoyGroup.size();i++) {
+			int groupNum = (i+fewest) %3;
+			if(groupNum==0) { groupNum = 3; }
+			ageABoyGroup.get(i).setDormNum(groupNum);
+		}
+		fewest = CalculationUtility.getDormFewestGroup(boyGroup);
+		for(int i=0;i<ageBBoyGroup.size();i++) {
+			int groupNum = (i+fewest) %3;
+			if(groupNum==0) { groupNum = 3; }
+			ageBBoyGroup.get(i).setDormNum(groupNum);
+		}
+		fewest = CalculationUtility.getDormFewestGroup(boyGroup);
+		for(int i=0;i<ageCBoyGroup.size();i++) {
+			int groupNum = (i+fewest) %3;
+			if(groupNum==0) { groupNum = 3; }
+			ageCBoyGroup.get(i).setDormNum(groupNum);
+		}
+
+		//asign to global
+		allDormCampers = allAcceptCampers;
+		//add to lists
+		for(Camper c:allAcceptCampers) {			
+			int dormNum = c.getDormNum();
+
+			if(c.getGender().equals("Girl")) {
+				if(dormNum==1) {
+					girlDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==2) {
+					girlDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==3) {
+					girlDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				}
+			} else if(c.getGender().equals("Boy")) {
+				if(dormNum==1) {
+					boyDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==2) {
+					boyDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==3) {
+					boyDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				}
+			}
+		}
+		
+		isDormAssigned = true;
+	}
+
+	private void reloadDorm() {
+		
+		girlDorm1Model.clear();
+		girlDorm2Model.clear();
+		girlDorm3Model.clear();
+		boyDorm1Model.clear();
+		boyDorm2Model.clear();
+		boyDorm3Model.clear();
+		for(Camper c:allDormCampers) {			
+			int dormNum = c.getDormNum();
+			if(c.getGender().equals("Girl")) {
+				if(dormNum==1) {
+					girlDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==2) {
+					girlDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==3) {
+					girlDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				}
+			} else if(c.getGender().equals("Boy")) {
+				if(dormNum==1) {
+					boyDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==2) {
+					boyDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				} else if(dormNum==3) {
+					boyDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+				}
+			}
+		}
+	}
+	
+	
+	private void loadDormSwapDropdowns() {
+		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
+		for(Camper c: allAcceptCampers) {
+			dormSwaper1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+			dormSwaper2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+		}
+	}
+	
+	private void swapCampersDormRequest() {
+	    DormItem camp1 = (DormItem)camperDropdownSwaper1.getSelectedItem();
+	    DormItem camp2 = (DormItem)camperDropdownSwaper2.getSelectedItem();
+		
+	    if(!isDormAssigned) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe haven't assigned dorm yet.");
+	    	return;
+	    }
+	    
+	    if(!camp1.getGender().equals(camp2.getGender())) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe can't make a dorm swap between a boy and a girl.");
+	    	return;
+	    }
+	    
+	    if(camp1.getId()==camp2.getId()) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nPlease select different campers.");
+	    	return;
+	    }
+	    
+	    Camper cmp1=null;
+	    Camper cmp2=null;
+	    for(Camper c: allDormCampers) {
+	    	if(c.getId()==camp1.getId()) {
+	    		cmp1 = c;
+	    	}
+	    	if(c.getId()==camp2.getId()) {
+	    		cmp2 = c;
+	    	}
+	    	if(cmp1!=null&&cmp2!=null) {
+	    		break;
+	    	}
+	    }
+	    if(cmp1.getDormNum()==cmp2.getDormNum()) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nPlease select camper from different dorms.");
+	    	return;
+	    }
+	    if(cmp1.getAgeGroup()!=cmp1.getAgeGroup()) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nAge group rule violation! We want to keep age distributed evenly.");
+	    	return;
+	    } else {
+	    	//swap dorm
+	    	int dorm1 = cmp1.getDormNum();
+	    	int dorm2 = cmp2.getDormNum();
+	    	cmp1.setDormNum(dorm2);
+	    	cmp2.setDormNum(dorm1);
+	    	String fullname1 = cmp1.getFirstname() + cmp1.getLastname();
+	    	String fullname2 = cmp2.getFirstname() + cmp2.getLastname();
+	    	String gender = cmp1.getGender();
+	    	//reload the group
+	    	
+	    	reloadDorm();
+	    	JOptionPane.showMessageDialog(null, "The dorm swap request has been performed.\r\n"+ fullname1 + " has moved to "+gender+" Dorm #" + dorm2 + " and\r\n"+fullname2+ " has moved to "+gender+" Dorm #" + dorm1);
+	    	return;
+	    }
+		
+	}
 	
 	/**
 	 * Initialize the contents of the frame.
@@ -991,9 +1225,10 @@ public class MainForm {
 		dormAsnPanel.add(panel);
 		panel.setLayout(null);
 		
-		JList listGirlDorm1 = new JList();
+		listGirlDorm1 = new JList(girlDorm1Model);
 		listGirlDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listGirlDorm1.setBounds(6, 16, 191, 176);
+		listGirlDorm1.setCellRenderer(new ItemCellRenderer());
 		panel.add(listGirlDorm1);
 		
 		JPanel panel_1 = new JPanel();
@@ -1002,9 +1237,10 @@ public class MainForm {
 		panel_1.setBounds(248, 17, 207, 203);
 		dormAsnPanel.add(panel_1);
 		
-		JList listGirlDorm2 = new JList();
+		listGirlDorm2 = new JList(girlDorm2Model);
 		listGirlDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listGirlDorm2.setBounds(6, 16, 191, 176);
+		listGirlDorm2.setCellRenderer(new ItemCellRenderer());
 		panel_1.add(listGirlDorm2);
 		
 		JPanel panel_2 = new JPanel();
@@ -1013,9 +1249,10 @@ public class MainForm {
 		panel_2.setBounds(478, 17, 207, 203);
 		dormAsnPanel.add(panel_2);
 		
-		JList listGirlDorm3 = new JList();
+		listGirlDorm3 = new JList(girlDorm3Model);
 		listGirlDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listGirlDorm3.setBounds(6, 16, 191, 176);
+		listGirlDorm3.setCellRenderer(new ItemCellRenderer());
 		panel_2.add(listGirlDorm3);
 		
 		JPanel panel_3 = new JPanel();
@@ -1024,9 +1261,10 @@ public class MainForm {
 		panel_3.setBounds(20, 238, 207, 203);
 		dormAsnPanel.add(panel_3);
 		
-		JList listBoyDorm1 = new JList();
+		listBoyDorm1 = new JList(boyDorm1Model);
 		listBoyDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listBoyDorm1.setBounds(6, 16, 191, 176);
+		listBoyDorm1.setCellRenderer(new ItemCellRenderer());
 		panel_3.add(listBoyDorm1);
 		
 		JPanel panel_4 = new JPanel();
@@ -1035,9 +1273,10 @@ public class MainForm {
 		panel_4.setBounds(248, 238, 207, 203);
 		dormAsnPanel.add(panel_4);
 		
-		JList listBoyDorm2 = new JList();
+		listBoyDorm2 = new JList(boyDorm2Model);
 		listBoyDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listBoyDorm2.setBounds(6, 16, 191, 176);
+		listBoyDorm2.setCellRenderer(new ItemCellRenderer());
 		panel_4.add(listBoyDorm2);
 		
 		JPanel panel_5 = new JPanel();
@@ -1046,50 +1285,56 @@ public class MainForm {
 		panel_5.setBounds(478, 238, 207, 203);
 		dormAsnPanel.add(panel_5);
 		
-		JList listBoyDorm3 = new JList();
+		listBoyDorm3 = new JList(boyDorm3Model);
 		listBoyDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listBoyDorm3.setBounds(6, 16, 191, 176);
+		listBoyDorm3.setCellRenderer(new ItemCellRenderer());
 		panel_5.add(listBoyDorm3);
 		
-		btnAutoAssignDorm = new JButton("Auto Assign");
+		btnAutoAssignDorm = new JButton("Auto Dorm Assign");
+		btnAutoAssignDorm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				autoAssnDorm();
+			}
+		});
 		btnAutoAssignDorm.setForeground(Color.BLACK);
 		btnAutoAssignDorm.setFont(new Font("Calibri", Font.PLAIN, 18));
 		btnAutoAssignDorm.setBackground(SystemColor.menu);
-		btnAutoAssignDorm.setBounds(714, 17, 129, 43);
+		btnAutoAssignDorm.setBounds(714, 17, 191, 43);
 		dormAsnPanel.add(btnAutoAssignDorm);
 		
-		JLabel lblRequestSwitchDorm = new JLabel("Switch Dorm");
+		JLabel lblRequestSwitchDorm = new JLabel("Dorm Switch Request");
 		lblRequestSwitchDorm.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblRequestSwitchDorm.setBounds(714, 322, 129, 32);
+		lblRequestSwitchDorm.setBounds(714, 322, 168, 32);
 		dormAsnPanel.add(lblRequestSwitchDorm);
 		
-		JComboBox<String> comboBox = new JComboBox<String>();
-		comboBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-		comboBox.setEnabled(false);
-		comboBox.setBackground(Color.WHITE);
-		comboBox.setBounds(714, 365, 191, 29);
-		dormAsnPanel.add(comboBox);
+		camperDropdownSwaper1 = new JComboBox<DormItem>(dormSwaper1Model);
+		camperDropdownSwaper1.setEnabled(true);
+		camperDropdownSwaper1.setFont(new Font("Calibri", Font.PLAIN, 16));
+		camperDropdownSwaper1.setBackground(Color.WHITE);
+		camperDropdownSwaper1.setBounds(714, 365, 191, 29);
+		//camperDropdownSwaper1.setRenderer(new SwaperComboItem());
+		dormAsnPanel.add(camperDropdownSwaper1);
 		
-		JComboBox<String> comboBox_1 = new JComboBox<String>();
-		comboBox_1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		comboBox_1.setEnabled(false);
-		comboBox_1.setBackground(Color.WHITE);
-		comboBox_1.setBounds(714, 412, 191, 29);
-		dormAsnPanel.add(comboBox_1);
+		camperDropdownSwaper2 = new JComboBox<DormItem>(dormSwaper2Model);
+		camperDropdownSwaper2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		camperDropdownSwaper2.setEnabled(true);
+		camperDropdownSwaper2.setBackground(Color.WHITE);
+		camperDropdownSwaper2.setBounds(714, 412, 191, 29);
+		//camperDropdownSwaper2.setRenderer(new SwaperComboItem());
+		dormAsnPanel.add(camperDropdownSwaper2);
 		
-		JButton btnRequest = new JButton("Request");
+		btnRequest = new JButton("Request");
+		btnRequest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				swapCampersDormRequest();
+			}
+		});
 		btnRequest.setForeground(Color.BLACK);
 		btnRequest.setFont(new Font("Calibri", Font.PLAIN, 18));
 		btnRequest.setBackground(SystemColor.menu);
 		btnRequest.setBounds(928, 398, 119, 43);
 		dormAsnPanel.add(btnRequest);
-		
-		JButton btnSave_1 = new JButton("Save Assignment");
-		btnSave_1.setForeground(Color.BLACK);
-		btnSave_1.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnSave_1.setBackground(SystemColor.menu);
-		btnSave_1.setBounds(879, 17, 168, 43);
-		dormAsnPanel.add(btnSave_1);
 		
 		bandAsnPanel = new JPanel();
 		bandAsnPanel.setBackground(SystemColor.window);
@@ -1234,5 +1479,7 @@ public class MainForm {
 		reloadApplicationTable();
 		reloadMailingCampersTable();
 		clearMailingFields(true);
+		//FOR US #4
+		loadDormSwapDropdowns();
 	}
 }
