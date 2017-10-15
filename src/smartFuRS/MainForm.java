@@ -111,6 +111,13 @@ public class MainForm {
 	
 	private JLabel labelMailingTotalBoy;
 	private JLabel labelMailingTotalGril;
+	private JLabel labelSingerNum;
+	private JLabel lblInstrumentalistNum;
+	private JLabel lblKeyboardistNum;
+	private JLabel lblBassistNum;
+	private JLabel lblDrummerNum;
+	private JLabel labelGuitaristNum;
+	private JLabel lblCategoryboygirl;
 	
 	private JButton btnAutoAssignDorm;
 	private JList<DormItem> listGirlDorm1;
@@ -127,6 +134,7 @@ public class MainForm {
 	private DefaultListModel<DormItem> boyDorm2Model = new DefaultListModel<DormItem>();
 	private DefaultListModel<DormItem> boyDorm3Model = new DefaultListModel<DormItem>();
 	
+	private JComboBox campDateDropdown;
 	private JButton btnRequest;
 	private JComboBox<DormItem> camperDropdownSwaper1;
 	private JComboBox<DormItem> camperDropdownSwaper2;
@@ -231,7 +239,23 @@ public class MainForm {
 		if(!CalculationUtility.isDateFormattedCorrect(recvdaytxt)) {
 			errmsg += "Received Date format incorrect!\n";
 			validateResult = false;
+		} else {
+			//validate receive date
+			String campDateName = (String)campDateDropdown.getSelectedItem();
+			String campDateTxt = "";
+			if(campDateName.equals("2017 Jun")) {
+				campDateTxt = "06/04/2017";
+			} else if(campDateName.equals("2017 July")) {
+				campDateTxt = "07/02/2017";
+			} else if(campDateName.equals("2017 Augest")) {
+				campDateTxt = "08/06/2017";
+			}
+			if(!CalculationUtility.isReceivedDateValidForCamp(recvdaytxt, campDateTxt)) {
+				errmsg += "Received Date has to be at least one month early and not more than three month early!\n";
+				validateResult = false;
+			}
 		}
+		
 		//should check the date format
 		String bdatetxt = dobTextField.getText().trim();
 		if(bdatetxt== null || bdatetxt.isEmpty()) {
@@ -247,6 +271,8 @@ public class MainForm {
 			errmsg += "Instrument cannot be blank!";
 			validateResult = false;
 		}
+		
+		
 		if(!validateResult) {
 			JOptionPane.showMessageDialog(null, errmsg);
 		}
@@ -488,8 +514,30 @@ public class MainForm {
 	    
 	    int totalgirls = getAcceptGender("Girl",mailCampers);
 	    int totalboys = getAcceptGender("Boy",mailCampers);
+	    
+	    int numsingerboy = getAcceptCategoryByGender("Boy", "Singer", mailCampers);
+	    int numsingergirl = getAcceptCategoryByGender("Girl", "Singer", mailCampers);
+	    int numguitaristboy = getAcceptCategoryByGender("Boy", "Guitarist", mailCampers);
+	    int numguitaristgirl = getAcceptCategoryByGender("Girl", "Guitarist", mailCampers);
+	    int numdrummerboy = getAcceptCategoryByGender("Boy", "Drummer", mailCampers);
+	    int numdrummergirl = getAcceptCategoryByGender("Girl", "Drummer", mailCampers);
+	    int numbassistboy = getAcceptCategoryByGender("Boy", "Bassist", mailCampers);
+	    int numbassistgirl = getAcceptCategoryByGender("Girl", "Bassist", mailCampers);
+	    int numkeyboardistboy = getAcceptCategoryByGender("Boy", "Keyboardist", mailCampers);
+	    int numkeyboardistgirl = getAcceptCategoryByGender("Girl", "Keyboardist", mailCampers);
+	    int numinstrumentalistboy = getAcceptCategoryByGender("Boy", "Instrumentalist", mailCampers);
+	    int numinstrumentalistgirl = getAcceptCategoryByGender("Girl", "Instrumentalist", mailCampers);
+	    
+	    labelSingerNum.setText("Singer: "+numsingerboy+"/"+numsingergirl);
+	    labelGuitaristNum.setText("Guitarist: "+numguitaristboy+"/"+numguitaristgirl);
+	    lblDrummerNum.setText("Drummer: "+numdrummerboy+"/"+numdrummergirl);
+	    lblBassistNum.setText("Bassist: "+numbassistboy+"/"+numbassistgirl);
+	    lblKeyboardistNum.setText("Keyboardist: "+numkeyboardistboy+"/"+numkeyboardistgirl);
+	    lblInstrumentalistNum.setText("Instrumentalist: "+numinstrumentalistboy+"/"+numinstrumentalistgirl);
 	    labelMailingTotalGril.setText(totalgirls + "/24");
 	    labelMailingTotalBoy.setText(totalboys + "/24");
+	    
+	    
 	}
 	
 	@SuppressWarnings("null")
@@ -580,6 +628,23 @@ public class MainForm {
 			}
 				
 			if(status.equals("Accept") && gender.equals(boyorgirl)) {
+				total ++;
+			}
+		}
+		return total;
+	}
+	
+	private int getAcceptCategoryByGender(String boyorgirl, String category, ArrayList<Camper> campers) {
+		int total = 0;
+		for (Camper camp:campers){
+			String status = camp.getApplicationStatus();
+			String gender = camp.getGender();
+			String campercat = camp.getCategory();
+			if(status==null ||status.isEmpty()||campercat==null||campercat.isEmpty()) {
+				continue;
+			}
+				
+			if(status.equals("Accept") && gender.equals(boyorgirl)&&campercat.equals(category)) {
 				total ++;
 			}
 		}
@@ -842,13 +907,13 @@ public class MainForm {
 	 */
 	private void initialize() {
 		frmSmartFursCamper = new JFrame();
+		frmSmartFursCamper.setResizable(false);
+		frmSmartFursCamper.setType(Type.UTILITY);
 		frmSmartFursCamper.getContentPane().setFont(new Font("Calibri", Font.PLAIN, 14));
 		frmSmartFursCamper.getContentPane().setBackground(new Color(255, 255, 255));
-		frmSmartFursCamper.getContentPane().setForeground(new Color(0, 0, 0));
+		frmSmartFursCamper.getContentPane().setForeground(Color.BLACK);
 		frmSmartFursCamper.setForeground(SystemColor.menu);
-		frmSmartFursCamper.setType(Type.UTILITY);
-		frmSmartFursCamper.setResizable(false);
-		frmSmartFursCamper.setBounds(100, 100, 1100, 645);
+		frmSmartFursCamper.setBounds(100, 100, 1091, 606);
 		frmSmartFursCamper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmSmartFursCamper.getContentPane().setLayout(null);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -858,7 +923,7 @@ public class MainForm {
 		tabbedPane.setFont(new Font("Calibri", Font.PLAIN, 18));
 		tabbedPane.setForeground(new Color(0, 0, 0));
 		tabbedPane.setBackground(new Color(255, 255, 255));
-		tabbedPane.setBounds(10, 106, 1074, 507);
+		tabbedPane.setBounds(10, 67, 1074, 507);
 		frmSmartFursCamper.getContentPane().add(tabbedPane);
 		
 		applicationPanel = new JPanel();
@@ -1068,7 +1133,7 @@ public class MainForm {
 		mailingPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(371, 46, 688, 413);
+		scrollPane.setBounds(371, 79, 688, 380);
 		mailingPanel.add(scrollPane);
 		
 		mailingTable = new JTable();
@@ -1172,23 +1237,23 @@ public class MainForm {
 		JLabel lblNewLabel_1 = new JLabel("Accepted Grils:");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel_1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblNewLabel_1.setBounds(455, 12, 120, 23);
+		lblNewLabel_1.setBounds(684, 12, 120, 23);
 		mailingPanel.add(lblNewLabel_1);
 		
 		labelMailingTotalGril = new JLabel("0/24");
 		labelMailingTotalGril.setFont(new Font("Calibri", Font.BOLD, 16));
-		labelMailingTotalGril.setBounds(585, 12, 65, 23);
+		labelMailingTotalGril.setBounds(814, 12, 65, 23);
 		mailingPanel.add(labelMailingTotalGril);
 		
 		JLabel lblAcceptedBoys = new JLabel("Accepted Boys:");
 		lblAcceptedBoys.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblAcceptedBoys.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblAcceptedBoys.setBounds(686, 12, 146, 23);
+		lblAcceptedBoys.setBounds(869, 12, 115, 23);
 		mailingPanel.add(lblAcceptedBoys);
 		
 		labelMailingTotalBoy = new JLabel("0/24");
 		labelMailingTotalBoy.setFont(new Font("Calibri", Font.BOLD, 16));
-		labelMailingTotalBoy.setBounds(842, 12, 65, 23);
+		labelMailingTotalBoy.setBounds(994, 12, 65, 23);
 		mailingPanel.add(labelMailingTotalBoy);
 		
 		JPanel panel_14 = new JPanel();
@@ -1229,78 +1294,134 @@ public class MainForm {
 		btnMailingCancel.setBounds(271, 416, 90, 43);
 		mailingPanel.add(btnMailingCancel);
 		
+		lblCategoryboygirl = new JLabel("(Category: Boy/Girl)");
+		lblCategoryboygirl.setHorizontalAlignment(SwingConstants.LEFT);
+		lblCategoryboygirl.setFont(new Font("Calibri", Font.ITALIC, 16));
+		lblCategoryboygirl.setBounds(371, 11, 165, 23);
+		mailingPanel.add(lblCategoryboygirl);
+		
+		labelGuitaristNum = new JLabel("Guitarist: 0/0");
+		labelGuitaristNum.setHorizontalAlignment(SwingConstants.LEFT);
+		labelGuitaristNum.setFont(new Font("Calibri", Font.PLAIN, 16));
+		labelGuitaristNum.setBounds(457, 48, 99, 23);
+		mailingPanel.add(labelGuitaristNum);
+		
+		lblDrummerNum = new JLabel("Drummer: 0/0");
+		lblDrummerNum.setHorizontalAlignment(SwingConstants.LEFT);
+		lblDrummerNum.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblDrummerNum.setBounds(554, 48, 99, 23);
+		mailingPanel.add(lblDrummerNum);
+		
+		lblBassistNum = new JLabel("Bassist: 0/0");
+		lblBassistNum.setHorizontalAlignment(SwingConstants.LEFT);
+		lblBassistNum.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblBassistNum.setBounds(654, 48, 90, 23);
+		mailingPanel.add(lblBassistNum);
+		
+		lblKeyboardistNum = new JLabel("Keyboardist: 0/0");
+		lblKeyboardistNum.setHorizontalAlignment(SwingConstants.LEFT);
+		lblKeyboardistNum.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblKeyboardistNum.setBounds(751, 48, 120, 23);
+		mailingPanel.add(lblKeyboardistNum);
+		
+		lblInstrumentalistNum = new JLabel("Instrumentalist: 0/0");
+		lblInstrumentalistNum.setHorizontalAlignment(SwingConstants.LEFT);
+		lblInstrumentalistNum.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblInstrumentalistNum.setBounds(879, 48, 152, 23);
+		mailingPanel.add(lblInstrumentalistNum);
+		
+		labelSingerNum = new JLabel("Singer: 0/0");
+		labelSingerNum.setHorizontalAlignment(SwingConstants.LEFT);
+		labelSingerNum.setFont(new Font("Calibri", Font.PLAIN, 16));
+		labelSingerNum.setBounds(371, 48, 90, 23);
+		mailingPanel.add(labelSingerNum);
+		
 		checkinPanel = new JPanel();
 		checkinPanel.setBackground(SystemColor.window);
 		tabbedPane.addTab("Camper Checkin", null, checkinPanel, null);
 		checkinPanel.setLayout(null);
 		
 		JLabel lblName = new JLabel("Name");
-		lblName.setBounds(49, 31, 61, 16);
+		lblName.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblName.setBounds(10, 57, 61, 16);
 		checkinPanel.add(lblName);
 		
 		JLabel lblCheckinInformation = new JLabel("Checkin Information");
-		lblCheckinInformation.setBounds(49, 85, 157, 16);
+		lblCheckinInformation.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblCheckinInformation.setBounds(10, 84, 157, 16);
 		checkinPanel.add(lblCheckinInformation);
 		
 		JCheckBox chckbx_arrivalpack = new JCheckBox("Arrival Packet");
-		chckbx_arrivalpack.setBounds(36, 124, 128, 23);
+		chckbx_arrivalpack.setBackground(Color.WHITE);
+		chckbx_arrivalpack.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbx_arrivalpack.setBounds(6, 107, 128, 23);
 		checkinPanel.add(chckbx_arrivalpack);
 		
 		JCheckBox chckbxMusicalInstrument = new JCheckBox("Musical Instrument");
-		chckbxMusicalInstrument.setBounds(36, 171, 170, 23);
+		chckbxMusicalInstrument.setBackground(Color.WHITE);
+		chckbxMusicalInstrument.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxMusicalInstrument.setBounds(6, 133, 170, 23);
 		checkinPanel.add(chckbxMusicalInstrument);
 		
 		JCheckBox chckbxEquipmentSupplies = new JCheckBox("Equipment Supplies");
-		chckbxEquipmentSupplies.setBounds(36, 212, 170, 23);
+		chckbxEquipmentSupplies.setBackground(Color.WHITE);
+		chckbxEquipmentSupplies.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxEquipmentSupplies.setBounds(6, 159, 170, 23);
 		checkinPanel.add(chckbxEquipmentSupplies);
 		
 		JLabel lblCloth = new JLabel("Cloth");
-		lblCloth.setBounds(36, 247, 61, 16);
+		lblCloth.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblCloth.setBounds(10, 196, 61, 16);
 		checkinPanel.add(lblCloth);
 		
 		JCheckBox chckbxLeather = new JCheckBox("Leather");
-		chckbxLeather.setBounds(36, 268, 92, 23);
+		chckbxLeather.setBackground(Color.WHITE);
+		chckbxLeather.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxLeather.setBounds(10, 222, 92, 23);
 		checkinPanel.add(chckbxLeather);
 		
 		JCheckBox chckbxSpandex = new JCheckBox("Spandex");
-		chckbxSpandex.setBounds(130, 268, 96, 23);
+		chckbxSpandex.setBackground(Color.WHITE);
+		chckbxSpandex.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxSpandex.setBounds(104, 222, 96, 23);
 		checkinPanel.add(chckbxSpandex);
 		
 		JCheckBox chckbxGlittered = new JCheckBox("Glittered");
-		chckbxGlittered.setBounds(238, 268, 109, 23);
+		chckbxGlittered.setBackground(Color.WHITE);
+		chckbxGlittered.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxGlittered.setBounds(202, 222, 109, 23);
 		checkinPanel.add(chckbxGlittered);
 		
 		JLabel lblSoecialRequest = new JLabel("Special Request");
-		lblSoecialRequest.setBounds(36, 308, 128, 16);
+		lblSoecialRequest.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblSoecialRequest.setBounds(10, 260, 128, 16);
 		checkinPanel.add(lblSoecialRequest);
 		
 		JCheckBox chckbxSameBand = new JCheckBox("Same Band");
-		chckbxSameBand.setBounds(36, 334, 128, 23);
+		chckbxSameBand.setBackground(Color.WHITE);
+		chckbxSameBand.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxSameBand.setBounds(10, 283, 117, 23);
 		checkinPanel.add(chckbxSameBand);
 		
-		JLabel lblNameOfPartner = new JLabel("Name of Partner");
-		lblNameOfPartner.setBounds(165, 338, 109, 16);
-		checkinPanel.add(lblNameOfPartner);
-		
 		JCheckBox chckbxSameDorm = new JCheckBox("Same Dorm");
-		chckbxSameDorm.setBounds(36, 361, 128, 23);
+		chckbxSameDorm.setBackground(Color.WHITE);
+		chckbxSameDorm.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxSameDorm.setBounds(10, 323, 109, 23);
 		checkinPanel.add(chckbxSameDorm);
 		
-		JLabel lblNameOfPartner_1 = new JLabel("Name of Partner");
-		lblNameOfPartner_1.setBounds(165, 365, 109, 16);
-		checkinPanel.add(lblNameOfPartner_1);
-		
 		JButton btnSave_2 = new JButton("Save");
-		btnSave_2.setBounds(36, 396, 117, 29);
+		btnSave_2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnSave_2.setBounds(10, 430, 117, 29);
 		checkinPanel.add(btnSave_2);
 		
 		JButton btnCancel_1 = new JButton("Cancel");
-		btnCancel_1.setBounds(214, 396, 117, 29);
+		btnCancel_1.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnCancel_1.setBounds(185, 430, 117, 29);
 		checkinPanel.add(btnCancel_1);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		
-		scrollPane_1.setBounds(375, 12, 672, 436);
+		scrollPane_1.setBounds(317, 12, 742, 447);
 		checkinPanel.add(scrollPane_1);
 		
 		tableCheckin = new JTable();
@@ -1309,11 +1430,36 @@ public class MainForm {
 				new Object[][] {
 				},
 				new String[] {
-						"Id", "FName", "LName", "Age", "Gender"
+						"Id", "FName", "LName", "HasArvalPak", "HasIstrmt", "HasSply", "LeatherCloth", "SpdxCloth", "GlitterCloth", "CheckedIn"
 				}
 			));
 		tableCheckin.setFont(new Font("Calibri", Font.PLAIN, 16));
+		tableCheckin.getColumnModel().getColumn(0).setPreferredWidth(20);
+		tableCheckin.getColumnModel().getColumn(1).setPreferredWidth(80);
+		tableCheckin.getColumnModel().getColumn(2).setPreferredWidth(80);
+		tableCheckin.getColumnModel().getColumn(3).setPreferredWidth(50);
+		tableCheckin.getColumnModel().getColumn(4).setPreferredWidth(40);
+		tableCheckin.getColumnModel().getColumn(5).setPreferredWidth(30);
+		tableCheckin.getColumnModel().getColumn(6).setPreferredWidth(50);
+		tableCheckin.getColumnModel().getColumn(7).setPreferredWidth(40);
+		tableCheckin.getColumnModel().getColumn(8).setPreferredWidth(40);
+		tableCheckin.getColumnModel().getColumn(9).setPreferredWidth(40);
+		tableCheckin.setRowHeight(21);
 		scrollPane_1.setViewportView(tableCheckin);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(139, 284, 157, 20);
+		checkinPanel.add(comboBox);
+		
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setBounds(139, 324, 157, 20);
+		checkinPanel.add(comboBox_1);
+		
+		JCheckBox chckbxCheckInCamper = new JCheckBox("Check in Camper");
+		chckbxCheckInCamper.setFont(new Font("Calibri", Font.PLAIN, 18));
+		chckbxCheckInCamper.setBackground(Color.WHITE);
+		chckbxCheckInCamper.setBounds(10, 386, 217, 23);
+		checkinPanel.add(chckbxCheckInCamper);
 		
 		dormAsnPanel = new JPanel();
 		dormAsnPanel.setBackground(SystemColor.window);
@@ -1537,13 +1683,6 @@ public class MainForm {
 		button.setBounds(886, 22, 160, 43);
 		bandAsnPanel.add(button);
 		
-		JButton btnSaveBand = new JButton("Save Band");
-		btnSaveBand.setForeground(Color.BLACK);
-		btnSaveBand.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnSaveBand.setBackground(SystemColor.menu);
-		btnSaveBand.setBounds(886, 76, 160, 43);
-		bandAsnPanel.add(btnSaveBand);
-		
 		JLabel lblSwitchBand = new JLabel("Switch Band");
 		lblSwitchBand.setFont(new Font("Calibri", Font.PLAIN, 16));
 		lblSwitchBand.setBounds(855, 273, 129, 32);
@@ -1569,13 +1708,39 @@ public class MainForm {
 		button_1.setBackground(SystemColor.menu);
 		button_1.setBounds(855, 403, 119, 43);
 		bandAsnPanel.add(button_1);
-		Image img = new ImageIcon(this.getClass().getResource("../nlogo-bg-2.png")).getImage();
+		
 		
 		JLabel welcomeLabel = new JLabel("Welcome, Yang");
 		welcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		welcomeLabel.setFont(new Font("Calibri", Font.PLAIN, 18));
-		welcomeLabel.setBounds(795, 163, 167, 20);
+		welcomeLabel.setFont(new Font("Calibri", Font.BOLD, 18));
+		welcomeLabel.setBounds(713, 31, 130, 20);
 		frmSmartFursCamper.getContentPane().add(welcomeLabel);
+		
+		campDateDropdown = new JComboBox();
+		campDateDropdown.setModel(new DefaultComboBoxModel(new String[] {"2017 Jun", "2017 July", "2017 Augest"}));
+		campDateDropdown.setFont(new Font("Calibri", Font.PLAIN, 18));
+		campDateDropdown.setBounds(952, 27, 123, 29);
+		campDateDropdown.setSelectedIndex(2);
+		frmSmartFursCamper.getContentPane().add(campDateDropdown);
+		
+		JLabel topImgLabel = new JLabel("");
+		topImgLabel.setBounds(10, 7, 282, 49);
+		frmSmartFursCamper.getContentPane().add(topImgLabel);
+		Image img = new ImageIcon(this.getClass().getResource("../toplogo.png")).getImage();
+		topImgLabel.setIcon(new ImageIcon(img));
+		
+		JLabel lblSetCamp = new JLabel("Set Camp:");
+		lblSetCamp.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblSetCamp.setFont(new Font("Calibri", Font.PLAIN, 18));
+		lblSetCamp.setBounds(805, 31, 130, 20);
+		frmSmartFursCamper.getContentPane().add(lblSetCamp);
+		
+		JLabel lblCampersManagementSystem = new JLabel("Campers Management System");
+		lblCampersManagementSystem.setForeground(Color.DARK_GRAY);
+		lblCampersManagementSystem.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCampersManagementSystem.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		lblCampersManagementSystem.setBounds(280, 16, 312, 40);
+		frmSmartFursCamper.getContentPane().add(lblCampersManagementSystem);
 		
 		reloadApplicationTable();
 		reloadMailingCampersTable();

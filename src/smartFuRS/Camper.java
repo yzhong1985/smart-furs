@@ -33,6 +33,13 @@ public class Camper {
 	private String rejectReason;
 	private String category;
 	
+	private String hasArrivalPack;
+	private String hasMusicalInstrument;
+	private String hasEquipmentSupplies;
+	private String hasClothLeather;
+	private String hasClothPandex;
+	private String hasClothGlitter;
+	
 	//0 means no dorm assigned
 	private int dormNum=0;
 
@@ -214,6 +221,42 @@ public class Camper {
 	}
 	public void setDormNum(int dormNum) {
 		this.dormNum = dormNum;
+	}
+	public String getHasArrivalPack() {
+		return hasArrivalPack;
+	}
+	public void setHasArrivalPack(String hasArrivalPack) {
+		this.hasArrivalPack = hasArrivalPack;
+	}
+	public String getHasMusicalInstrument() {
+		return hasMusicalInstrument;
+	}
+	public void setHasMusicalInstrument(String hasMusicalInstrument) {
+		this.hasMusicalInstrument = hasMusicalInstrument;
+	}
+	public String getHasEquipmentSupplies() {
+		return hasEquipmentSupplies;
+	}
+	public void setHasEquipmentSupplies(String hasEquipmentSupplies) {
+		this.hasEquipmentSupplies = hasEquipmentSupplies;
+	}
+	public String getHasClothLeather() {
+		return hasClothLeather;
+	}
+	public void setHasClothLeather(String hasClothLeather) {
+		this.hasClothLeather = hasClothLeather;
+	}
+	public String getHasClothPandex() {
+		return hasClothPandex;
+	}
+	public void setHasClothPandex(String hasClothPandex) {
+		this.hasClothPandex = hasClothPandex;
+	}
+	public String getHasClothGlitter() {
+		return hasClothGlitter;
+	}
+	public void setHasClothGlitter(String hasClothGlitter) {
+		this.hasClothGlitter = hasClothGlitter;
 	}
 	
 	

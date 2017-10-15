@@ -3,6 +3,7 @@ package smartFuRS;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class CalculationUtility {
@@ -34,8 +35,7 @@ public class CalculationUtility {
 	    }
 	}
 	
-	public static boolean isDateFormattedCorrect(String datetext) {
-		
+	public static boolean isDateFormattedCorrect(String datetext) {	
 		try {
 			Calendar day = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy", Locale.ENGLISH);
@@ -52,7 +52,16 @@ public class CalculationUtility {
 			System.out.println(ex.getMessage());
 			return false;
 		}
-		
+	}
+	
+	public static boolean isReceivedDateValidForCamp(String recDateTxt, String campDateTxt) {
+		try {			
+			return true;
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			return false;
+		}
 	}
 	
 	public static ArrayList<Camper> getCampersByGender(String gender, ArrayList<Camper> campers){
