@@ -141,6 +141,38 @@ public class FuRSDBUtility {
 		}
 	}
 	
+public static ArrayList<Camper> getCheckinCampers(){
+		
+		Connection con = getConnection();
+		String sql = "SELECT id, firstname, lastname, birthday, gender FROM Camper";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ArrayList<Camper> camperlist = new ArrayList<Camper>();
+		try {
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				Camper camp = new Camper();
+				camp.setId(rs.getInt("id"));
+				camp.setFirstname(rs.getString("firstname"));
+				camp.setLastname(rs.getString("lastname"));
+				camp.setBirthday(rs.getString("birthday"));
+				camp.setGender(rs.getString("gender"));
+				camperlist.add(camp);		
+			}
+			return camperlist;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		finally {
+			if (rs != null) {try { rs.close(); } catch (Exception e) { e.printStackTrace(); }}
+		    if (ps != null) {try { ps.close(); } catch (Exception e) { e.printStackTrace(); }}
+		    if (con != null) {try { con.close(); } catch (Exception e) { e.printStackTrace(); }}
+		}
+	}
+	
 	public static boolean addCamper(Camper camper){
 		
 		Connection con = getConnection();

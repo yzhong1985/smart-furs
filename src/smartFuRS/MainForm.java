@@ -60,6 +60,7 @@ import javax.swing.UIManager;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JList;
+import javax.swing.ComboBoxModel;
 
 public class MainForm {
 
@@ -135,6 +136,7 @@ public class MainForm {
 	
 	private ArrayList<Camper> allDormCampers = new ArrayList<Camper>();
 	private boolean isDormAssigned = false;
+	private JTable tableCheckin;
 	/**
 	 * Launch the application.
 	 */
@@ -608,6 +610,24 @@ public class MainForm {
 		
 	}
 	
+	//#### USER STORY 3 ###
+	private void reloadCheckinTable() {
+		
+		ArrayList<Camper> checkinCampers =FuRSDBUtility.getCheckinCampers();
+	    DefaultTableModel model = (DefaultTableModel)tableCheckin.getModel();
+	    model.setRowCount(0);
+	    Object rowData[] = new Object[5];
+	    for(int i=0; i<checkinCampers.size();i++) {
+	    	rowData[0] = checkinCampers.get(i).getId();
+	    	rowData[1] = checkinCampers.get(i).getFirstname();
+	    	rowData[2] = checkinCampers.get(i).getLastname();
+	    	rowData[3] = checkinCampers.get(i).getAge();
+	    	rowData[4] = checkinCampers.get(i).getGender();
+	    	model.addRow(rowData);
+	    }
+		
+	}
+	
 	//####  USER STORY DORM ASSIGNMENT  #################
 	private void autoAssnDorm() {
 		
@@ -796,7 +816,7 @@ public class MainForm {
 	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nPlease select camper from different dorms.");
 	    	return;
 	    }
-	    if(cmp1.getAgeGroup()!=cmp1.getAgeGroup()) {
+	    if(cmp1.getAgeGroup()!=cmp2.getAgeGroup()) {
 	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nAge group rule violation! We want to keep age distributed evenly.");
 	    	return;
 	    } else {
@@ -1214,6 +1234,87 @@ public class MainForm {
 		tabbedPane.addTab("Camper Checkin", null, checkinPanel, null);
 		checkinPanel.setLayout(null);
 		
+		JLabel lblName = new JLabel("Name");
+		lblName.setBounds(49, 31, 61, 16);
+		checkinPanel.add(lblName);
+		
+		JLabel lblCheckinInformation = new JLabel("Checkin Information");
+		lblCheckinInformation.setBounds(49, 85, 157, 16);
+		checkinPanel.add(lblCheckinInformation);
+		
+		JCheckBox chckbx_arrivalpack = new JCheckBox("Arrival Packet");
+		chckbx_arrivalpack.setBounds(36, 124, 128, 23);
+		checkinPanel.add(chckbx_arrivalpack);
+		
+		JCheckBox chckbxMusicalInstrument = new JCheckBox("Musical Instrument");
+		chckbxMusicalInstrument.setBounds(36, 171, 170, 23);
+		checkinPanel.add(chckbxMusicalInstrument);
+		
+		JCheckBox chckbxEquipmentSupplies = new JCheckBox("Equipment Supplies");
+		chckbxEquipmentSupplies.setBounds(36, 212, 170, 23);
+		checkinPanel.add(chckbxEquipmentSupplies);
+		
+		JLabel lblCloth = new JLabel("Cloth");
+		lblCloth.setBounds(36, 247, 61, 16);
+		checkinPanel.add(lblCloth);
+		
+		JCheckBox chckbxLeather = new JCheckBox("Leather");
+		chckbxLeather.setBounds(36, 268, 92, 23);
+		checkinPanel.add(chckbxLeather);
+		
+		JCheckBox chckbxSpandex = new JCheckBox("Spandex");
+		chckbxSpandex.setBounds(130, 268, 96, 23);
+		checkinPanel.add(chckbxSpandex);
+		
+		JCheckBox chckbxGlittered = new JCheckBox("Glittered");
+		chckbxGlittered.setBounds(238, 268, 109, 23);
+		checkinPanel.add(chckbxGlittered);
+		
+		JLabel lblSoecialRequest = new JLabel("Special Request");
+		lblSoecialRequest.setBounds(36, 308, 128, 16);
+		checkinPanel.add(lblSoecialRequest);
+		
+		JCheckBox chckbxSameBand = new JCheckBox("Same Band");
+		chckbxSameBand.setBounds(36, 334, 128, 23);
+		checkinPanel.add(chckbxSameBand);
+		
+		JLabel lblNameOfPartner = new JLabel("Name of Partner");
+		lblNameOfPartner.setBounds(165, 338, 109, 16);
+		checkinPanel.add(lblNameOfPartner);
+		
+		JCheckBox chckbxSameDorm = new JCheckBox("Same Dorm");
+		chckbxSameDorm.setBounds(36, 361, 128, 23);
+		checkinPanel.add(chckbxSameDorm);
+		
+		JLabel lblNameOfPartner_1 = new JLabel("Name of Partner");
+		lblNameOfPartner_1.setBounds(165, 365, 109, 16);
+		checkinPanel.add(lblNameOfPartner_1);
+		
+		JButton btnSave_2 = new JButton("Save");
+		btnSave_2.setBounds(36, 396, 117, 29);
+		checkinPanel.add(btnSave_2);
+		
+		JButton btnCancel_1 = new JButton("Cancel");
+		btnCancel_1.setBounds(214, 396, 117, 29);
+		checkinPanel.add(btnCancel_1);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		
+		scrollPane_1.setBounds(375, 12, 672, 436);
+		checkinPanel.add(scrollPane_1);
+		
+		tableCheckin = new JTable();
+		
+		tableCheckin.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+						"Id", "FName", "LName", "Age", "Gender"
+				}
+			));
+		tableCheckin.setFont(new Font("Calibri", Font.PLAIN, 16));
+		scrollPane_1.setViewportView(tableCheckin);
+		
 		dormAsnPanel = new JPanel();
 		dormAsnPanel.setBackground(SystemColor.window);
 		tabbedPane.addTab("Dorm Assignment", null, dormAsnPanel, null);
@@ -1478,6 +1579,7 @@ public class MainForm {
 		
 		reloadApplicationTable();
 		reloadMailingCampersTable();
+		reloadCheckinTable();
 		clearMailingFields(true);
 		//FOR US #4
 		loadDormSwapDropdowns();

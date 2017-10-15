@@ -110,7 +110,7 @@ public class Login extends JFrame {
 		contentPane.add(lblPleaseEnterYour);
 		
 		LoginBtn = new JButton("Login");
-		LoginBtn.setForeground(SystemColor.desktop);
+		LoginBtn.setForeground(Color.BLACK);
 		LoginBtn.setBackground(SystemColor.control);
 		LoginBtn.setFont(new Font("Calibri", Font.PLAIN, 20));
 		LoginBtn.addActionListener(new ActionListener() {
