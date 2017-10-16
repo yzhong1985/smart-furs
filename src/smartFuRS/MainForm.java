@@ -144,9 +144,17 @@ public class MainForm {
 	private DefaultComboBoxModel<DormItem> dormSwaper1Model = new DefaultComboBoxModel<DormItem>();
 	private DefaultComboBoxModel<DormItem> dormSwaper2Model = new DefaultComboBoxModel<DormItem>();
 	
-	private ArrayList<Camper> allDormCampers = new ArrayList<Camper>();
+	private DefaultComboBoxModel<BandItem> bandSwaper1Model = new DefaultComboBoxModel<BandItem>();
+	private DefaultComboBoxModel<BandItem> bandSwaper2Model = new DefaultComboBoxModel<BandItem>();
+	
+	private JComboBox<BandItem> bandDropdownSwaper1;
+	private JComboBox<BandItem> bandDropdownSwaper2;
+	
+	private ArrayList<Camper> allAptCampers = new ArrayList<Camper>();
 	private boolean isDormAssigned = false;
 	private JTable tableCheckin;
+	private boolean isBandAssigned = false;
+	
 	
 	private String appUser = "user";
 	
@@ -805,7 +813,7 @@ public class MainForm {
 		}
 
 		//asign to global
-		allDormCampers = allAcceptCampers;
+		allAptCampers = allAcceptCampers;
 		//add to lists
 		reloadDorm();
 		
@@ -820,7 +828,7 @@ public class MainForm {
 		boyDorm1Model.clear();
 		boyDorm2Model.clear();
 		boyDorm3Model.clear();
-		for(Camper c:allDormCampers) {			
+		for(Camper c:allAptCampers) {			
 			int dormNum = c.getDormNum();
 			if(c.getGender().equals("Girl")) {
 				if(dormNum==1) {
@@ -851,6 +859,15 @@ public class MainForm {
 		}
 	}
 	
+	private void loadBandSwapDropdowns() {
+		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
+		for(Camper c: allAcceptCampers) {
+			bandSwaper1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+			bandSwaper2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+		}
+	}
+	
+	
 	private void swapCampersDormRequest() {
 	    DormItem camp1 = (DormItem)camperDropdownSwaper1.getSelectedItem();
 	    DormItem camp2 = (DormItem)camperDropdownSwaper2.getSelectedItem();
@@ -872,7 +889,7 @@ public class MainForm {
 	    
 	    Camper cmp1=null;
 	    Camper cmp2=null;
-	    for(Camper c: allDormCampers) {
+	    for(Camper c: allAptCampers) {
 	    	if(c.getId()==camp1.getId()) {
 	    		cmp1 = c;
 	    	}
@@ -984,7 +1001,13 @@ public class MainForm {
 	    	advIndx++;
 	    }
 	    
-	    band1Model.clear();
+	    allAptCampers = allAcceptCampers;
+	    reloadBand();
+	    isBandAssigned = true;
+	}
+	
+	private void reloadBand() {
+		band1Model.clear();
 	    band2Model.clear();
 	    band3Model.clear();
 	    band4Model.clear();
@@ -993,7 +1016,7 @@ public class MainForm {
 	    band7Model.clear();
 	    band8Model.clear();
 	    
-	    for(Camper c:allAcceptCampers) {			
+	    for(Camper c:allAptCampers) {			
 			int bandnum = c.getBandNum();
 			switch (bandnum) {
             case 1:  band1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
@@ -1013,8 +1036,68 @@ public class MainForm {
             case 8:  band8Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
 			}
-	    } 
+	    }
 	}
+	
+    private void swapCampersBandRequest() {
+    	
+    	BandItem camp1 = (BandItem)bandDropdownSwaper1.getSelectedItem();
+    	BandItem camp2 = (BandItem)bandDropdownSwaper2.getSelectedItem();
+		
+	    if(!isBandAssigned) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe haven't assigned band yet.");
+	    	return;
+	    }
+	    
+	    if(!camp1.getGender().equals(camp2.getGender())) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe can't make a band swap between a boy and a girl.");
+	    	return;
+	    }
+	    
+	    if(!camp1.getCategory().equals(camp2.getCategory())) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe can't make a band swap between different instrument categories.");
+	    	return;
+	    }
+	    
+	    if(camp1.getId()==camp2.getId()) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nPlease select different campers.");
+	    	return;
+	    }
+	    
+	    Camper cmp1=null;
+	    Camper cmp2=null;
+	    for(Camper c: allAptCampers) {
+	    	if(c.getId()==camp1.getId()) {
+	    		cmp1 = c;
+	    	}
+	    	if(c.getId()==camp2.getId()) {
+	    		cmp2 = c;
+	    	}
+	    	if(cmp1!=null&&cmp2!=null) {
+	    		break;
+	    	}
+	    }
+
+	    //should check talent level here
+	    boolean istalentmatch = true;
+	    if(!istalentmatch) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nAge group rule violation! We want to keep age distributed evenly.");
+	    	return;
+	    } else {
+	    	//swap dorm
+	    	int b1 = cmp1.getBandNum();
+	    	int b2 = cmp2.getBandNum();
+	    	cmp1.setBandNum(b2);
+	    	cmp2.setBandNum(b1);
+	    	String fullname1 = cmp1.getFirstname() + cmp1.getLastname();
+	    	String fullname2 = cmp2.getFirstname() + cmp2.getLastname();
+	    	//reload the group
+	    	
+	    	reloadBand();
+	    	JOptionPane.showMessageDialog(null, "The dorm swap request has been performed.\r\n"+ fullname1 + " has moved to Band #" + b2 + " and\r\n"+fullname2+ " has moved to Band #" + b1);
+	    	return;
+	    }
+    }
 	
 	
 	/**
@@ -1673,7 +1756,6 @@ public class MainForm {
 		dormAsnPanel.add(lblRequestSwitchDorm);
 		
 		camperDropdownSwaper1 = new JComboBox<DormItem>(dormSwaper1Model);
-		camperDropdownSwaper1.setEnabled(true);
 		camperDropdownSwaper1.setFont(new Font("Calibri", Font.PLAIN, 16));
 		camperDropdownSwaper1.setBackground(Color.WHITE);
 		camperDropdownSwaper1.setBounds(714, 365, 191, 29);
@@ -1682,7 +1764,6 @@ public class MainForm {
 		
 		camperDropdownSwaper2 = new JComboBox<DormItem>(dormSwaper2Model);
 		camperDropdownSwaper2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		camperDropdownSwaper2.setEnabled(true);
 		camperDropdownSwaper2.setBackground(Color.WHITE);
 		camperDropdownSwaper2.setBounds(714, 412, 191, 29);
 		//camperDropdownSwaper2.setRenderer(new SwaperComboItem());
@@ -1818,26 +1899,29 @@ public class MainForm {
 		lblSwitchBand.setBounds(34, 369, 100, 32);
 		bandAsnPanel.add(lblSwitchBand);
 		
-		JComboBox<String> comboBox_2 = new JComboBox<String>();
-		comboBox_2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		comboBox_2.setEnabled(false);
-		comboBox_2.setBackground(Color.WHITE);
-		comboBox_2.setBounds(149, 371, 191, 29);
-		bandAsnPanel.add(comboBox_2);
+		bandDropdownSwaper1 = new JComboBox<BandItem>(bandSwaper1Model);
+		bandDropdownSwaper1.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bandDropdownSwaper1.setBackground(Color.WHITE);
+		bandDropdownSwaper1.setBounds(149, 371, 191, 29);
+		bandAsnPanel.add(bandDropdownSwaper1);
 		
-		JComboBox<String> comboBox_3 = new JComboBox<String>();
-		comboBox_3.setFont(new Font("Calibri", Font.PLAIN, 16));
-		comboBox_3.setEnabled(false);
-		comboBox_3.setBackground(Color.WHITE);
-		comboBox_3.setBounds(149, 411, 191, 29);
-		bandAsnPanel.add(comboBox_3);
+		bandDropdownSwaper2 = new JComboBox<BandItem>(bandSwaper2Model);
+		bandDropdownSwaper2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bandDropdownSwaper2.setBackground(Color.WHITE);
+		bandDropdownSwaper2.setBounds(149, 411, 191, 29);
+		bandAsnPanel.add(bandDropdownSwaper2);
 		
-		JButton button_1 = new JButton("Request");
-		button_1.setForeground(Color.BLACK);
-		button_1.setFont(new Font("Calibri", Font.PLAIN, 18));
-		button_1.setBackground(SystemColor.menu);
-		button_1.setBounds(363, 403, 119, 43);
-		bandAsnPanel.add(button_1);
+		JButton btnBandSwapRequest = new JButton("Request");
+		btnBandSwapRequest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				swapCampersBandRequest();
+			}
+		});
+		btnBandSwapRequest.setForeground(Color.BLACK);
+		btnBandSwapRequest.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnBandSwapRequest.setBackground(SystemColor.menu);
+		btnBandSwapRequest.setBounds(363, 403, 119, 43);
+		bandAsnPanel.add(btnBandSwapRequest);
 				
 		welcomeLabel = new JLabel("Welcome, "+appUser);
 		welcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -1879,5 +1963,6 @@ public class MainForm {
 		clearMailingFields(true);
 		//FOR US #4
 		loadDormSwapDropdowns();
+		loadBandSwapDropdowns();
 	}
 }

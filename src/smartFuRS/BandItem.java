@@ -61,7 +61,7 @@ public class BandItem {
     
     @Override
     public String toString() {
-        return String.format(fname + " " + lname + " " + gender + " " + cat + " " + talentLevel);
+        return String.format(fname + " " + lname);
     }
 }
 
