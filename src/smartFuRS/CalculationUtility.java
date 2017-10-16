@@ -22,7 +22,6 @@ public class CalculationUtility {
 	            dayTwo = temp;
 	        }
 	        int extraDays = 0;
-
 	        int dayOneOriginalYearDays = dayOne.get(Calendar.DAY_OF_YEAR);
 
 	        while (dayOne.get(Calendar.YEAR) > dayTwo.get(Calendar.YEAR)) {
@@ -55,7 +54,30 @@ public class CalculationUtility {
 	}
 	
 	public static boolean isReceivedDateValidForCamp(String recDateTxt, String campDateTxt) {
-		try {			
+		try {
+			Calendar revday = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy", Locale.ENGLISH);
+			revday.setTime(sdf.parse(recDateTxt));	
+			
+			Calendar cmpday = Calendar.getInstance();
+			cmpday.setTime(sdf.parse(campDateTxt));	
+			
+			int day = cmpday.get(5);
+			int month = cmpday.get(12);
+			
+			int r_day = revday.get(5);
+			int r_month = revday.get(12);
+			
+			if(r_month<month-3 ||r_month>month-1) {
+				return false;
+			}
+			if(r_month==month-3 && r_day<day) {
+				return false;
+			}
+			if(r_month==month-1 && r_day>day) {
+				return false;
+			}
+			//otherwist return true
 			return true;
 
 		} catch (Exception ex) {
@@ -68,6 +90,17 @@ public class CalculationUtility {
 		ArrayList<Camper> outputList = new ArrayList<Camper>();
 		for(Camper c: campers) {
 			if(c.getGender().equals(gender)) {
+				outputList.add(c);
+			}
+		}
+		return outputList;
+		
+	}
+	
+	public static ArrayList<Camper> getCampersByCategory(String cat, ArrayList<Camper> campers){
+		ArrayList<Camper> outputList = new ArrayList<Camper>();
+		for(Camper c: campers) {
+			if(c.getCategory().equals(cat)) {
 				outputList.add(c);
 			}
 		}

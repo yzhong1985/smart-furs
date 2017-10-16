@@ -12,7 +12,7 @@ import java.util.Locale;
  * @author Yang Zhong
  *
  */
-public class Camper {
+public class Camper implements Comparable<Camper> {
 	private int id;
 	private String firstname;
 	private String lastname;
@@ -42,6 +42,8 @@ public class Camper {
 	
 	//0 means no dorm assigned
 	private int dormNum=0;
+	//0 means no band assigned
+	private int bandNum=0;
 
 	public int getId() {
 		return id;
@@ -258,7 +260,31 @@ public class Camper {
 	public void setHasClothGlitter(String hasClothGlitter) {
 		this.hasClothGlitter = hasClothGlitter;
 	}
+	public int getBandNum() {
+		return bandNum;
+	}
+	public void setBandNum(int bandNum) {
+		this.bandNum = bandNum;
+	}
 	
-	
+	@Override
+	public int compareTo(Camper c) {
+		// -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+		//order by Boy > Girl then by TalentLevel
+		if(this.getGender().equals("Boy")&&c.getGender().equals("Girl")) {
+			return 1;
+		} else if(this.getGender().equals("Girl")&&c.getGender().equals("Boy")) {
+			return -1;
+		}
+		
+		if(this.getTalentLevel()>c.getTalentLevel()) {
+			return 1;
+		} else if (this.getTalentLevel()<c.getTalentLevel()) {
+			return -1;
+		}
+		
+		return 0;
+	}
+
 	
 }

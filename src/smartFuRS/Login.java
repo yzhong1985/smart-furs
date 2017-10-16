@@ -38,6 +38,8 @@ public class Login extends JFrame {
 	private JButton LoginBtn;
 	private JLabel messageLabel;
 	
+	private String loginUser;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -118,6 +120,7 @@ public class Login extends JFrame {
 				NaviToMainFrame();
 			}
 		});
+		LoginBtn.setFocusable(false);
 		LoginBtn.setBounds(438, 212, 89, 68);
 		contentPane.add(LoginBtn);
 		
@@ -142,6 +145,7 @@ public class Login extends JFrame {
 		
 		if(Validate()) {
 			MainForm mainfrm = new MainForm();
+			mainfrm.SetAppUser(loginUser);
 			mainfrm.Display();
 			setVisible(false);
 		}
@@ -171,6 +175,7 @@ public class Login extends JFrame {
 		else {
 			//if has user, return true
 			messageLabel.setText("");
+			loginUser = user;
 			return true;
 		}
 		

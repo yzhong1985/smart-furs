@@ -4,9 +4,6 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -15,12 +12,12 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Window.Type;
 import javax.swing.Icon;
@@ -30,8 +27,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JTable;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -52,15 +47,12 @@ import java.awt.Image;
 
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.JEditorPane;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.UIManager;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JList;
-import javax.swing.ComboBoxModel;
 
 public class MainForm {
 
@@ -134,10 +126,20 @@ public class MainForm {
 	private DefaultListModel<DormItem> boyDorm2Model = new DefaultListModel<DormItem>();
 	private DefaultListModel<DormItem> boyDorm3Model = new DefaultListModel<DormItem>();
 	
-	private JComboBox campDateDropdown;
+	private JList<BandItem> listBand1;
+	private JList<BandItem> listBand2;
+	private JList<BandItem> listBand3;
+	private JList<BandItem> listBand4;
+	private JList<BandItem> listBand5;
+	private JList<BandItem> listBand6;
+	private JList<BandItem> listBand7;
+	private JList<BandItem> listBand8;
+	
+	private JComboBox<String> campDateDropdown;
 	private JButton btnRequest;
 	private JComboBox<DormItem> camperDropdownSwaper1;
 	private JComboBox<DormItem> camperDropdownSwaper2;
+	private JLabel welcomeLabel;
 	
 	private DefaultComboBoxModel<DormItem> dormSwaper1Model = new DefaultComboBoxModel<DormItem>();
 	private DefaultComboBoxModel<DormItem> dormSwaper2Model = new DefaultComboBoxModel<DormItem>();
@@ -145,6 +147,23 @@ public class MainForm {
 	private ArrayList<Camper> allDormCampers = new ArrayList<Camper>();
 	private boolean isDormAssigned = false;
 	private JTable tableCheckin;
+	
+	private String appUser = "user";
+	
+	private DefaultListModel<BandItem> band1Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band2Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band3Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band4Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band5Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band6Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band7Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> band8Model = new DefaultListModel<BandItem>();
+	
+	public void SetAppUser(String user) {
+		appUser = user;
+		welcomeLabel.setText("Welcome, "+appUser);
+	}
+	
 	/**
 	 * Launch the application.
 	 */
@@ -467,6 +486,7 @@ public class MainForm {
 	 */
 	private void openWordMailTemplate() {
 		try {
+			@SuppressWarnings("resource")
 			XWPFDocument document = new XWPFDocument();
 			FileOutputStream out = new FileOutputStream(new File("notification.docx"));
 			String content = txtpnMail.getText();
@@ -608,7 +628,7 @@ public class MainForm {
 		btnGenerateMail.setVisible(false);
 		statusDropdown.setEnabled(false);
 		dropdownCategory.setEnabled(false);
-		spinnerTelentLvl.setValue(5);
+		spinnerTelentLvl.setValue(0);
 		
 		txtpnMail.setText("");
 		lblMailingFname.setText("");
@@ -654,7 +674,7 @@ public class MainForm {
 	private void saveCamperStatus() {
 		
 		Camper camperToUpdate = new Camper();
-		String idstr = camperTable.getValueAt(mailingTable.getSelectedRow(), 0).toString();
+		String idstr = mailingTable.getValueAt(mailingTable.getSelectedRow(), 0).toString();
 	    int id =Integer.parseInt(idstr);
 		camperToUpdate.setId(id);
 		camperToUpdate.setCategory(dropdownCategory.getSelectedItem().toString());
@@ -727,11 +747,17 @@ public class MainForm {
 				ageGroupC.add(c);
 			}
 		}
+		
+		//randomize
+		Collections.shuffle(ageGroupA);
+		Collections.shuffle(ageGroupB);
+		Collections.shuffle(ageGroupC);
+		
 		//assign girls dorm
 		ArrayList<Camper> girlGroup = CalculationUtility.getCampersByGender("Girl", allAcceptCampers);
 		ArrayList<Camper> ageAGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupA);
 		ArrayList<Camper> ageBGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupB);
-		ArrayList<Camper> ageCGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupC);
+		ArrayList<Camper> ageCGirlGroup = CalculationUtility.getCampersByGender("Girl", ageGroupC);		
 		
 		int fewest = 1;
 		//split ageAGirlGroup into 3
@@ -781,27 +807,7 @@ public class MainForm {
 		//asign to global
 		allDormCampers = allAcceptCampers;
 		//add to lists
-		for(Camper c:allAcceptCampers) {			
-			int dormNum = c.getDormNum();
-
-			if(c.getGender().equals("Girl")) {
-				if(dormNum==1) {
-					girlDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-				} else if(dormNum==2) {
-					girlDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-				} else if(dormNum==3) {
-					girlDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-				}
-			} else if(c.getGender().equals("Boy")) {
-				if(dormNum==1) {
-					boyDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-				} else if(dormNum==2) {
-					boyDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-				} else if(dormNum==3) {
-					boyDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-				}
-			}
-		}
+		reloadDorm();
 		
 		isDormAssigned = true;
 	}
@@ -901,6 +907,115 @@ public class MainForm {
 	    }
 		
 	}
+	
+	//#### USER STORY BAND ASSIGNMENT #################
+	private void autoAssnBand() {
+		
+		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
+		//Group them into 6 category
+		ArrayList<Camper> singers = CalculationUtility.getCampersByCategory("Singer", allAcceptCampers);
+		ArrayList<Camper> guitarists = CalculationUtility.getCampersByCategory("Guitarist", allAcceptCampers);
+		ArrayList<Camper> drummers = CalculationUtility.getCampersByCategory("Drummer", allAcceptCampers);
+		ArrayList<Camper> bassists = CalculationUtility.getCampersByCategory("Bassist", allAcceptCampers);
+		ArrayList<Camper> keyboardists = CalculationUtility.getCampersByCategory("Keyboardist", allAcceptCampers);
+		ArrayList<Camper> instrumentalists = CalculationUtility.getCampersByCategory("Instrumentalist", allAcceptCampers);
+		//Sort each of them based on talentlevel and gender
+		Collections.sort(singers);
+		Collections.sort(guitarists);
+		Collections.sort(drummers);
+		Collections.sort(bassists);
+		Collections.sort(keyboardists);
+		Collections.sort(instrumentalists);
+		
+	    ArrayList<ArrayList<Camper>> allCat = new ArrayList<ArrayList<Camper>>();
+	    allCat.add(singers);
+	    allCat.add(guitarists);
+	    allCat.add(drummers);
+	    allCat.add(bassists);
+	    allCat.add(keyboardists);
+	    allCat.add(instrumentalists);
+	    Collections.shuffle(allCat);
+	    
+	    //6 cats each assign number
+	    boolean order = true;
+	    //for random asisgn
+	    int advArg = 0;
+	    int advIndx = 0;
+	    
+	    for(int i=1; i<=allCat.size();i++) {
+	    	if(advIndx==2) {
+	    		//reset
+	    		advArg=4; //adv factor = 
+	    	} else if(advIndx==4) {
+	    		advArg=0;
+	    	}
+	    	
+	    	ArrayList<Camper> thisCat = allCat.get(i-1);
+	    	//System.out.println("-------------Group"+i);
+	    	for(int j=0; j<thisCat.size(); j++) {
+	    		Camper c = thisCat.get(j);
+	    		int bnum = ((j+1) + advArg)%8;
+	    		if(bnum==0) {
+	    			bnum=8;
+	    		}
+	    		//make some switch
+	    		if(advArg!=0) {
+	    			if(bnum>4&&bnum<=6) {
+	    				bnum=bnum+2;
+	    			} else if(bnum>6) {
+	    				bnum=bnum-2;
+	    			} else if(bnum<3) {
+	    				bnum=bnum+2;
+	    			} else if(bnum>=3 && bnum<=4) {
+	    				bnum=bnum-2;
+	    			}	
+	    		}
+	    		
+	    		if(order) { 			
+	    			c.setBandNum(bnum);
+	    			//System.out.println(bnum);
+	    		} else {
+	    			c.setBandNum(thisCat.size()+1-bnum);
+	    			//System.out.println((thisCat.size()+1-bnum)+"");
+	    		}
+	    	}
+	    	//reverse order
+	    	order = !order;
+	    	advIndx++;
+	    }
+	    
+	    band1Model.clear();
+	    band2Model.clear();
+	    band3Model.clear();
+	    band4Model.clear();
+	    band5Model.clear();
+	    band6Model.clear();
+	    band7Model.clear();
+	    band8Model.clear();
+	    
+	    for(Camper c:allAcceptCampers) {			
+			int bandnum = c.getBandNum();
+			switch (bandnum) {
+            case 1:  band1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 2:  band2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 3:  band3Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 4:  band4Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 5:  band5Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 6:  band6Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 7:  band7Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 8:  band8Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+			}
+	    } 
+	}
+	
 	
 	/**
 	 * Initialize the contents of the frame.
@@ -1230,7 +1345,7 @@ public class MainForm {
 		
 		spinnerTelentLvl = new JSpinner();
 		spinnerTelentLvl.setFont(new Font("Calibri", Font.PLAIN, 16));
-		spinnerTelentLvl.setModel(new SpinnerNumberModel(5, 0, 10, 1));
+		spinnerTelentLvl.setModel(new SpinnerNumberModel(0, 0, 10, 1));
 		spinnerTelentLvl.setBounds(127, 126, 65, 29);
 		mailingPanel.add(spinnerTelentLvl);
 		
@@ -1410,11 +1525,13 @@ public class MainForm {
 		checkinPanel.add(chckbxSameDorm);
 		
 		JButton btnSave_2 = new JButton("Save");
+		btnSave_2.setBackground(SystemColor.control);
 		btnSave_2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		btnSave_2.setBounds(10, 430, 117, 29);
 		checkinPanel.add(btnSave_2);
 		
 		JButton btnCancel_1 = new JButton("Cancel");
+		btnCancel_1.setBackground(SystemColor.control);
 		btnCancel_1.setFont(new Font("Calibri", Font.PLAIN, 16));
 		btnCancel_1.setBounds(185, 430, 117, 29);
 		checkinPanel.add(btnCancel_1);
@@ -1472,10 +1589,10 @@ public class MainForm {
 		dormAsnPanel.add(panel);
 		panel.setLayout(null);
 		
-		listGirlDorm1 = new JList(girlDorm1Model);
+		listGirlDorm1 = new JList<DormItem>(girlDorm1Model);
 		listGirlDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listGirlDorm1.setBounds(6, 16, 191, 176);
-		listGirlDorm1.setCellRenderer(new ItemCellRenderer());
+		listGirlDorm1.setCellRenderer(new DormItemCellRenderer());
 		panel.add(listGirlDorm1);
 		
 		JPanel panel_1 = new JPanel();
@@ -1484,10 +1601,10 @@ public class MainForm {
 		panel_1.setBounds(248, 17, 207, 203);
 		dormAsnPanel.add(panel_1);
 		
-		listGirlDorm2 = new JList(girlDorm2Model);
+		listGirlDorm2 = new JList<DormItem>(girlDorm2Model);
 		listGirlDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listGirlDorm2.setBounds(6, 16, 191, 176);
-		listGirlDorm2.setCellRenderer(new ItemCellRenderer());
+		listGirlDorm2.setCellRenderer(new DormItemCellRenderer());
 		panel_1.add(listGirlDorm2);
 		
 		JPanel panel_2 = new JPanel();
@@ -1496,10 +1613,10 @@ public class MainForm {
 		panel_2.setBounds(478, 17, 207, 203);
 		dormAsnPanel.add(panel_2);
 		
-		listGirlDorm3 = new JList(girlDorm3Model);
+		listGirlDorm3 = new JList<DormItem>(girlDorm3Model);
 		listGirlDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listGirlDorm3.setBounds(6, 16, 191, 176);
-		listGirlDorm3.setCellRenderer(new ItemCellRenderer());
+		listGirlDorm3.setCellRenderer(new DormItemCellRenderer());
 		panel_2.add(listGirlDorm3);
 		
 		JPanel panel_3 = new JPanel();
@@ -1508,10 +1625,10 @@ public class MainForm {
 		panel_3.setBounds(20, 238, 207, 203);
 		dormAsnPanel.add(panel_3);
 		
-		listBoyDorm1 = new JList(boyDorm1Model);
+		listBoyDorm1 = new JList<DormItem>(boyDorm1Model);
 		listBoyDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listBoyDorm1.setBounds(6, 16, 191, 176);
-		listBoyDorm1.setCellRenderer(new ItemCellRenderer());
+		listBoyDorm1.setCellRenderer(new DormItemCellRenderer());
 		panel_3.add(listBoyDorm1);
 		
 		JPanel panel_4 = new JPanel();
@@ -1520,10 +1637,10 @@ public class MainForm {
 		panel_4.setBounds(248, 238, 207, 203);
 		dormAsnPanel.add(panel_4);
 		
-		listBoyDorm2 = new JList(boyDorm2Model);
+		listBoyDorm2 = new JList<DormItem>(boyDorm2Model);
 		listBoyDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listBoyDorm2.setBounds(6, 16, 191, 176);
-		listBoyDorm2.setCellRenderer(new ItemCellRenderer());
+		listBoyDorm2.setCellRenderer(new DormItemCellRenderer());
 		panel_4.add(listBoyDorm2);
 		
 		JPanel panel_5 = new JPanel();
@@ -1532,10 +1649,10 @@ public class MainForm {
 		panel_5.setBounds(478, 238, 207, 203);
 		dormAsnPanel.add(panel_5);
 		
-		listBoyDorm3 = new JList(boyDorm3Model);
+		listBoyDorm3 = new JList<DormItem>(boyDorm3Model);
 		listBoyDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
 		listBoyDorm3.setBounds(6, 16, 191, 176);
-		listBoyDorm3.setCellRenderer(new ItemCellRenderer());
+		listBoyDorm3.setCellRenderer(new DormItemCellRenderer());
 		panel_5.add(listBoyDorm3);
 		
 		btnAutoAssignDorm = new JButton("Auto Dorm Assign");
@@ -1591,133 +1708,147 @@ public class MainForm {
 		JPanel panel_6 = new JPanel();
 		panel_6.setLayout(null);
 		panel_6.setBorder(new TitledBorder(null, "Band #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_6.setBounds(10, 22, 191, 203);
+		panel_6.setBounds(25, 22, 236, 144);
 		bandAsnPanel.add(panel_6);
 		
-		JList list_5 = new JList();
-		list_5.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_5.setBounds(6, 16, 179, 176);
-		panel_6.add(list_5);
+		listBand1 = new JList<BandItem>(band1Model);
+		listBand1.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand1.setCellRenderer(new BandItemCellRenderer());
+		listBand1.setBounds(6, 16, 224, 120);
+		panel_6.add(listBand1);
 		
 		JPanel panel_7 = new JPanel();
 		panel_7.setLayout(null);
 		panel_7.setBorder(new TitledBorder(null, "Band #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_7.setBounds(221, 22, 191, 203);
+		panel_7.setBounds(286, 22, 236, 144);
 		bandAsnPanel.add(panel_7);
 		
-		JList list_6 = new JList();
-		list_6.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_6.setBounds(6, 16, 179, 176);
-		panel_7.add(list_6);
+		listBand2 = new JList<BandItem>(band2Model);
+		listBand2.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand2.setCellRenderer(new BandItemCellRenderer());
+		listBand2.setBounds(6, 16, 224, 120);
+		panel_7.add(listBand2);
 		
 		JPanel panel_8 = new JPanel();
 		panel_8.setLayout(null);
 		panel_8.setBorder(new TitledBorder(null, "Band #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_8.setBounds(431, 22, 191, 203);
+		panel_8.setBounds(547, 22, 236, 144);
 		bandAsnPanel.add(panel_8);
 		
-		JList list_7 = new JList();
-		list_7.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_7.setBounds(6, 16, 179, 176);
-		panel_8.add(list_7);
+		listBand3 = new JList<BandItem>(band3Model);
+		listBand3.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand3.setCellRenderer(new BandItemCellRenderer());
+		listBand3.setBounds(6, 16, 224, 120);
+		panel_8.add(listBand3);
 		
 		JPanel panel_9 = new JPanel();
 		panel_9.setLayout(null);
 		panel_9.setBorder(new TitledBorder(null, "Band #5", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_9.setBounds(10, 243, 191, 203);
+		panel_9.setBounds(25, 190, 236, 144);
 		bandAsnPanel.add(panel_9);
 		
-		JList list_8 = new JList();
-		list_8.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_8.setBounds(6, 16, 179, 176);
-		panel_9.add(list_8);
+		listBand5 = new JList<BandItem>(band5Model);
+		listBand5.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand5.setCellRenderer(new BandItemCellRenderer());
+		listBand5.setBounds(6, 16, 224, 120);
+		panel_9.add(listBand5);
 		
 		JPanel panel_10 = new JPanel();
 		panel_10.setLayout(null);
 		panel_10.setBorder(new TitledBorder(null, "Band #6", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_10.setBounds(221, 243, 191, 203);
+		panel_10.setBounds(286, 190, 236, 144);
 		bandAsnPanel.add(panel_10);
 		
-		JList list_9 = new JList();
-		list_9.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_9.setBounds(6, 16, 179, 176);
-		panel_10.add(list_9);
+		listBand6 = new JList<BandItem>(band6Model);
+		listBand6.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand6.setCellRenderer(new BandItemCellRenderer());
+		listBand6.setBounds(6, 16, 224, 120);
+		panel_10.add(listBand6);
 		
 		JPanel panel_11 = new JPanel();
 		panel_11.setLayout(null);
 		panel_11.setBorder(new TitledBorder(null, "Band #7", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_11.setBounds(431, 243, 191, 203);
+		panel_11.setBounds(547, 190, 236, 144);
 		bandAsnPanel.add(panel_11);
 		
-		JList list_10 = new JList();
-		list_10.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_10.setBounds(6, 16, 179, 176);
-		panel_11.add(list_10);
+		listBand7 = new JList<BandItem>(band7Model);
+		listBand7.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand7.setCellRenderer(new BandItemCellRenderer());
+		listBand7.setBounds(6, 16, 224, 120);
+		panel_11.add(listBand7);
 		
 		JPanel panel_12 = new JPanel();
 		panel_12.setLayout(null);
 		panel_12.setBorder(new TitledBorder(null, "Band #4", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_12.setBounds(642, 22, 191, 203);
+		panel_12.setBounds(808, 22, 236, 144);
 		bandAsnPanel.add(panel_12);
 		
-		JList list_11 = new JList();
-		list_11.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_11.setBounds(6, 16, 179, 176);
-		panel_12.add(list_11);
+		listBand4 = new JList<BandItem>(band4Model);
+		listBand4.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand4.setCellRenderer(new BandItemCellRenderer());
+		listBand4.setBounds(6, 16, 224, 120);
+		panel_12.add(listBand4);
 		
 		JPanel panel_13 = new JPanel();
 		panel_13.setLayout(null);
 		panel_13.setBorder(new TitledBorder(null, "Band #8", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_13.setBounds(642, 243, 191, 203);
+		panel_13.setBounds(808, 190, 236, 144);
 		bandAsnPanel.add(panel_13);
 		
-		JList list_12 = new JList();
-		list_12.setFont(new Font("Calibri", Font.PLAIN, 14));
-		list_12.setBounds(6, 16, 179, 176);
-		panel_13.add(list_12);
+		listBand8 = new JList<BandItem>(band8Model);
+		listBand8.setFont(new Font("Calibri", Font.PLAIN, 12));
+		listBand8.setCellRenderer(new BandItemCellRenderer());
+		listBand8.setBounds(6, 16, 224, 120);
+		panel_13.add(listBand8);
 		
-		JButton button = new JButton("Auto Assign");
-		button.setForeground(Color.BLACK);
-		button.setFont(new Font("Calibri", Font.PLAIN, 18));
-		button.setBackground(SystemColor.menu);
-		button.setBounds(886, 22, 160, 43);
-		bandAsnPanel.add(button);
+		JButton btnAutoAssignBand = new JButton("Auto Assign");
+		btnAutoAssignBand.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				autoAssnBand();
+			}
+		});
+		btnAutoAssignBand.setForeground(Color.BLACK);
+		btnAutoAssignBand.setFont(new Font("Calibri", Font.PLAIN, 18));
+		btnAutoAssignBand.setBackground(SystemColor.menu);
+		btnAutoAssignBand.setBounds(884, 403, 160, 43);
+		bandAsnPanel.add(btnAutoAssignBand);
 		
 		JLabel lblSwitchBand = new JLabel("Switch Band");
 		lblSwitchBand.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblSwitchBand.setBounds(855, 273, 129, 32);
+		lblSwitchBand.setBounds(34, 369, 100, 32);
 		bandAsnPanel.add(lblSwitchBand);
 		
 		JComboBox<String> comboBox_2 = new JComboBox<String>();
 		comboBox_2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		comboBox_2.setEnabled(false);
 		comboBox_2.setBackground(Color.WHITE);
-		comboBox_2.setBounds(855, 316, 191, 29);
+		comboBox_2.setBounds(149, 371, 191, 29);
 		bandAsnPanel.add(comboBox_2);
 		
 		JComboBox<String> comboBox_3 = new JComboBox<String>();
 		comboBox_3.setFont(new Font("Calibri", Font.PLAIN, 16));
 		comboBox_3.setEnabled(false);
 		comboBox_3.setBackground(Color.WHITE);
-		comboBox_3.setBounds(855, 363, 191, 29);
+		comboBox_3.setBounds(149, 411, 191, 29);
 		bandAsnPanel.add(comboBox_3);
 		
 		JButton button_1 = new JButton("Request");
 		button_1.setForeground(Color.BLACK);
 		button_1.setFont(new Font("Calibri", Font.PLAIN, 18));
 		button_1.setBackground(SystemColor.menu);
-		button_1.setBounds(855, 403, 119, 43);
+		button_1.setBounds(363, 403, 119, 43);
 		bandAsnPanel.add(button_1);
-		
-		
-		JLabel welcomeLabel = new JLabel("Welcome, Yang");
+				
+		welcomeLabel = new JLabel("Welcome, "+appUser);
 		welcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		welcomeLabel.setFont(new Font("Calibri", Font.BOLD, 18));
-		welcomeLabel.setBounds(713, 31, 130, 20);
+		welcomeLabel.setBounds(707, 31, 130, 20);
+		
 		frmSmartFursCamper.getContentPane().add(welcomeLabel);
 		
-		campDateDropdown = new JComboBox();
-		campDateDropdown.setModel(new DefaultComboBoxModel(new String[] {"2017 Jun", "2017 July", "2017 Augest"}));
+		campDateDropdown = new JComboBox<String>();
+		campDateDropdown.setBackground(Color.WHITE);
+		campDateDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"2017 Jun", "2017 July", "2017 Augest"}));
 		campDateDropdown.setFont(new Font("Calibri", Font.PLAIN, 18));
 		campDateDropdown.setBounds(952, 27, 123, 29);
 		campDateDropdown.setSelectedIndex(2);
@@ -1732,7 +1863,7 @@ public class MainForm {
 		JLabel lblSetCamp = new JLabel("Set Camp:");
 		lblSetCamp.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblSetCamp.setFont(new Font("Calibri", Font.PLAIN, 18));
-		lblSetCamp.setBounds(805, 31, 130, 20);
+		lblSetCamp.setBounds(847, 31, 88, 20);
 		frmSmartFursCamper.getContentPane().add(lblSetCamp);
 		
 		JLabel lblCampersManagementSystem = new JLabel("Campers Management System");
