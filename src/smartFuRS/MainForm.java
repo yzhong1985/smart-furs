@@ -166,6 +166,7 @@ public class MainForm {
 	private DefaultListModel<BandItem> band6Model = new DefaultListModel<BandItem>();
 	private DefaultListModel<BandItem> band7Model = new DefaultListModel<BandItem>();
 	private DefaultListModel<BandItem> band8Model = new DefaultListModel<BandItem>();
+	private JLabel lblTopImg;
 	
 	public void SetAppUser(String user) {
 		appUser = user;
@@ -1938,11 +1939,6 @@ public class MainForm {
 		campDateDropdown.setSelectedIndex(2);
 		frmSmartFursCamper.getContentPane().add(campDateDropdown);
 		
-		JLabel topImgLabel = new JLabel("");
-		topImgLabel.setBounds(10, 7, 282, 49);
-		frmSmartFursCamper.getContentPane().add(topImgLabel);
-		Image img = new ImageIcon(this.getClass().getResource("../toplogo.png")).getImage();
-		topImgLabel.setIcon(new ImageIcon(img));
 		
 		JLabel lblSetCamp = new JLabel("Set Camp:");
 		lblSetCamp.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -1956,6 +1952,13 @@ public class MainForm {
 		lblCampersManagementSystem.setFont(new Font("Segoe UI", Font.BOLD, 20));
 		lblCampersManagementSystem.setBounds(280, 16, 312, 40);
 		frmSmartFursCamper.getContentPane().add(lblCampersManagementSystem);
+		
+		lblTopImg = new JLabel("");
+		Image img = new ImageIcon(this.getClass().getResource("resources/topbg-main.png")).getImage();
+		lblTopImg.setIcon(new ImageIcon(img));
+		lblTopImg.setBounds(10, 0, 282, 69);
+		frmSmartFursCamper.getContentPane().add(lblTopImg);
+		
 		
 		reloadApplicationTable();
 		reloadMailingCampersTable();

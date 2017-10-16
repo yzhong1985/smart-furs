@@ -131,7 +131,7 @@ public class Login extends JFrame {
 		contentPane.add(messageLabel);
 		
 		JLabel bgImgLabel = new JLabel("");
-		Image img = new ImageIcon(this.getClass().getResource("../logo-design.png")).getImage();
+		Image img = new ImageIcon(this.getClass().getResource("resources/topbg-login.png")).getImage();
 		bgImgLabel.setIcon(new ImageIcon(img));
 		bgImgLabel.setBounds(75, 23, 553, 178);
 		contentPane.add(bgImgLabel);
