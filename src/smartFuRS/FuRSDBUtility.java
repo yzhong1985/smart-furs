@@ -261,10 +261,32 @@ public static ArrayList<Camper> getCheckinCampers(){
 
 	}
 	
+	public static boolean updateCamperCheckinStatus(Camper camper){
+		
+		Connection con = getConnection();
+		String sql = "UPDATE Camper SET arrivalpack='%s', musicalinstrument='%s', equipmentsupplies='%s', clothleather='%s', clothglitter='%s', clothspandex='%s' WHERE id='%s'" ;
+		sql = String.format(sql, camper.getHasArrivalPack(), camper.getHasMusicalInstrument(), camper.getHasEquipmentSupplies(), camper.getHasClothLeather(), camper.getHasClothGlitter(),camper.getHasClothSpandex(), camper.getId());
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(sql);
+			ps.execute();
+			return true;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		finally {
+		    if (ps != null) {try { ps.close(); } catch (Exception e) { e.printStackTrace(); }}
+		    if (con != null) {try { con.close(); } catch (Exception e) { e.printStackTrace(); }}
+		}
+
+	}
+	
 	public static ArrayList<Camper> getAllAcceptedCampers(){
 		
 		Connection con = getConnection();
-		String sql = "SELECT id, firstname, lastname, birthday, gender, talentLevel, category FROM Camper WHERE applicationStatus='Accept'";
+		String sql = "SELECT id, firstname, lastname, birthday, gender, talentLevel, category, arrivalpack, musicalinstrument, equipmentsupplies, clothleather, clothglitter, clothspandex, checkinStatus FROM Camper WHERE applicationStatus='Accept'";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ArrayList<Camper> camperlist = new ArrayList<Camper>();
@@ -281,6 +303,13 @@ public static ArrayList<Camper> getCheckinCampers(){
 				camp.setTalentLevel(rs.getString("talentLevel"));
 				camp.setCategory(rs.getString("category"));
 				camp.setApplicationStatus("Accept");
+			    camp.setHasArrivalPack(rs.getString("arrivalpack"));
+			    camp.setHasMusicalInstrument(rs.getString("musicalinstrument"));
+			    camp.setHasEquipmentSupplies(rs.getString("equipmentsupplies"));
+			    camp.setHasClothLeather(rs.getString("clothleather"));
+			    camp.setHasClothGlitter(rs.getString("clothglitter"));
+			    camp.setHasClothSpandex(rs.getString("clothspandex"));
+			    camp.setCheckinStatus(rs.getString("checkinStatus"));
 				camperlist.add(camp);		
 			}
 			return camperlist;

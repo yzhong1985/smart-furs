@@ -37,8 +37,9 @@ public class Camper implements Comparable<Camper> {
 	private String hasMusicalInstrument;
 	private String hasEquipmentSupplies;
 	private String hasClothLeather;
-	private String hasClothPandex;
+	private String hasClothSpandex;
 	private String hasClothGlitter;
+	private String checkinStatus;
 	
 	//0 means no dorm assigned
 	private int dormNum=0;
@@ -248,11 +249,11 @@ public class Camper implements Comparable<Camper> {
 	public void setHasClothLeather(String hasClothLeather) {
 		this.hasClothLeather = hasClothLeather;
 	}
-	public String getHasClothPandex() {
-		return hasClothPandex;
+	public String getHasClothSpandex() {
+		return hasClothSpandex;
 	}
-	public void setHasClothPandex(String hasClothPandex) {
-		this.hasClothPandex = hasClothPandex;
+	public void setHasClothSpandex(String hasClothSpandex) {
+		this.hasClothSpandex = hasClothSpandex;
 	}
 	public String getHasClothGlitter() {
 		return hasClothGlitter;
@@ -284,6 +285,12 @@ public class Camper implements Comparable<Camper> {
 		}
 		
 		return 0;
+	}
+	public String getCheckinStatus() {
+		return checkinStatus;
+	}
+	public void setCheckinStatus(String checkinStatus) {
+		this.checkinStatus = checkinStatus;
 	}
 
 	

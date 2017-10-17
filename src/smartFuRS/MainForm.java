@@ -167,6 +167,20 @@ public class MainForm {
 	private DefaultListModel<BandItem> band7Model = new DefaultListModel<BandItem>();
 	private DefaultListModel<BandItem> band8Model = new DefaultListModel<BandItem>();
 	private JLabel lblTopImg;
+	private JLabel lblPleaseCheckinCamper;
+	
+	private JLabel lblCheckinName;
+	private JCheckBox chckbxArrivalpack;
+	private JCheckBox chckbxMusicalInstrument;
+	private JCheckBox chckbxEquipmentSupplies;
+	private JCheckBox chckbxLeather;
+	private JCheckBox chckbxSpandex;
+	private JCheckBox chckbxGlittered;
+	
+	private JCheckBox chckbxCheckInCamper;
+	
+	private JButton btnCheckinSave;
+	private JButton btnCheckinCancel;
 	
 	public void SetAppUser(String user) {
 		appUser = user;
@@ -705,22 +719,185 @@ public class MainForm {
 	}
 	
 	//#### USER STORY 3 ###
+	
+	private void  saveCheckinStatus() {
+		Camper camperToCheckin = new Camper();
+		String idstr = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 0).toString();
+	    int id =Integer.parseInt(idstr);
+	    camperToCheckin.setId(id);
+	    String hasArrivalpack = "NO";
+	    String hasInstrument = "NO";
+	    String hasSupplies = "NO";
+	    String hasLeather = "NO";
+	    String hasGlittered = "NO";
+	    String hasSpandex = "NO";
+	    String checkedin = "NO";
+	    int totalcloth = 0;
+	    boolean hasItemsNeeded = true;
+	    
+	    if(chckbxArrivalpack.isSelected()) {
+	    	hasArrivalpack = "YES";
+	    } else {
+	    	hasItemsNeeded = false;
+	    }
+	    
+	    if(chckbxMusicalInstrument.isSelected()) {
+	    	hasInstrument = "YES";
+	    } else {
+	    	hasItemsNeeded = false;
+	    }
+	    
+	    if(chckbxEquipmentSupplies.isSelected()) {
+	    	hasSupplies = "YES";
+	    } else {
+	    	hasItemsNeeded = false;
+	    }
+	    
+	    if(chckbxLeather.isSelected()) {
+	    	hasLeather = "YES";
+	    	totalcloth++;
+	    }
+	    if(chckbxGlittered.isSelected()) {
+	    	hasGlittered = "YES";
+	    	totalcloth++;
+	    }
+	    if(chckbxSpandex.isSelected()) {
+	    	hasSpandex = "YES";
+	    	totalcloth++;
+	    }
+	    if(chckbxCheckInCamper.isSelected()) {
+	    	checkedin = "YES";
+	    }
+	    
+	    if(!hasItemsNeeded) {
+	    	JOptionPane.showMessageDialog(null, "The camper doesn't have the needed items for this camp. Checkin cannot be compelted.");
+	    	return;
+	    }
+	    
+	    if(totalcloth<2) {
+	    	JOptionPane.showMessageDialog(null, "The camper doesn't have enough clothes for this camp. Checkin cannot be compelted.");
+	    	return;
+	    }
+	    
+	    camperToCheckin.setHasArrivalPack(hasArrivalpack);
+	    camperToCheckin.setHasMusicalInstrument(hasInstrument);
+	    camperToCheckin.setHasEquipmentSupplies(hasSupplies);
+	    camperToCheckin.setHasClothLeather(hasLeather);
+	    camperToCheckin.setHasClothGlitter(hasGlittered);
+	    camperToCheckin.setHasClothSpandex(hasSpandex);
+		camperToCheckin.setCheckinStatus(checkedin);
+	    
+		if(FuRSDBUtility.updateCamperCheckinStatus(camperToCheckin)) {
+			//show success msg
+			String fname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 1).toString();
+			String lname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 2).toString();
+			String camperfullname = fname + " " + lname;
+			JOptionPane.showMessageDialog(null, camperfullname + " has been updated.");
+			//update the table
+			reloadCheckinTable();
+			//clean the inputs
+			clearCheckinFields();
+		}
+	}
+	
+	private void clearCheckinFields() {
+		
+		lblCheckinName.setText("");
+		btnCheckinSave.setVisible(false);
+		btnCheckinCancel.setVisible(false);
+		chckbxArrivalpack.setSelected(false);
+		chckbxMusicalInstrument.setSelected(false);
+		chckbxEquipmentSupplies.setSelected(false);
+		chckbxLeather.setSelected(false);
+		chckbxSpandex.setSelected(false);
+		chckbxGlittered.setSelected(false);
+
+		chckbxCheckInCamper.setSelected(false);
+	}
+	
 	private void reloadCheckinTable() {
 		
-		ArrayList<Camper> checkinCampers =FuRSDBUtility.getCheckinCampers();
+		ArrayList<Camper> checkinCampers =FuRSDBUtility.getAllAcceptedCampers();
 	    DefaultTableModel model = (DefaultTableModel)tableCheckin.getModel();
 	    model.setRowCount(0);
-	    Object rowData[] = new Object[5];
+	    Object rowData[] = new Object[11];
 	    for(int i=0; i<checkinCampers.size();i++) {
 	    	rowData[0] = checkinCampers.get(i).getId();
 	    	rowData[1] = checkinCampers.get(i).getFirstname();
 	    	rowData[2] = checkinCampers.get(i).getLastname();
-	    	rowData[3] = checkinCampers.get(i).getAge();
-	    	rowData[4] = checkinCampers.get(i).getGender();
+	    	rowData[3] = checkinCampers.get(i).getHasArrivalPack();
+	    	rowData[4] = checkinCampers.get(i).getHasMusicalInstrument();
+	    	rowData[5] = checkinCampers.get(i).getHasEquipmentSupplies();
+	    	rowData[6] = checkinCampers.get(i).getHasClothLeather();
+	    	rowData[7] = checkinCampers.get(i).getHasClothSpandex();
+	    	rowData[8] = checkinCampers.get(i).getHasClothGlitter();
+	    	rowData[9] = checkinCampers.get(i).getHasEquipmentSupplies();
+	    	rowData[10] = checkinCampers.get(i).getCheckinStatus();
 	    	model.addRow(rowData);
 	    }
 		
 	}
+	
+    private void populateCheckinFields() {
+		
+    	btnCheckinSave.setVisible(true);
+		btnCheckinCancel.setVisible(true);
+    	
+    	String fname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 1).toString();
+    	String lname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 2).toString();
+    	lblCheckinName.setText(fname+" "+lname);
+    	
+    	String hasArrivalpack = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 3);
+ 	    String hasInstrument = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 4);
+ 	    String hasSupplies = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 5);
+ 	    String hasLeather = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 6);
+ 	    String hasGlittered = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 7);
+ 	    String hasSpandex = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 8);
+ 	    String checkedin = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 9);
+    	
+    	if(hasArrivalpack!=null&&hasArrivalpack.equals("YES")) {
+    		chckbxArrivalpack.setSelected(true);
+    	} else {
+    		chckbxArrivalpack.setSelected(false);}
+    	
+    	if(hasInstrument!=null&&hasInstrument.equals("YES")) {
+    		chckbxMusicalInstrument.setSelected(true);
+    	} else {
+    		chckbxMusicalInstrument.setSelected(false);
+    	}
+    	
+    	if(hasSupplies!=null&&hasSupplies.equals("YES")) {
+    		chckbxEquipmentSupplies.setSelected(true);
+    	} else {
+    		chckbxEquipmentSupplies.setSelected(false);
+    	}
+    	
+    	if(hasLeather!=null&&hasLeather.equals("YES")) {
+    		chckbxLeather.setSelected(true);
+    	} else {
+    		chckbxLeather.setSelected(false);
+    	}
+    	
+    	if(hasGlittered!=null&&hasGlittered.equals("YES")) {
+    		chckbxGlittered.setSelected(true);
+    	} else {
+    		chckbxGlittered.setSelected(false);
+    	}
+    	
+    	if(hasSpandex!=null&&hasSpandex.equals("YES")) {
+    		chckbxSpandex.setSelected(true);
+    	} else {
+    		chckbxSpandex.setSelected(false);
+    	}
+    	
+    	if(checkedin!=null&&checkedin.equals("YES")) {
+    		chckbxCheckInCamper.setSelected(true);
+    	} else {
+    		chckbxCheckInCamper.setSelected(false);
+    	}
+
+    }
+	
 	
 	//####  USER STORY DORM ASSIGNMENT  #################
 	private void autoAssnDorm() {
@@ -1400,7 +1577,7 @@ public class MainForm {
 		dropdownCategory.setModel(new DefaultComboBoxModel(new String[] {"Not Assigned", "Singer", "Guitarist", "Drummer", "Bassist", "Keyboardist", "Instrumentalist"}));
 		dropdownCategory.setFont(new Font("Calibri", Font.PLAIN, 16));
 		dropdownCategory.setBackground(Color.WHITE);
-		dropdownCategory.setBounds(127, 86, 180, 29);
+		dropdownCategory.setBounds(142, 86, 180, 29);
 		mailingPanel.add(dropdownCategory);
 		
 		JLabel lblCategory = new JLabel("Category:");
@@ -1421,16 +1598,16 @@ public class MainForm {
 		btnMailingSave.setBounds(16, 416, 77, 43);
 		mailingPanel.add(btnMailingSave);
 		
-		JLabel lblSkillLevel = new JLabel("Talent Level:");
+		JLabel lblSkillLevel = new JLabel("Talent Ranking:");
 		lblSkillLevel.setFont(new Font("Calibri", Font.PLAIN, 16));
 		lblSkillLevel.setBackground(Color.WHITE);
-		lblSkillLevel.setBounds(16, 126, 90, 29);
+		lblSkillLevel.setBounds(16, 126, 116, 29);
 		mailingPanel.add(lblSkillLevel);
 		
 		spinnerTelentLvl = new JSpinner();
 		spinnerTelentLvl.setFont(new Font("Calibri", Font.PLAIN, 16));
 		spinnerTelentLvl.setModel(new SpinnerNumberModel(0, 0, 10, 1));
-		spinnerTelentLvl.setBounds(127, 126, 65, 29);
+		spinnerTelentLvl.setBounds(142, 126, 65, 29);
 		mailingPanel.add(spinnerTelentLvl);
 		
 		JLabel lblNewLabel_1 = new JLabel("Accepted Grils:");
@@ -1472,7 +1649,7 @@ public class MainForm {
 		statusDropdown.setModel(new DefaultComboBoxModel(new String[] {"Undecided", "Accept", "Deny"}));
 		statusDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
 		statusDropdown.setBackground(Color.WHITE);
-		statusDropdown.setBounds(127, 50, 180, 29);
+		statusDropdown.setBounds(142, 50, 180, 29);
 		statusDropdown.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
 		        mailingStatusChange();
@@ -1540,29 +1717,29 @@ public class MainForm {
 		tabbedPane.addTab("Camper Checkin", null, checkinPanel, null);
 		checkinPanel.setLayout(null);
 		
-		JLabel lblName = new JLabel("Name");
-		lblName.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblName.setBounds(10, 57, 61, 16);
-		checkinPanel.add(lblName);
+		lblCheckinName = new JLabel("");
+		lblCheckinName.setFont(new Font("Calibri", Font.BOLD, 16));
+		lblCheckinName.setBounds(10, 41, 286, 29);
+		checkinPanel.add(lblCheckinName);
 		
 		JLabel lblCheckinInformation = new JLabel("Checkin Information");
 		lblCheckinInformation.setFont(new Font("Calibri", Font.PLAIN, 16));
 		lblCheckinInformation.setBounds(10, 84, 157, 16);
 		checkinPanel.add(lblCheckinInformation);
 		
-		JCheckBox chckbx_arrivalpack = new JCheckBox("Arrival Packet");
-		chckbx_arrivalpack.setBackground(Color.WHITE);
-		chckbx_arrivalpack.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbx_arrivalpack.setBounds(6, 107, 128, 23);
-		checkinPanel.add(chckbx_arrivalpack);
+		chckbxArrivalpack = new JCheckBox("Arrival Packet");
+		chckbxArrivalpack.setBackground(Color.WHITE);
+		chckbxArrivalpack.setFont(new Font("Calibri", Font.PLAIN, 16));
+		chckbxArrivalpack.setBounds(6, 107, 128, 23);
+		checkinPanel.add(chckbxArrivalpack);
 		
-		JCheckBox chckbxMusicalInstrument = new JCheckBox("Musical Instrument");
+		chckbxMusicalInstrument = new JCheckBox("Musical Instrument");
 		chckbxMusicalInstrument.setBackground(Color.WHITE);
 		chckbxMusicalInstrument.setFont(new Font("Calibri", Font.PLAIN, 16));
 		chckbxMusicalInstrument.setBounds(6, 133, 170, 23);
 		checkinPanel.add(chckbxMusicalInstrument);
 		
-		JCheckBox chckbxEquipmentSupplies = new JCheckBox("Equipment Supplies");
+		chckbxEquipmentSupplies = new JCheckBox("Equipment Supplies");
 		chckbxEquipmentSupplies.setBackground(Color.WHITE);
 		chckbxEquipmentSupplies.setFont(new Font("Calibri", Font.PLAIN, 16));
 		chckbxEquipmentSupplies.setBounds(6, 159, 170, 23);
@@ -1570,55 +1747,50 @@ public class MainForm {
 		
 		JLabel lblCloth = new JLabel("Cloth");
 		lblCloth.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblCloth.setBounds(10, 196, 61, 16);
+		lblCloth.setBounds(10, 223, 61, 26);
 		checkinPanel.add(lblCloth);
 		
-		JCheckBox chckbxLeather = new JCheckBox("Leather");
+		chckbxLeather = new JCheckBox("Leather");
 		chckbxLeather.setBackground(Color.WHITE);
 		chckbxLeather.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxLeather.setBounds(10, 222, 92, 23);
+		chckbxLeather.setBounds(10, 256, 92, 23);
 		checkinPanel.add(chckbxLeather);
 		
-		JCheckBox chckbxSpandex = new JCheckBox("Spandex");
+		chckbxSpandex = new JCheckBox("Spandex");
 		chckbxSpandex.setBackground(Color.WHITE);
 		chckbxSpandex.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxSpandex.setBounds(104, 222, 96, 23);
+		chckbxSpandex.setBounds(10, 282, 96, 23);
 		checkinPanel.add(chckbxSpandex);
 		
-		JCheckBox chckbxGlittered = new JCheckBox("Glittered");
+		chckbxGlittered = new JCheckBox("Glittered");
 		chckbxGlittered.setBackground(Color.WHITE);
 		chckbxGlittered.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxGlittered.setBounds(202, 222, 109, 23);
+		chckbxGlittered.setBounds(10, 308, 109, 23);
 		checkinPanel.add(chckbxGlittered);
 		
-		JLabel lblSoecialRequest = new JLabel("Special Request");
-		lblSoecialRequest.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblSoecialRequest.setBounds(10, 260, 128, 16);
-		checkinPanel.add(lblSoecialRequest);
+		btnCheckinSave = new JButton("Save");
+		btnCheckinSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveCheckinStatus();
+			}
+		});
+		btnCheckinSave.setBackground(SystemColor.control);
+		btnCheckinSave.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnCheckinSave.setBounds(10, 418, 117, 41);
+		btnCheckinSave.setVisible(false);
+		checkinPanel.add(btnCheckinSave);
 		
-		JCheckBox chckbxSameBand = new JCheckBox("Same Band");
-		chckbxSameBand.setBackground(Color.WHITE);
-		chckbxSameBand.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxSameBand.setBounds(10, 283, 117, 23);
-		checkinPanel.add(chckbxSameBand);
-		
-		JCheckBox chckbxSameDorm = new JCheckBox("Same Dorm");
-		chckbxSameDorm.setBackground(Color.WHITE);
-		chckbxSameDorm.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxSameDorm.setBounds(10, 323, 109, 23);
-		checkinPanel.add(chckbxSameDorm);
-		
-		JButton btnSave_2 = new JButton("Save");
-		btnSave_2.setBackground(SystemColor.control);
-		btnSave_2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnSave_2.setBounds(10, 430, 117, 29);
-		checkinPanel.add(btnSave_2);
-		
-		JButton btnCancel_1 = new JButton("Cancel");
-		btnCancel_1.setBackground(SystemColor.control);
-		btnCancel_1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnCancel_1.setBounds(185, 430, 117, 29);
-		checkinPanel.add(btnCancel_1);
+		btnCheckinCancel = new JButton("Cancel");
+		btnCheckinCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearCheckinFields();
+			}
+		});
+		btnCheckinCancel.setBackground(SystemColor.control);
+		btnCheckinCancel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnCheckinCancel.setBounds(185, 418, 117, 41);
+		btnCheckinCancel.setVisible(false);
+		checkinPanel.add(btnCheckinCancel);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		
@@ -1646,21 +1818,25 @@ public class MainForm {
 		tableCheckin.getColumnModel().getColumn(8).setPreferredWidth(40);
 		tableCheckin.getColumnModel().getColumn(9).setPreferredWidth(40);
 		tableCheckin.setRowHeight(21);
+		ListSelectionModel selCheckinModel = tableCheckin.getSelectionModel(); 
+		selCheckinModel.addListSelectionListener(new ListSelectionListener(){
+	        @Override
+			public void valueChanged(ListSelectionEvent event) {
+	            if(!selCheckinModel.isSelectionEmpty()) {populateCheckinFields();}
+	        }
+	    });
 		scrollPane_1.setViewportView(tableCheckin);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(139, 284, 157, 20);
-		checkinPanel.add(comboBox);
-		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(139, 324, 157, 20);
-		checkinPanel.add(comboBox_1);
-		
-		JCheckBox chckbxCheckInCamper = new JCheckBox("Check in Camper");
+		chckbxCheckInCamper = new JCheckBox("Check in Camper");
 		chckbxCheckInCamper.setFont(new Font("Calibri", Font.PLAIN, 18));
 		chckbxCheckInCamper.setBackground(Color.WHITE);
-		chckbxCheckInCamper.setBounds(10, 386, 217, 23);
+		chckbxCheckInCamper.setBounds(10, 366, 217, 23);
 		checkinPanel.add(chckbxCheckInCamper);
+		
+		lblPleaseCheckinCamper = new JLabel("Please Checkin for");
+		lblPleaseCheckinCamper.setFont(new Font("Calibri", Font.PLAIN, 16));
+		lblPleaseCheckinCamper.setBounds(10, 13, 130, 32);
+		checkinPanel.add(lblPleaseCheckinCamper);
 		
 		dormAsnPanel = new JPanel();
 		dormAsnPanel.setBackground(SystemColor.window);
@@ -1927,7 +2103,7 @@ public class MainForm {
 		welcomeLabel = new JLabel("Welcome, "+appUser);
 		welcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		welcomeLabel.setFont(new Font("Calibri", Font.BOLD, 18));
-		welcomeLabel.setBounds(707, 31, 130, 20);
+		welcomeLabel.setBounds(664, 31, 130, 20);
 		
 		frmSmartFursCamper.getContentPane().add(welcomeLabel);
 		
@@ -1935,7 +2111,7 @@ public class MainForm {
 		campDateDropdown.setBackground(Color.WHITE);
 		campDateDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"2017 Jun", "2017 July", "2017 Augest"}));
 		campDateDropdown.setFont(new Font("Calibri", Font.PLAIN, 18));
-		campDateDropdown.setBounds(952, 27, 123, 29);
+		campDateDropdown.setBounds(917, 27, 158, 29);
 		campDateDropdown.setSelectedIndex(2);
 		frmSmartFursCamper.getContentPane().add(campDateDropdown);
 		
@@ -1943,7 +2119,7 @@ public class MainForm {
 		JLabel lblSetCamp = new JLabel("Set Camp:");
 		lblSetCamp.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblSetCamp.setFont(new Font("Calibri", Font.PLAIN, 18));
-		lblSetCamp.setBounds(847, 31, 88, 20);
+		lblSetCamp.setBounds(804, 31, 88, 20);
 		frmSmartFursCamper.getContentPane().add(lblSetCamp);
 		
 		JLabel lblCampersManagementSystem = new JLabel("Campers Management System");
