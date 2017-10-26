@@ -14,10 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Window.Type;
 import javax.swing.Icon;
@@ -56,156 +53,179 @@ import javax.swing.JList;
 
 public class MainForm {
 
-	private JFrame frmSmartFursCamper;
-	private JTextField firstnameTextField;
-	private JTextField lastnameTextField;
-	private JTextField dobTextField;
-	private JTable camperTable;
+	//## Defines main UI components 
+	private JFrame main_Frame;
+	private JTabbedPane main_TabPane;
+	private JLabel main_WelcomeLabel;
+	private JLabel main_TopImageLabel;
+	private JLabel main_MainTitleLabel;
+	private JLabel main_SetCampLabel;
+	private JComboBox<String> main_CampDateDropdown;
+	
+	//## Defines five panels
+	private JPanel ap_MainPanel;
+	private JPanel mn_MainPanel;
+	private JPanel ci_MainPanel;
+	private JPanel da_MainPanel;
+	private JPanel bd_MainPanel;
+	
+	//########################################################
+	//## US1 components on Application Panel prefix - 'ap'
+	//########################################################
+	private JScrollPane ap_ScrollPane;
+	private JRadioButton ap_BoyRadioButton;
+	private JRadioButton ap_GirlRadioButton;
+	private JButton ap_AddButton;
+	private JButton ap_SaveButton;
+	private JButton ap_CancelButton;
+	private JButton ap_DeleteButton;
+	private ButtonGroup ap_GenderBtnGroup;
+	private JLabel ap_RecivedOnLabel;
+	private JLabel ap_LastnameLabel;
+	private JLabel ap_FirstnameLabel;
+	private JLabel ap_InstrumentLabel;
+	private JLabel ap_IdLabel;
+	private JLabel ap_DateOfBirthLabel;
+	private JLabel ap_GenderLabel;
+	private JTextField ap_RecivedOnTextField;
+	private JTextField ap_InstrumentTextField;
+	private JTextField ap_FirstnameTextField;
+	private JTextField ap_LastnameTextField;
+	private JTextField ap_DateOfBirthTextField;
+	private JCheckBox ap_HasEssayCheckBox;
+	private JCheckBox ap_HasRecordingCheckBox;
+	private JCheckBox ap_HasPaymentCheckBox;
+	private JTable ap_applicationTable;
+	
+	//########################################################
+	//## US2 components on Mailing Notification Panel prefix - 'mn'
+	//########################################################
+	private JScrollPane mn_ScrollPane;	
+    private JPanel mn_MailTextPanePanel;
+	private JButton mn_CancelButton;
+	private JButton mn_GenerateMailButton;
+	private JButton mn_SaveButton;
+	private JLabel mn_AcceptGirlLabel;
+	private JLabel mn_AcceptBoysLabel;
+	private JLabel mn_FullnameLabel;
+	private JLabel mn_DecisionLabel;
+	private JLabel mn_CategoryLabel;
+	private JLabel mn_SkillLevelLabel;
+	private JLabel mn_SelectDecisionLabel;
+	private JLabel mn_InstrumentalistNumLabel;
+	private JLabel mn_CategoryBGLabel;
+	private JLabel mn_TotalBoyLabel;
+	private JLabel mn_TotalGirlLabel;
+	private JLabel mn_SingerNumLabel;
+	private JLabel mn_KeyboardistNumLabel;
+	private JLabel mn_BassistNumLabel;
+	private JLabel mn_DrummerNumLabel;
+	private JLabel mn_GuitaristNumLabel;
+	private JSpinner mn_TelentLevelSpinner;
+	private JTextPane mn_MailTextPane;
+	private JTable mn_CandidatesTable;
+	private JComboBox<String> mn_StatusDropdown;
+	private JComboBox<String> mn_CategoryDropdown;
+	
+	//########################################################
+	//## US3 components on Camper Check-in Panel prefix - 'ci'
+	//########################################################
+	private JScrollPane ci_ScrollPane;
+	private JLabel ci_CheckinInfoLabel;
+	private JLabel ci_ClothLabel;
+	private JLabel ci_PleaseCheckinCamperLabel;
+	private JLabel ci_CamperNameLabel;
+	private JCheckBox ci_ArrivalpackCheckBox;
+	private JCheckBox ci_MusicalInstrumentCheckBox;
+	private JCheckBox ci_EquipmentSuppliesCheckBox;
+	private JCheckBox ci_LeatherCheckBox;
+	private JCheckBox ci_SpandexCheckBox;
+	private JCheckBox ci_GlitteredCheckBox;
+	private JCheckBox ci_CheckInCamperCheckBox;	
+	private JButton ci_SaveButton;
+	private JButton ci_CancelButton;
+	private JTable ci_CheckinTable;
+	
+	//########################################################
+	//## US4 components on Dorm Assignment Panel prefix - 'da'
+	//########################################################
+	private JLabel da_RequestSwitchDormLabel;
+	private JButton da_AutoAssignDormButton;
+	private JList<DormItem> da_GirlDorm1List;
+	private JList<DormItem> da_GirlDorm2List;
+	private JList<DormItem> da_GirlDorm3List;
+	private JList<DormItem> da_BoyDorm1List;
+	private JList<DormItem> da_BoyDorm2List;
+	private JList<DormItem> da_BoyDorm3List;
+	private JPanel da_GirlDorm1Panel;
+	private JPanel da_GirlDorm2Panel;
+	private JPanel da_GirlDorm3Panel;
+	private JPanel da_BoyDorm1Panel;
+	private JPanel da_BoyDorm2Panel;
+	private JPanel da_BoyDorm3Panel;
+	private DefaultListModel<DormItem> da_GirlDorm1Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> da_GirlDorm2Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> da_GirlDorm3Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> da_BoyDorm1Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> da_BoyDorm2Model = new DefaultListModel<DormItem>();
+	private DefaultListModel<DormItem> da_BoyDorm3Model = new DefaultListModel<DormItem>();
+	private JComboBox<DormItem> da_Swaper1Dropdown;
+	private JComboBox<DormItem> da_Swaper2Dropdown;
+	private JButton da_RequestButton;
+	private DefaultComboBoxModel<DormItem> da_Swaper1Model = new DefaultComboBoxModel<DormItem>();
+	private DefaultComboBoxModel<DormItem> da_Swaper2Model = new DefaultComboBoxModel<DormItem>();
 
-	//defines five panels
-	private JPanel applicationPanel;
-	private JPanel mailingPanel;
-	private JPanel checkinPanel;
-	private JPanel dormAsnPanel;
-	private JPanel bandAsnPanel;
+	//########################################################
+	//## US5 components on Band Assignment Panel prefix - 'bd'
+	//########################################################
+	private JLabel bd_SwitchBandLabel;
+	private JButton bd_AutoAssignBandButton;
+	private JButton bd_RequestButton;
+	private JList<BandItem> bd_Band1List;
+	private JList<BandItem> bd_Band2List;
+	private JList<BandItem> bd_Band3List;
+	private JList<BandItem> bd_Band4List;
+	private JList<BandItem> bd_Band5List;
+	private JList<BandItem> bd_Band6List;
+	private JList<BandItem> bd_Band7List;
+	private JList<BandItem> bd_Band8List;
+	private JComboBox<BandItem> bd_Swaper1Dropdown;
+	private JComboBox<BandItem> bd_Swaper2Dropdown;
+	private JPanel bd_Band1Panel;
+	private JPanel bd_Band2Panel;
+	private JPanel bd_Band3Panel;
+	private JPanel bd_Band4Panel;
+	private JPanel bd_Band5Panel;
+	private JPanel bd_Band6Panel;
+	private JPanel bd_Band7Panel;
+	private JPanel bd_Band8Panel;
+	private DefaultListModel<BandItem> bd_Band1Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band2Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band3Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band4Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band5Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band6Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band7Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd_Band8Model = new DefaultListModel<BandItem>();
+	private DefaultComboBoxModel<BandItem> bd_Swaper1Model = new DefaultComboBoxModel<BandItem>();
+	private DefaultComboBoxModel<BandItem> bd_Swaper2Model = new DefaultComboBoxModel<BandItem>();
 	
-	private JRadioButton maleRadioButton;
-	private JRadioButton femaleRadioButton;
-	private ButtonGroup genderBtnGroup;
-	private JLabel lblApplicationRecivedOn;
-	private JTextField recvdayTextField;
-	private JTable mailingTable;
-	private JTextField instrumentTextField;
-	private JCheckBox hasEssayCheckBox;
-	private JCheckBox hasRecordingCheckBox;
-	private JCheckBox hasPaymentCheckBox;
-	
-	private JLabel idLabel;
-	private JLabel lblDob;
-	private JLabel lblGender;
-	private JButton btnAdd;
-	private JButton btnSave;
-	private JButton btnDelete;
-	private JButton btnCancel;
-	private JScrollPane applicationScrollPane;
-	private JTextPane txtpnMail;
-	
-	private Boolean isApplicationEditMode = false;
-	
-	private JLabel lblMailingFname;
-	private JComboBox<String> statusDropdown;
-	private JSpinner spinnerTelentLvl;
-	private JComboBox<String> dropdownCategory;
-	private JButton btnMailingCancel;
-	private JButton btnGenerateMail;
-	private JLabel lblNewLabel;
-	private JButton btnMailingSave;
-	
-	private JLabel labelMailingTotalBoy;
-	private JLabel labelMailingTotalGril;
-	private JLabel labelSingerNum;
-	private JLabel lblInstrumentalistNum;
-	private JLabel lblKeyboardistNum;
-	private JLabel lblBassistNum;
-	private JLabel lblDrummerNum;
-	private JLabel labelGuitaristNum;
-	private JLabel lblCategoryboygirl;
-	
-	private JButton btnAutoAssignDorm;
-	private JList<DormItem> listGirlDorm1;
-	private JList<DormItem> listGirlDorm2;
-	private JList<DormItem> listGirlDorm3;
-	private JList<DormItem> listBoyDorm1;
-	private JList<DormItem> listBoyDorm2;
-	private JList<DormItem> listBoyDorm3;
-	
-	private DefaultListModel<DormItem> girlDorm1Model = new DefaultListModel<DormItem>();
-	private DefaultListModel<DormItem> girlDorm2Model = new DefaultListModel<DormItem>();
-	private DefaultListModel<DormItem> girlDorm3Model = new DefaultListModel<DormItem>();
-	private DefaultListModel<DormItem> boyDorm1Model = new DefaultListModel<DormItem>();
-	private DefaultListModel<DormItem> boyDorm2Model = new DefaultListModel<DormItem>();
-	private DefaultListModel<DormItem> boyDorm3Model = new DefaultListModel<DormItem>();
-	
-	private JList<BandItem> listBand1;
-	private JList<BandItem> listBand2;
-	private JList<BandItem> listBand3;
-	private JList<BandItem> listBand4;
-	private JList<BandItem> listBand5;
-	private JList<BandItem> listBand6;
-	private JList<BandItem> listBand7;
-	private JList<BandItem> listBand8;
-	
-	private JComboBox<String> campDateDropdown;
-	private JButton btnRequest;
-	private JComboBox<DormItem> camperDropdownSwaper1;
-	private JComboBox<DormItem> camperDropdownSwaper2;
-	private JLabel welcomeLabel;
-	
-	private DefaultComboBoxModel<DormItem> dormSwaper1Model = new DefaultComboBoxModel<DormItem>();
-	private DefaultComboBoxModel<DormItem> dormSwaper2Model = new DefaultComboBoxModel<DormItem>();
-	
-	private DefaultComboBoxModel<BandItem> bandSwaper1Model = new DefaultComboBoxModel<BandItem>();
-	private DefaultComboBoxModel<BandItem> bandSwaper2Model = new DefaultComboBoxModel<BandItem>();
-	
-	private JComboBox<BandItem> bandDropdownSwaper1;
-	private JComboBox<BandItem> bandDropdownSwaper2;
-	
-	private ArrayList<Camper> allAptCampers = new ArrayList<Camper>();
+	//## Global Variables	
 	private boolean isDormAssigned = false;
-	private JTable tableCheckin;
-	private boolean isBandAssigned = false;
-	
-	
+	private boolean isBandAssigned = false;	
+	private boolean isApplicationEditMode = false;
 	private String appUser = "user";
+	private ArrayList<Camper> allAptCampers = new ArrayList<Camper>();
 	
-	private DefaultListModel<BandItem> band1Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band2Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band3Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band4Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band5Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band6Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band7Model = new DefaultListModel<BandItem>();
-	private DefaultListModel<BandItem> band8Model = new DefaultListModel<BandItem>();
-	private JLabel lblTopImg;
-	private JLabel lblPleaseCheckinCamper;
-	
-	private JLabel lblCheckinName;
-	private JCheckBox chckbxArrivalpack;
-	private JCheckBox chckbxMusicalInstrument;
-	private JCheckBox chckbxEquipmentSupplies;
-	private JCheckBox chckbxLeather;
-	private JCheckBox chckbxSpandex;
-	private JCheckBox chckbxGlittered;
-	
-	private JCheckBox chckbxCheckInCamper;
-	
-	private JButton btnCheckinSave;
-	private JButton btnCheckinCancel;
+	//## Global Methods
 	
 	public void SetAppUser(String user) {
 		appUser = user;
-		welcomeLabel.setText("Welcome, "+appUser);
+		main_WelcomeLabel.setText("Welcome, "+ appUser);
 	}
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainForm window = new MainForm();
-					window.frmSmartFursCamper.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public void Display() {
-		
-		frmSmartFursCamper.setVisible(true);
+	public void Display() {		
+		main_Frame.setVisible(true);
 	}
 	
 	/**
@@ -221,7 +241,7 @@ public class MainForm {
 	 */
 	private void reloadApplicationTable() {
 		ArrayList<Camper> applicationCampers =FuRSDBUtility.getApplicationCampers();
-	    DefaultTableModel model = (DefaultTableModel)camperTable.getModel();
+	    DefaultTableModel model = (DefaultTableModel)ap_applicationTable.getModel();
 	    model.setRowCount(0);
 	    Object rowData[] = new Object[10];
 	    for(int i=0; i<applicationCampers.size();i++) {
@@ -239,28 +259,27 @@ public class MainForm {
 	    }
 	    
 	    //firstname, lastname, birthday, gender, instrument,
-		//camperTable.setModel( DbUtils.resultSetToTableModel(applicationRs));
+		//ap_applicationTable.setModel( DbUtils.resultSetToTableModel(applicationRs));
 	    
 	    //ResultSet mailingRs =FuRSDBUtility.getMailingCampers();
-	    //mailingTable.setModel( DbUtils.resultSetToTableModel(mailingRs));
+	    //mn_CandidatesTable.setModel( DbUtils.resultSetToTableModel(mailingRs));
 	}
 	
 	private void cleanApplicationInputs() {
-		
-		recvdayTextField.setText("");
-		firstnameTextField.setText("");
-		lastnameTextField.setText("");
-		dobTextField.setText("");
-		instrumentTextField.setText("");
-		maleRadioButton.setSelected(true);
-		hasRecordingCheckBox.setSelected(false);
-		hasEssayCheckBox.setSelected(false);
-		hasPaymentCheckBox.setSelected(false);
+		ap_RecivedOnTextField.setText("");
+		ap_FirstnameTextField.setText("");
+		ap_LastnameTextField.setText("");
+		ap_DateOfBirthTextField.setText("");
+		ap_InstrumentTextField.setText("");
+		ap_BoyRadioButton.setSelected(true);
+		ap_HasRecordingCheckBox.setSelected(false);
+		ap_HasEssayCheckBox.setSelected(false);
+		ap_HasPaymentCheckBox.setSelected(false);
 	}
 	
 	private boolean ValidateApplicationInput() {
 		//should do a validation logic here
-		String fname = firstnameTextField.getText().trim();
+		String fname = ap_FirstnameTextField.getText().trim();
 		String errmsg = "";
 		Boolean validateResult = true;
 		
@@ -268,12 +287,12 @@ public class MainForm {
 			errmsg += "Firstname cannot be blank!\n";
 			validateResult = false;
 		}
-		String lname = lastnameTextField.getText().trim();
+		String lname = ap_LastnameTextField.getText().trim();
 		if(lname== null || lname.isEmpty()) {
 			errmsg += "Lastname cannot be blank!\n";
 			validateResult = false;
 		}
-		String recvdaytxt = recvdayTextField.getText().trim();
+		String recvdaytxt = ap_RecivedOnTextField.getText().trim();
 		if(recvdaytxt== null || recvdaytxt.isEmpty()) {
 			errmsg += "Received Date cannot be blank!\n";
 			validateResult = false;
@@ -283,7 +302,7 @@ public class MainForm {
 			validateResult = false;
 		} else {
 			//validate receive date
-			String campDateName = (String)campDateDropdown.getSelectedItem();
+			String campDateName = (String)main_CampDateDropdown.getSelectedItem();
 			String campDateTxt = "";
 			if(campDateName.equals("2017 Jun")) {
 				campDateTxt = "06/04/2017";
@@ -299,7 +318,7 @@ public class MainForm {
 		}
 		
 		//should check the date format
-		String bdatetxt = dobTextField.getText().trim();
+		String bdatetxt = ap_DateOfBirthTextField.getText().trim();
 		if(bdatetxt== null || bdatetxt.isEmpty()) {
 			errmsg += "Birth Date cannot be blank!\n";
 			validateResult = false;
@@ -308,7 +327,7 @@ public class MainForm {
 			errmsg += "Birth Date format incorrect!\n";
 			validateResult = false;
 		}
-		String instrumenttxt = instrumentTextField.getText().trim();
+		String instrumenttxt = ap_InstrumentTextField.getText().trim();
 		if(instrumenttxt== null || instrumenttxt.isEmpty()) {
 			errmsg += "Instrument cannot be blank!";
 			validateResult = false;
@@ -329,27 +348,27 @@ public class MainForm {
 		}
 		
 		Camper camperToAdd = new Camper();
-		camperToAdd.setReceivedDate(recvdayTextField.getText());
-		camperToAdd.setFirstname(firstnameTextField.getText());
-		camperToAdd.setLastname(lastnameTextField.getText());
-		camperToAdd.setBirthday(dobTextField.getText());
-		camperToAdd.setInstrument(instrumentTextField.getText());
-		if(maleRadioButton.isSelected()) {
+		camperToAdd.setReceivedDate(ap_RecivedOnTextField.getText());
+		camperToAdd.setFirstname(ap_FirstnameTextField.getText());
+		camperToAdd.setLastname(ap_LastnameTextField.getText());
+		camperToAdd.setBirthday(ap_DateOfBirthTextField.getText());
+		camperToAdd.setInstrument(ap_InstrumentTextField.getText());
+		if(ap_BoyRadioButton.isSelected()) {
 			camperToAdd.setGender("Boy");
 		} else {
 			camperToAdd.setGender("Girl");
 		}
-		if(hasEssayCheckBox.isSelected()) {
+		if(ap_HasEssayCheckBox.isSelected()) {
 			camperToAdd.setHasPersonalEssay("YES");
 		} else {
 			camperToAdd.setHasPersonalEssay("NO");
 		}
-		if(hasRecordingCheckBox.isSelected()) {
+		if(ap_HasRecordingCheckBox.isSelected()) {
 			camperToAdd.setHasRecording("YES");
 		} else {
 			camperToAdd.setHasRecording("NO");
 		}
-		if(hasPaymentCheckBox.isSelected()) {
+		if(ap_HasPaymentCheckBox.isSelected()) {
 			camperToAdd.setHasDepositPayment("YES");
 		} else {
 			camperToAdd.setHasDepositPayment("NO");
@@ -374,30 +393,30 @@ public class MainForm {
 			return;
 		}
 		Camper camperToUpdate = new Camper();
-		String idstr = camperTable.getValueAt(camperTable.getSelectedRow(), 0).toString();
+		String idstr = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 0).toString();
 	    int id =Integer.parseInt(idstr);
 		camperToUpdate.setId(id);
-		camperToUpdate.setReceivedDate(recvdayTextField.getText());
-		camperToUpdate.setFirstname(firstnameTextField.getText());
-		camperToUpdate.setLastname(lastnameTextField.getText());
-		camperToUpdate.setBirthday(dobTextField.getText());
-		camperToUpdate.setInstrument(instrumentTextField.getText());
-		if(maleRadioButton.isSelected()) {
+		camperToUpdate.setReceivedDate(ap_RecivedOnTextField.getText());
+		camperToUpdate.setFirstname(ap_FirstnameTextField.getText());
+		camperToUpdate.setLastname(ap_LastnameTextField.getText());
+		camperToUpdate.setBirthday(ap_DateOfBirthTextField.getText());
+		camperToUpdate.setInstrument(ap_InstrumentTextField.getText());
+		if(ap_BoyRadioButton.isSelected()) {
 			camperToUpdate.setGender("Boy");
 		} else {
 			camperToUpdate.setGender("Girl");
 		}
-		if(hasEssayCheckBox.isSelected()) {
+		if(ap_HasEssayCheckBox.isSelected()) {
 			camperToUpdate.setHasPersonalEssay("YES");
 		} else {
 			camperToUpdate.setHasPersonalEssay("NO");
 		}
-		if(hasRecordingCheckBox.isSelected()) {
+		if(ap_HasRecordingCheckBox.isSelected()) {
 			camperToUpdate.setHasRecording("YES");
 		} else {
 			camperToUpdate.setHasRecording("NO");
 		}
-		if(hasPaymentCheckBox.isSelected()) {
+		if(ap_HasPaymentCheckBox.isSelected()) {
 			camperToUpdate.setHasDepositPayment("YES");
 		} else {
 			camperToUpdate.setHasDepositPayment("NO");
@@ -420,9 +439,9 @@ public class MainForm {
 			//something goes wrong
 			return;
 		}
-		String id = camperTable.getValueAt(camperTable.getSelectedRow(), 0).toString();
-		String fname = camperTable.getValueAt(camperTable.getSelectedRow(), 2).toString();
-    	String lname = camperTable.getValueAt(camperTable.getSelectedRow(), 3).toString();
+		String id = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 0).toString();
+		String fname = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 2).toString();
+    	String lname = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 3).toString();
     	
 		int dialogButton = JOptionPane.YES_NO_OPTION;
 		int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete "+fname+" "+lname+"?","Warning",dialogButton);
@@ -431,11 +450,11 @@ public class MainForm {
 				JOptionPane.showMessageDialog(null, fname+" "+lname + " has been deleted from our candidate list.");
 				//setback to add mode
 				isApplicationEditMode = false;
-		    	btnAdd.setVisible(true);
-		    	btnSave.setVisible(false);
-		    	btnDelete.setVisible(false);
-		    	btnCancel.setVisible(false);
-		    	idLabel.setVisible(false);
+		    	ap_AddButton.setVisible(true);
+		    	ap_SaveButton.setVisible(false);
+		    	ap_DeleteButton.setVisible(false);
+		    	ap_CancelButton.setVisible(false);
+		    	ap_IdLabel.setVisible(false);
 		    	cleanApplicationInputs();
 				reloadApplicationTable();
 				reloadMailingCampersTable();
@@ -445,58 +464,58 @@ public class MainForm {
 	
 	private void cancelApplicationEdit() {
 		isApplicationEditMode = false;
-    	btnAdd.setVisible(true);
-    	btnSave.setVisible(false);
-    	btnDelete.setVisible(false);
-    	btnCancel.setVisible(false);
-    	idLabel.setVisible(false);
+    	ap_AddButton.setVisible(true);
+    	ap_SaveButton.setVisible(false);
+    	ap_DeleteButton.setVisible(false);
+    	ap_CancelButton.setVisible(false);
+    	ap_IdLabel.setVisible(false);
     	cleanApplicationInputs();
 	}
 	
 	private void populateFields() {
 		isApplicationEditMode = true;
-    	btnAdd.setVisible(false);
-    	btnSave.setVisible(true);
-    	btnDelete.setVisible(true);
-    	btnCancel.setVisible(true);
-    	idLabel.setVisible(true);
-    	String id = camperTable.getValueAt(camperTable.getSelectedRow(), 0).toString();
-    	String recvDate = camperTable.getValueAt(camperTable.getSelectedRow(), 1).toString();
-    	String fname = camperTable.getValueAt(camperTable.getSelectedRow(), 2).toString();
-    	String lname = camperTable.getValueAt(camperTable.getSelectedRow(), 3).toString();
-    	String bDate = camperTable.getValueAt(camperTable.getSelectedRow(), 4).toString();
-    	String gender = camperTable.getValueAt(camperTable.getSelectedRow(), 5).toString();
-    	String instrmt = camperTable.getValueAt(camperTable.getSelectedRow(), 6).toString();
-    	String hasEsy = camperTable.getValueAt(camperTable.getSelectedRow(), 7).toString();
-    	String hasRec = camperTable.getValueAt(camperTable.getSelectedRow(), 8).toString();
-    	String hasDps = camperTable.getValueAt(camperTable.getSelectedRow(), 9).toString();
+    	ap_AddButton.setVisible(false);
+    	ap_SaveButton.setVisible(true);
+    	ap_DeleteButton.setVisible(true);
+    	ap_CancelButton.setVisible(true);
+    	ap_IdLabel.setVisible(true);
+    	String id = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 0).toString();
+    	String recvDate = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 1).toString();
+    	String fname = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 2).toString();
+    	String lname = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 3).toString();
+    	String bDate = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 4).toString();
+    	String gender = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 5).toString();
+    	String instrmt = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 6).toString();
+    	String hasEsy = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 7).toString();
+    	String hasRec = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 8).toString();
+    	String hasDps = ap_applicationTable.getValueAt(ap_applicationTable.getSelectedRow(), 9).toString();
     	
-    	idLabel.setText("Id: "+id);
-    	recvdayTextField.setText(recvDate);
-    	firstnameTextField.setText(fname);
-    	lastnameTextField.setText(lname);
-    	dobTextField.setText(bDate);
-    	instrumentTextField.setText(instrmt);
+    	ap_IdLabel.setText("Id: "+id);
+    	ap_RecivedOnTextField.setText(recvDate);
+    	ap_FirstnameTextField.setText(fname);
+    	ap_LastnameTextField.setText(lname);
+    	ap_DateOfBirthTextField.setText(bDate);
+    	ap_InstrumentTextField.setText(instrmt);
     	if(gender.equals("Boy")) {
-    		maleRadioButton.setSelected(true);
+    		ap_BoyRadioButton.setSelected(true);
     	} else {
-    		femaleRadioButton.setSelected(true);
+    		ap_GirlRadioButton.setSelected(true);
     	}
     	
     	if(hasEsy.equals("YES")) {
-    		hasEssayCheckBox.setSelected(true);
+    		ap_HasEssayCheckBox.setSelected(true);
     	} else {
-    		hasEssayCheckBox.setSelected(false);
+    		ap_HasEssayCheckBox.setSelected(false);
     	}
     	if(hasRec.equals("YES")) {
-    		hasRecordingCheckBox.setSelected(true);
+    		ap_HasRecordingCheckBox.setSelected(true);
     	} else {
-    		hasRecordingCheckBox.setSelected(false);
+    		ap_HasRecordingCheckBox.setSelected(false);
     	}
     	if(hasDps.equals("YES")) {
-    		hasPaymentCheckBox.setSelected(true);
+    		ap_HasPaymentCheckBox.setSelected(true);
     	} else {
-    		hasPaymentCheckBox.setSelected(false);
+    		ap_HasPaymentCheckBox.setSelected(false);
     	}
     	
 	}
@@ -512,7 +531,7 @@ public class MainForm {
 			@SuppressWarnings("resource")
 			XWPFDocument document = new XWPFDocument();
 			FileOutputStream out = new FileOutputStream(new File("notification.docx"));
-			String content = txtpnMail.getText();
+			String content = mn_MailTextPane.getText();
 			String[] paraArray = content.split("\r\n");
 			for(String p:paraArray) {
 				XWPFParagraph paragraph = document.createParagraph();
@@ -536,7 +555,7 @@ public class MainForm {
 	
 	private void reloadMailingCampersTable() {
 		ArrayList<Camper> mailCampers =FuRSDBUtility.getMailingCampers();
-	    DefaultTableModel model = (DefaultTableModel)mailingTable.getModel();
+	    DefaultTableModel model = (DefaultTableModel)mn_CandidatesTable.getModel();
 	    model.setRowCount(0);
 	    Object rowData[] = new Object[12];
 	    for(int i=0; i<mailCampers.size();i++) {
@@ -571,14 +590,14 @@ public class MainForm {
 	    int numinstrumentalistboy = getAcceptCategoryByGender("Boy", "Instrumentalist", mailCampers);
 	    int numinstrumentalistgirl = getAcceptCategoryByGender("Girl", "Instrumentalist", mailCampers);
 	    
-	    labelSingerNum.setText("Singer: "+numsingerboy+"/"+numsingergirl);
-	    labelGuitaristNum.setText("Guitarist: "+numguitaristboy+"/"+numguitaristgirl);
-	    lblDrummerNum.setText("Drummer: "+numdrummerboy+"/"+numdrummergirl);
-	    lblBassistNum.setText("Bassist: "+numbassistboy+"/"+numbassistgirl);
-	    lblKeyboardistNum.setText("Keyboardist: "+numkeyboardistboy+"/"+numkeyboardistgirl);
-	    lblInstrumentalistNum.setText("Instrumentalist: "+numinstrumentalistboy+"/"+numinstrumentalistgirl);
-	    labelMailingTotalGril.setText(totalgirls + "/24");
-	    labelMailingTotalBoy.setText(totalboys + "/24");
+	    mn_SingerNumLabel.setText("Singer: "+numsingerboy+"/"+numsingergirl);
+	    mn_GuitaristNumLabel.setText("Guitarist: "+numguitaristboy+"/"+numguitaristgirl);
+	    mn_DrummerNumLabel.setText("Drummer: "+numdrummerboy+"/"+numdrummergirl);
+	    mn_BassistNumLabel.setText("Bassist: "+numbassistboy+"/"+numbassistgirl);
+	    mn_KeyboardistNumLabel.setText("Keyboardist: "+numkeyboardistboy+"/"+numkeyboardistgirl);
+	    mn_InstrumentalistNumLabel.setText("Instrumentalist: "+numinstrumentalistboy+"/"+numinstrumentalistgirl);
+	    mn_TotalGirlLabel.setText(totalgirls + "/24");
+	    mn_TotalBoyLabel.setText(totalboys + "/24");
 	    
 	    
 	}
@@ -586,32 +605,32 @@ public class MainForm {
 	@SuppressWarnings("null")
 	private void populateMailingFields() {
 		
-		btnMailingSave.setVisible(true);
-		btnMailingCancel.setVisible(true);
-		btnGenerateMail.setVisible(true);
-		statusDropdown.setEnabled(true);
-		dropdownCategory.setEnabled(true);
+		mn_SaveButton.setVisible(true);
+		mn_CancelButton.setVisible(true);
+		mn_GenerateMailButton.setVisible(true);
+		mn_StatusDropdown.setEnabled(true);
+		mn_CategoryDropdown.setEnabled(true);
 		
-    	String fname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 2).toString();
+    	String fname = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 2).toString();
     	String status = "";
-    	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 1) !=null) {
-    		status	= mailingTable.getValueAt(mailingTable.getSelectedRow(), 1).toString();
+    	if(mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 1) !=null) {
+    		status	= mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 1).toString();
     	}
     	String talentlvltxt = "";
-    	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 8) !=null) {
-    		talentlvltxt	= mailingTable.getValueAt(mailingTable.getSelectedRow(), 8).toString();
+    	if(mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 8) !=null) {
+    		talentlvltxt	= mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 8).toString();
     	}
     	String category = "";
-    	if(mailingTable.getValueAt(mailingTable.getSelectedRow(), 7) !=null) {
-    		category = mailingTable.getValueAt(mailingTable.getSelectedRow(), 7).toString();
+    	if(mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 7) !=null) {
+    		category = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 7).toString();
     	}
     	
     	//set to controls
-    	lblMailingFname.setText(fname);
+    	mn_FullnameLabel.setText(fname);
     	if(status.equals("Accept")||status.equals("Deny")) {
-    		statusDropdown.setSelectedItem(status);
+    		mn_StatusDropdown.setSelectedItem(status);
     	} else {
-    		statusDropdown.setSelectedItem("Undecided");
+    		mn_StatusDropdown.setSelectedItem("Undecided");
     	}
     	
     	int talentlvl = 0;   	
@@ -620,21 +639,21 @@ public class MainForm {
     	} catch (Exception ex) {
     		ex.printStackTrace();
     	}
-    	spinnerTelentLvl.setValue(talentlvl);
+    	mn_TelentLevelSpinner.setValue(talentlvl);
     	
     	if(category!=null ||!category.isEmpty()) {
-    		dropdownCategory.setSelectedItem(category);
+    		mn_CategoryDropdown.setSelectedItem(category);
     	}
     	else {
-    		dropdownCategory.setSelectedItem("Not Assigned");
+    		mn_CategoryDropdown.setSelectedItem("Not Assigned");
     	}
 	}
 	
 	private void mailingStatusChange() {
-		String selStatus = statusDropdown.getSelectedItem().toString();
+		String selStatus = mn_StatusDropdown.getSelectedItem().toString();
 		String content = "";
-		String fname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 2).toString();
-		String lname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 3).toString();
+		String fname = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 2).toString();
+		String lname = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 3).toString();
 		if(selStatus.equals("Accept")) {
 			content = String.format(FuRSDBUtility.AcceptMailContent, fname, lname);
 		} else if(selStatus.equals("Deny")) {
@@ -642,22 +661,22 @@ public class MainForm {
 		} else {
 			content = "";
 		}
-		txtpnMail.setText(content);
+		mn_MailTextPane.setText(content);
 	}
 	
 	private void clearMailingFields(boolean isStart) {
-		btnMailingSave.setVisible(false);
-		btnMailingCancel.setVisible(false);
-		btnGenerateMail.setVisible(false);
-		statusDropdown.setEnabled(false);
-		dropdownCategory.setEnabled(false);
-		spinnerTelentLvl.setValue(0);
+		mn_SaveButton.setVisible(false);
+		mn_CancelButton.setVisible(false);
+		mn_GenerateMailButton.setVisible(false);
+		mn_StatusDropdown.setEnabled(false);
+		mn_CategoryDropdown.setEnabled(false);
+		mn_TelentLevelSpinner.setValue(0);
 		
-		txtpnMail.setText("");
-		lblMailingFname.setText("");
+		mn_MailTextPane.setText("");
+		mn_FullnameLabel.setText("");
 		if(!isStart) {
-			dropdownCategory.setSelectedIndex(0);
-			statusDropdown.setSelectedIndex(0);
+			mn_CategoryDropdown.setSelectedIndex(0);
+			mn_StatusDropdown.setSelectedIndex(0);
 		}
 	}
 	
@@ -697,17 +716,17 @@ public class MainForm {
 	private void saveCamperStatus() {
 		
 		Camper camperToUpdate = new Camper();
-		String idstr = mailingTable.getValueAt(mailingTable.getSelectedRow(), 0).toString();
+		String idstr = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 0).toString();
 	    int id =Integer.parseInt(idstr);
 		camperToUpdate.setId(id);
-		camperToUpdate.setCategory(dropdownCategory.getSelectedItem().toString());
-		camperToUpdate.setApplicationStatus(statusDropdown.getSelectedItem().toString());
-		camperToUpdate.setTalentLevel(spinnerTelentLvl.getValue().toString());
+		camperToUpdate.setCategory(mn_CategoryDropdown.getSelectedItem().toString());
+		camperToUpdate.setApplicationStatus(mn_StatusDropdown.getSelectedItem().toString());
+		camperToUpdate.setTalentLevel(mn_TelentLevelSpinner.getValue().toString());
 		
 		if(FuRSDBUtility.updateCamperStatus(camperToUpdate)) {
 			//show success msg
-			String fname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 2).toString();
-			String lname = mailingTable.getValueAt(mailingTable.getSelectedRow(), 3).toString();
+			String fname = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 2).toString();
+			String lname = mn_CandidatesTable.getValueAt(mn_CandidatesTable.getSelectedRow(), 3).toString();
 			String camperfullname = fname + " " + lname;
 			JOptionPane.showMessageDialog(null, camperfullname + " has been updated.");
 			//update the table
@@ -722,7 +741,7 @@ public class MainForm {
 	
 	private void  saveCheckinStatus() {
 		Camper camperToCheckin = new Camper();
-		String idstr = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 0).toString();
+		String idstr = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 0).toString();
 	    int id =Integer.parseInt(idstr);
 	    camperToCheckin.setId(id);
 	    String hasArrivalpack = "NO";
@@ -735,37 +754,37 @@ public class MainForm {
 	    int totalcloth = 0;
 	    boolean hasItemsNeeded = true;
 	    
-	    if(chckbxArrivalpack.isSelected()) {
+	    if(ci_ArrivalpackCheckBox.isSelected()) {
 	    	hasArrivalpack = "YES";
 	    } else {
 	    	hasItemsNeeded = false;
 	    }
 	    
-	    if(chckbxMusicalInstrument.isSelected()) {
+	    if(ci_MusicalInstrumentCheckBox.isSelected()) {
 	    	hasInstrument = "YES";
 	    } else {
 	    	hasItemsNeeded = false;
 	    }
 	    
-	    if(chckbxEquipmentSupplies.isSelected()) {
+	    if(ci_EquipmentSuppliesCheckBox.isSelected()) {
 	    	hasSupplies = "YES";
 	    } else {
 	    	hasItemsNeeded = false;
 	    }
 	    
-	    if(chckbxLeather.isSelected()) {
+	    if(ci_LeatherCheckBox.isSelected()) {
 	    	hasLeather = "YES";
 	    	totalcloth++;
 	    }
-	    if(chckbxGlittered.isSelected()) {
+	    if(ci_GlitteredCheckBox.isSelected()) {
 	    	hasGlittered = "YES";
 	    	totalcloth++;
 	    }
-	    if(chckbxSpandex.isSelected()) {
+	    if(ci_SpandexCheckBox.isSelected()) {
 	    	hasSpandex = "YES";
 	    	totalcloth++;
 	    }
-	    if(chckbxCheckInCamper.isSelected()) {
+	    if(ci_CheckInCamperCheckBox.isSelected()) {
 	    	checkedin = "YES";
 	    }
 	    
@@ -789,8 +808,8 @@ public class MainForm {
 	    
 		if(FuRSDBUtility.updateCamperCheckinStatus(camperToCheckin)) {
 			//show success msg
-			String fname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 1).toString();
-			String lname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 2).toString();
+			String fname = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 1).toString();
+			String lname = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 2).toString();
 			String camperfullname = fname + " " + lname;
 			JOptionPane.showMessageDialog(null, camperfullname + " has been updated.");
 			//update the table
@@ -800,25 +819,23 @@ public class MainForm {
 		}
 	}
 	
-	private void clearCheckinFields() {
-		
-		lblCheckinName.setText("");
-		btnCheckinSave.setVisible(false);
-		btnCheckinCancel.setVisible(false);
-		chckbxArrivalpack.setSelected(false);
-		chckbxMusicalInstrument.setSelected(false);
-		chckbxEquipmentSupplies.setSelected(false);
-		chckbxLeather.setSelected(false);
-		chckbxSpandex.setSelected(false);
-		chckbxGlittered.setSelected(false);
-
-		chckbxCheckInCamper.setSelected(false);
+	private void clearCheckinFields() {	
+		ci_CamperNameLabel.setText("");
+		ci_SaveButton.setVisible(false);
+		ci_CancelButton.setVisible(false);
+		ci_ArrivalpackCheckBox.setSelected(false);
+		ci_MusicalInstrumentCheckBox.setSelected(false);
+		ci_EquipmentSuppliesCheckBox.setSelected(false);
+		ci_LeatherCheckBox.setSelected(false);
+		ci_SpandexCheckBox.setSelected(false);
+		ci_GlitteredCheckBox.setSelected(false);
+		ci_CheckInCamperCheckBox.setSelected(false);
 	}
 	
 	private void reloadCheckinTable() {
 		
 		ArrayList<Camper> checkinCampers =FuRSDBUtility.getAllAcceptedCampers();
-	    DefaultTableModel model = (DefaultTableModel)tableCheckin.getModel();
+	    DefaultTableModel model = (DefaultTableModel)ci_CheckinTable.getModel();
 	    model.setRowCount(0);
 	    Object rowData[] = new Object[11];
 	    for(int i=0; i<checkinCampers.size();i++) {
@@ -840,65 +857,64 @@ public class MainForm {
 	
     private void populateCheckinFields() {
 		
-    	btnCheckinSave.setVisible(true);
-		btnCheckinCancel.setVisible(true);
+    	ci_SaveButton.setVisible(true);
+		ci_CancelButton.setVisible(true);
     	
-    	String fname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 1).toString();
-    	String lname = tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 2).toString();
-    	lblCheckinName.setText(fname+" "+lname);
+    	String fname = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 1).toString();
+    	String lname = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 2).toString();
+    	ci_CamperNameLabel.setText(fname+" "+lname);
     	
-    	String hasArrivalpack = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 3);
- 	    String hasInstrument = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 4);
- 	    String hasSupplies = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 5);
- 	    String hasLeather = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 6);
- 	    String hasGlittered = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 7);
- 	    String hasSpandex = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 8);
- 	    String checkedin = (String)tableCheckin.getValueAt(tableCheckin.getSelectedRow(), 9);
+    	String hasArrivalpack = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 3);
+ 	    String hasInstrument = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 4);
+ 	    String hasSupplies = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 5);
+ 	    String hasLeather = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 6);
+ 	    String hasGlittered = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 7);
+ 	    String hasSpandex = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 8);
+ 	    String checkedin = (String)ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 9);
     	
     	if(hasArrivalpack!=null&&hasArrivalpack.equals("YES")) {
-    		chckbxArrivalpack.setSelected(true);
+    		ci_ArrivalpackCheckBox.setSelected(true);
     	} else {
-    		chckbxArrivalpack.setSelected(false);}
+    		ci_ArrivalpackCheckBox.setSelected(false);}
     	
     	if(hasInstrument!=null&&hasInstrument.equals("YES")) {
-    		chckbxMusicalInstrument.setSelected(true);
+    		ci_MusicalInstrumentCheckBox.setSelected(true);
     	} else {
-    		chckbxMusicalInstrument.setSelected(false);
+    		ci_MusicalInstrumentCheckBox.setSelected(false);
     	}
     	
     	if(hasSupplies!=null&&hasSupplies.equals("YES")) {
-    		chckbxEquipmentSupplies.setSelected(true);
+    		ci_EquipmentSuppliesCheckBox.setSelected(true);
     	} else {
-    		chckbxEquipmentSupplies.setSelected(false);
+    		ci_EquipmentSuppliesCheckBox.setSelected(false);
     	}
     	
     	if(hasLeather!=null&&hasLeather.equals("YES")) {
-    		chckbxLeather.setSelected(true);
+    		ci_LeatherCheckBox.setSelected(true);
     	} else {
-    		chckbxLeather.setSelected(false);
+    		ci_LeatherCheckBox.setSelected(false);
     	}
     	
     	if(hasGlittered!=null&&hasGlittered.equals("YES")) {
-    		chckbxGlittered.setSelected(true);
+    		ci_GlitteredCheckBox.setSelected(true);
     	} else {
-    		chckbxGlittered.setSelected(false);
+    		ci_GlitteredCheckBox.setSelected(false);
     	}
     	
     	if(hasSpandex!=null&&hasSpandex.equals("YES")) {
-    		chckbxSpandex.setSelected(true);
+    		ci_SpandexCheckBox.setSelected(true);
     	} else {
-    		chckbxSpandex.setSelected(false);
+    		ci_SpandexCheckBox.setSelected(false);
     	}
     	
     	if(checkedin!=null&&checkedin.equals("YES")) {
-    		chckbxCheckInCamper.setSelected(true);
+    		ci_CheckInCamperCheckBox.setSelected(true);
     	} else {
-    		chckbxCheckInCamper.setSelected(false);
+    		ci_CheckInCamperCheckBox.setSelected(false);
     	}
 
     }
-	
-	
+		
 	//####  USER STORY DORM ASSIGNMENT  #################
 	private void autoAssnDorm() {
 		
@@ -1000,55 +1016,53 @@ public class MainForm {
 
 	private void reloadDorm() {
 		
-		girlDorm1Model.clear();
-		girlDorm2Model.clear();
-		girlDorm3Model.clear();
-		boyDorm1Model.clear();
-		boyDorm2Model.clear();
-		boyDorm3Model.clear();
+		da_GirlDorm1Model.clear();
+		da_GirlDorm2Model.clear();
+		da_GirlDorm3Model.clear();
+		da_BoyDorm1Model.clear();
+		da_BoyDorm2Model.clear();
+		da_BoyDorm3Model.clear();
 		for(Camper c:allAptCampers) {			
 			int dormNum = c.getDormNum();
 			if(c.getGender().equals("Girl")) {
 				if(dormNum==1) {
-					girlDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+					da_GirlDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 				} else if(dormNum==2) {
-					girlDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+					da_GirlDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 				} else if(dormNum==3) {
-					girlDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+					da_GirlDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 				}
 			} else if(c.getGender().equals("Boy")) {
 				if(dormNum==1) {
-					boyDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+					da_BoyDorm1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 				} else if(dormNum==2) {
-					boyDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+					da_BoyDorm2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 				} else if(dormNum==3) {
-					boyDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+					da_BoyDorm3Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 				}
 			}
 		}
 	}
-	
-	
+		
 	private void loadDormSwapDropdowns() {
 		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
 		for(Camper c: allAcceptCampers) {
-			dormSwaper1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
-			dormSwaper2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+			da_Swaper1Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
+			da_Swaper2Model.addElement(new DormItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getAge(), c.getId()));
 		}
 	}
 	
 	private void loadBandSwapDropdowns() {
 		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
 		for(Camper c: allAcceptCampers) {
-			bandSwaper1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
-			bandSwaper2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+			bd_Swaper1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+			bd_Swaper2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
 		}
 	}
-	
-	
+		
 	private void swapCampersDormRequest() {
-	    DormItem camp1 = (DormItem)camperDropdownSwaper1.getSelectedItem();
-	    DormItem camp2 = (DormItem)camperDropdownSwaper2.getSelectedItem();
+	    DormItem camp1 = (DormItem)da_Swaper1Dropdown.getSelectedItem();
+	    DormItem camp2 = (DormItem)da_Swaper2Dropdown.getSelectedItem();
 		
 	    if(!isDormAssigned) {
 	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe haven't assigned dorm yet.");
@@ -1185,33 +1199,33 @@ public class MainForm {
 	}
 	
 	private void reloadBand() {
-		band1Model.clear();
-	    band2Model.clear();
-	    band3Model.clear();
-	    band4Model.clear();
-	    band5Model.clear();
-	    band6Model.clear();
-	    band7Model.clear();
-	    band8Model.clear();
+		bd_Band1Model.clear();
+	    bd_Band2Model.clear();
+	    bd_Band3Model.clear();
+	    bd_Band4Model.clear();
+	    bd_Band5Model.clear();
+	    bd_Band6Model.clear();
+	    bd_Band7Model.clear();
+	    bd_Band8Model.clear();
 	    
 	    for(Camper c:allAptCampers) {			
 			int bandnum = c.getBandNum();
 			switch (bandnum) {
-            case 1:  band1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 1:  bd_Band1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 2:  band2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 2:  bd_Band2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 3:  band3Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 3:  bd_Band3Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 4:  band4Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 4:  bd_Band4Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 5:  band5Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 5:  bd_Band5Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 6:  band6Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 6:  bd_Band6Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 7:  band7Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 7:  bd_Band7Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
-            case 8:  band8Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+            case 8:  bd_Band8Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
                      break;
 			}
 	    }
@@ -1219,8 +1233,8 @@ public class MainForm {
 	
     private void swapCampersBandRequest() {
     	
-    	BandItem camp1 = (BandItem)bandDropdownSwaper1.getSelectedItem();
-    	BandItem camp2 = (BandItem)bandDropdownSwaper2.getSelectedItem();
+    	BandItem camp1 = (BandItem)bd_Swaper1Dropdown.getSelectedItem();
+    	BandItem camp2 = (BandItem)bd_Swaper2Dropdown.getSelectedItem();
 		
 	    if(!isBandAssigned) {
 	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe haven't assigned band yet.");
@@ -1277,140 +1291,156 @@ public class MainForm {
 	    }
     }
 	
-	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmSmartFursCamper = new JFrame();
-		frmSmartFursCamper.setResizable(false);
-		frmSmartFursCamper.setType(Type.UTILITY);
-		frmSmartFursCamper.getContentPane().setFont(new Font("Calibri", Font.PLAIN, 14));
-		frmSmartFursCamper.getContentPane().setBackground(new Color(255, 255, 255));
-		frmSmartFursCamper.getContentPane().setForeground(Color.BLACK);
-		frmSmartFursCamper.setForeground(SystemColor.menu);
-		frmSmartFursCamper.setBounds(100, 100, 1091, 606);
-		frmSmartFursCamper.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmSmartFursCamper.getContentPane().setLayout(null);
+		
+		main_Frame = new JFrame();
+		main_Frame.setResizable(false);
+		main_Frame.setType(Type.UTILITY);
+		main_Frame.getContentPane().setFont(new Font("Calibri", Font.PLAIN, 14));
+		main_Frame.getContentPane().setBackground(new Color(255, 255, 255));
+		main_Frame.getContentPane().setForeground(Color.BLACK);
+		main_Frame.setForeground(SystemColor.menu);
+		main_Frame.setBounds(100, 100, 1091, 606);
+		main_Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		main_Frame.getContentPane().setLayout(null);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		frmSmartFursCamper.setLocation(dim.width/2-frmSmartFursCamper.getSize().width/2, dim.height/2-frmSmartFursCamper.getSize().height/2);
+		main_Frame.setLocation(dim.width/2-main_Frame.getSize().width/2, dim.height/2-main_Frame.getSize().height/2);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setFont(new Font("Calibri", Font.PLAIN, 18));
-		tabbedPane.setForeground(new Color(0, 0, 0));
-		tabbedPane.setBackground(new Color(255, 255, 255));
-		tabbedPane.setBounds(10, 67, 1074, 507);
-		frmSmartFursCamper.getContentPane().add(tabbedPane);
+		main_TabPane = new JTabbedPane(JTabbedPane.TOP);
+		main_TabPane.setFont(new Font("Calibri", Font.PLAIN, 18));
+		main_TabPane.setForeground(new Color(0, 0, 0));
+		main_TabPane.setBackground(new Color(255, 255, 255));
+		main_TabPane.setBounds(10, 67, 1074, 507);
+		main_Frame.getContentPane().add(main_TabPane);
 		
-		applicationPanel = new JPanel();
-		applicationPanel.setBackground(new Color(255, 255, 255));
-		tabbedPane.addTab("Applications", (Icon) null, applicationPanel, null);
-		applicationPanel.setLayout(null);
+		ap_MainPanel = new JPanel();
+		ap_MainPanel.setBackground(new Color(255, 255, 255));
+		main_TabPane.addTab("Applications", (Icon) null, ap_MainPanel, null);
+		ap_MainPanel.setLayout(null);
 		
-		btnAdd = new JButton("Add");
-		btnAdd.setForeground(new Color(0, 0, 0));
-		btnAdd.setBackground(SystemColor.control);
-		btnAdd.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				addCamper();
-				//reload application campers
-			}
-		});
-		btnAdd.setBounds(10, 410, 74, 41);
-		applicationPanel.add(btnAdd);
+		ap_ScrollPane = new JScrollPane();
+		ap_ScrollPane.setBounds(345, 11, 714, 448);
+		ap_MainPanel.add(ap_ScrollPane);
 		
-		firstnameTextField = new JTextField();
-		firstnameTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-		firstnameTextField.setBackground(new Color(255, 255, 255));
-		firstnameTextField.setBounds(121, 99, 156, 29);
-		applicationPanel.add(firstnameTextField);
-		firstnameTextField.setColumns(10);
-		
-		JLabel lblFirstName = new JLabel("First Name");
-		lblFirstName.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblFirstName.setBackground(SystemColor.window);
-		lblFirstName.setBounds(10, 98, 101, 31);
-		applicationPanel.add(lblFirstName);
-		
-		JLabel lblLastName = new JLabel("Last Name");
-		lblLastName.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblLastName.setBackground(SystemColor.window);
-		lblLastName.setBounds(10, 138, 101, 31);
-		applicationPanel.add(lblLastName);
-		
-		lastnameTextField = new JTextField();
-		lastnameTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lastnameTextField.setBackground(new Color(255, 255, 255));
-		lastnameTextField.setColumns(10);
-		lastnameTextField.setBounds(121, 139, 156, 29);
-		applicationPanel.add(lastnameTextField);
-		
-		lblGender = new JLabel("Gender");
-		lblGender.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblGender.setBackground(SystemColor.window);
-		lblGender.setBounds(10, 179, 101, 29);
-		applicationPanel.add(lblGender);
-		
-		maleRadioButton = new JRadioButton("Boy");
-		maleRadioButton.setFont(new Font("Calibri", Font.PLAIN, 16));
-		maleRadioButton.setBackground(SystemColor.window);
-		maleRadioButton.setBounds(121, 177, 73, 33);
-		applicationPanel.add(maleRadioButton);
-		
-		femaleRadioButton = new JRadioButton("Girl");
-		femaleRadioButton.setFont(new Font("Calibri", Font.PLAIN, 16));
-		femaleRadioButton.setBackground(SystemColor.window);
-		femaleRadioButton.setBounds(196, 177, 105, 33);
-		applicationPanel.add(femaleRadioButton);
-		
-		genderBtnGroup = new ButtonGroup();
-		genderBtnGroup.add(femaleRadioButton);
-		genderBtnGroup.add(maleRadioButton);
-		
-		dobTextField = new JTextField();
-		dobTextField.setToolTipText("Please follow format mm/dd/yyyy");
-		dobTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-		dobTextField.setBackground(new Color(255, 255, 255));
-		dobTextField.setBounds(121, 217, 156, 29);
-		applicationPanel.add(dobTextField);
-		dobTextField.setColumns(10);
-		
-		lblDob = new JLabel("DOB");
-		lblDob.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblDob.setBackground(SystemColor.window);
-		lblDob.setBounds(10, 218, 101, 27);
-		applicationPanel.add(lblDob);
-		
-		JLabel lblInstrument = new JLabel("Instrument");
-		lblInstrument.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblInstrument.setBackground(SystemColor.window);
-		lblInstrument.setBounds(10, 257, 101, 29);
-		applicationPanel.add(lblInstrument);
-		
-		applicationScrollPane = new JScrollPane();
-		applicationScrollPane.setBounds(345, 11, 714, 448);
-		applicationPanel.add(applicationScrollPane);
-		
-		camperTable = new JTable();
-		camperTable.setModel(new DefaultTableModel(
+		ap_applicationTable = new JTable();
+		ap_applicationTable.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
 				"Id", "Recv.On", "FName", "LName", "BDay", "Gender", "Instrument", "Esy", "Rec", "Dps"
 			}
 		));
-		camperTable.setFont(new Font("Calibri", Font.PLAIN, 16));
-		applicationScrollPane.setViewportView(camperTable);
-		camperTable.setRowHeight(21);
-		camperTable.getColumnModel().getColumn(0).setPreferredWidth(20);
-		camperTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-		camperTable.getColumnModel().getColumn(4).setPreferredWidth(100);
-		camperTable.getColumnModel().getColumn(5).setPreferredWidth(50);
-		camperTable.getColumnModel().getColumn(7).setPreferredWidth(40);
-		camperTable.getColumnModel().getColumn(8).setPreferredWidth(40);
-		camperTable.getColumnModel().getColumn(9).setPreferredWidth(40);
-		ListSelectionModel selModel = camperTable.getSelectionModel(); 
+		ap_applicationTable.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_ScrollPane.setViewportView(ap_applicationTable);
+		ap_applicationTable.setRowHeight(21);
+		ap_applicationTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		ap_applicationTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+		ap_applicationTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+		ap_applicationTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+		ap_applicationTable.getColumnModel().getColumn(7).setPreferredWidth(40);
+		ap_applicationTable.getColumnModel().getColumn(8).setPreferredWidth(40);
+		ap_applicationTable.getColumnModel().getColumn(9).setPreferredWidth(40);
+		ListSelectionModel selModel = ap_applicationTable.getSelectionModel(); 
+		
+		ap_IdLabel = new JLabel("Id: ");
+		ap_IdLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_IdLabel.setBackground(Color.WHITE);
+		ap_IdLabel.setBounds(10, 11, 101, 27);
+		ap_IdLabel.setVisible(false);
+		ap_MainPanel.add(ap_IdLabel);
+		
+		ap_RecivedOnLabel = new JLabel("Received On");
+		ap_RecivedOnLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_RecivedOnLabel.setBackground(Color.WHITE);
+		ap_RecivedOnLabel.setBounds(10, 61, 101, 27);
+		ap_MainPanel.add(ap_RecivedOnLabel);
+		
+		ap_FirstnameLabel = new JLabel("First Name");
+		ap_FirstnameLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_FirstnameLabel.setBackground(SystemColor.window);
+		ap_FirstnameLabel.setBounds(10, 98, 101, 31);
+		ap_MainPanel.add(ap_FirstnameLabel);
+		
+		ap_LastnameLabel = new JLabel("Last Name");
+		ap_LastnameLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_LastnameLabel.setBackground(SystemColor.window);
+		ap_LastnameLabel.setBounds(10, 138, 101, 31);
+		ap_MainPanel.add(ap_LastnameLabel);
+		
+		ap_GenderLabel = new JLabel("Gender");
+		ap_GenderLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_GenderLabel.setBackground(SystemColor.window);
+		ap_GenderLabel.setBounds(10, 179, 101, 29);
+		ap_MainPanel.add(ap_GenderLabel);
+		
+		ap_DateOfBirthLabel = new JLabel("DOB");
+		ap_DateOfBirthLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_DateOfBirthLabel.setBackground(SystemColor.window);
+		ap_DateOfBirthLabel.setBounds(10, 218, 101, 27);
+		ap_MainPanel.add(ap_DateOfBirthLabel);
+		
+		ap_InstrumentLabel = new JLabel("Instrument");
+		ap_InstrumentLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_InstrumentLabel.setBackground(SystemColor.window);
+		ap_InstrumentLabel.setBounds(10, 257, 101, 29);
+		ap_MainPanel.add(ap_InstrumentLabel);
+		
+		ap_RecivedOnTextField = new JTextField();
+		ap_RecivedOnTextField.setToolTipText("Please follow format mm/dd/yyyy");
+		ap_RecivedOnTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_RecivedOnTextField.setColumns(10);
+		ap_RecivedOnTextField.setBackground(new Color(255, 255, 255));
+		ap_RecivedOnTextField.setBounds(121, 59, 156, 29);
+		ap_MainPanel.add(ap_RecivedOnTextField);
+		
+		ap_FirstnameTextField = new JTextField();
+		ap_FirstnameTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_FirstnameTextField.setBackground(new Color(255, 255, 255));
+		ap_FirstnameTextField.setBounds(121, 99, 156, 29);
+		ap_MainPanel.add(ap_FirstnameTextField);
+		ap_FirstnameTextField.setColumns(10);
+		
+		ap_LastnameTextField = new JTextField();
+		ap_LastnameTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_LastnameTextField.setBackground(new Color(255, 255, 255));
+		ap_LastnameTextField.setColumns(10);
+		ap_LastnameTextField.setBounds(121, 139, 156, 29);
+		ap_MainPanel.add(ap_LastnameTextField);
+		
+		ap_InstrumentTextField = new JTextField();
+		ap_InstrumentTextField.setToolTipText("");
+		ap_InstrumentTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_InstrumentTextField.setColumns(10);
+		ap_InstrumentTextField.setBackground(new Color(255, 255, 255));
+		ap_InstrumentTextField.setBounds(121, 257, 156, 29);
+		ap_MainPanel.add(ap_InstrumentTextField);
+		
+		ap_DateOfBirthTextField = new JTextField();
+		ap_DateOfBirthTextField.setToolTipText("Please follow format mm/dd/yyyy");
+		ap_DateOfBirthTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_DateOfBirthTextField.setBackground(new Color(255, 255, 255));
+		ap_DateOfBirthTextField.setBounds(121, 217, 156, 29);
+		ap_MainPanel.add(ap_DateOfBirthTextField);
+		ap_DateOfBirthTextField.setColumns(10);
+		
+		ap_BoyRadioButton = new JRadioButton("Boy");
+		ap_BoyRadioButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_BoyRadioButton.setBackground(SystemColor.window);
+		ap_BoyRadioButton.setBounds(121, 177, 73, 33);
+		ap_MainPanel.add(ap_BoyRadioButton);
+		
+		ap_GirlRadioButton = new JRadioButton("Girl");
+		ap_GirlRadioButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ap_GirlRadioButton.setBackground(SystemColor.window);
+		ap_GirlRadioButton.setBounds(196, 177, 105, 33);
+		ap_MainPanel.add(ap_GirlRadioButton);
+		
+		ap_GenderBtnGroup = new ButtonGroup();
+		ap_GenderBtnGroup.add(ap_GirlRadioButton);
+		ap_GenderBtnGroup.add(ap_BoyRadioButton);
 		selModel.addListSelectionListener(new ListSelectionListener(){
 	        @Override
 			public void valueChanged(ListSelectionEvent event) {
@@ -1418,124 +1448,107 @@ public class MainForm {
 	        }
 	    });
 		
-
-		hasEssayCheckBox = new JCheckBox("Personal Essay");
-	    hasEssayCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    hasEssayCheckBox.setBackground(SystemColor.window);
-	    hasEssayCheckBox.setBounds(10, 304, 140, 31);
-	    applicationPanel.add(hasEssayCheckBox);
+		ap_HasEssayCheckBox = new JCheckBox("Personal Essay");
+	    ap_HasEssayCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_HasEssayCheckBox.setBackground(SystemColor.window);
+	    ap_HasEssayCheckBox.setBounds(10, 304, 140, 31);
+	    ap_MainPanel.add(ap_HasEssayCheckBox);
 	    
-	    hasRecordingCheckBox = new JCheckBox("Recording");
-	    hasRecordingCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    hasRecordingCheckBox.setBackground(SystemColor.window);
-	    hasRecordingCheckBox.setBounds(157, 304, 120, 31);
-	    applicationPanel.add(hasRecordingCheckBox);
+	    ap_HasRecordingCheckBox = new JCheckBox("Recording");
+	    ap_HasRecordingCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_HasRecordingCheckBox.setBackground(SystemColor.window);
+	    ap_HasRecordingCheckBox.setBounds(157, 304, 120, 31);
+	    ap_MainPanel.add(ap_HasRecordingCheckBox);
 	    
-	    hasPaymentCheckBox = new JCheckBox("Deposit Payment");
-	    hasPaymentCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    hasPaymentCheckBox.setBackground(SystemColor.window);
-	    hasPaymentCheckBox.setBounds(10, 338, 184, 31);
-	    applicationPanel.add(hasPaymentCheckBox);
+	    ap_HasPaymentCheckBox = new JCheckBox("Deposit Payment");
+	    ap_HasPaymentCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_HasPaymentCheckBox.setBackground(SystemColor.window);
+	    ap_HasPaymentCheckBox.setBounds(10, 338, 184, 31);
+	    ap_MainPanel.add(ap_HasPaymentCheckBox);
 	    
-	    btnSave = new JButton("Save");
-	    btnSave.addActionListener(new ActionListener() {
+	    ap_SaveButton = new JButton("Save");
+	    ap_SaveButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		saveCamper();
 	    	}
 	    });
-	    btnSave.setBackground(SystemColor.control);
-	    btnSave.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    btnSave.setBounds(127, 410, 85, 41);
-	    btnSave.setVisible(false);
-	    applicationPanel.add(btnSave);
+	    ap_SaveButton.setBackground(SystemColor.control);
+	    ap_SaveButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_SaveButton.setBounds(127, 410, 85, 41);
+	    ap_SaveButton.setVisible(false);
 	    
-	    btnDelete = new JButton("Delete");
-	    btnDelete.addActionListener(new ActionListener() {
+	    ap_AddButton = new JButton("Add");
+	    ap_AddButton.setForeground(new Color(0, 0, 0));
+	    ap_AddButton.setBackground(SystemColor.control);
+	    ap_AddButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_AddButton.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent arg0) {
+	    		addCamper();
+	    		//reload application campers
+	    	}
+	    });
+	    ap_AddButton.setBounds(10, 410, 74, 41);
+	    ap_MainPanel.add(ap_AddButton);
+	    ap_MainPanel.add(ap_SaveButton);
+	    
+	    ap_DeleteButton = new JButton("Delete");
+	    ap_DeleteButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		deleteSelectedCamper();
 	    	}
 	    });
-	    btnDelete.setBackground(SystemColor.control);
-	    btnDelete.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    btnDelete.setBounds(192, 11, 85, 30);
-	    btnDelete.setVisible(false);
-	    applicationPanel.add(btnDelete);
+	    ap_DeleteButton.setBackground(SystemColor.control);
+	    ap_DeleteButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_DeleteButton.setBounds(192, 11, 85, 30);
+	    ap_DeleteButton.setVisible(false);
+	    ap_MainPanel.add(ap_DeleteButton);
 	    
-	    lblApplicationRecivedOn = new JLabel("Received On");
-	    lblApplicationRecivedOn.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    lblApplicationRecivedOn.setBackground(Color.WHITE);
-	    lblApplicationRecivedOn.setBounds(10, 61, 101, 27);
-	    applicationPanel.add(lblApplicationRecivedOn);
-	    
-	    recvdayTextField = new JTextField();
-	    recvdayTextField.setToolTipText("Please follow format mm/dd/yyyy");
-	    recvdayTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    recvdayTextField.setColumns(10);
-	    recvdayTextField.setBackground(new Color(255, 255, 255));
-	    recvdayTextField.setBounds(121, 59, 156, 29);
-	    applicationPanel.add(recvdayTextField);
-	    
-	    instrumentTextField = new JTextField();
-	    instrumentTextField.setToolTipText("");
-	    instrumentTextField.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    instrumentTextField.setColumns(10);
-	    instrumentTextField.setBackground(new Color(255, 255, 255));
-	    instrumentTextField.setBounds(121, 257, 156, 29);
-	    applicationPanel.add(instrumentTextField);
-	    
-	    idLabel = new JLabel("Id: ");
-	    idLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    idLabel.setBackground(Color.WHITE);
-	    idLabel.setBounds(10, 11, 101, 27);
-	    idLabel.setVisible(false);
-	    applicationPanel.add(idLabel);
-	    
-	    btnCancel = new JButton("Cancel");
-	    btnCancel.addActionListener(new ActionListener() {
+	    ap_CancelButton = new JButton("Cancel");
+	    ap_CancelButton.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		cancelApplicationEdit();
 	    	}
 	    });
-	    btnCancel.setForeground(new Color(0, 0, 0));
-	    btnCancel.setFont(new Font("Calibri", Font.PLAIN, 16));
-	    btnCancel.setBackground(SystemColor.menu);
-	    btnCancel.setBounds(222, 410, 79, 41);
-	    btnCancel.setVisible(false);
-	    applicationPanel.add(btnCancel);
+	    ap_CancelButton.setForeground(new Color(0, 0, 0));
+	    ap_CancelButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+	    ap_CancelButton.setBackground(SystemColor.menu);
+	    ap_CancelButton.setBounds(222, 410, 79, 41);
+	    ap_CancelButton.setVisible(false);
+	    ap_MainPanel.add(ap_CancelButton);
 		
-		mailingPanel = new JPanel();
-		mailingPanel.setBackground(new Color(255, 255, 255));
-		tabbedPane.addTab("Mailing Notification", null, mailingPanel, null);
-		mailingPanel.setLayout(null);
+		mn_MainPanel = new JPanel();
+		mn_MainPanel.setBackground(new Color(255, 255, 255));
+		main_TabPane.addTab("Mailing Notification", null, mn_MainPanel, null);
+		mn_MainPanel.setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(371, 79, 688, 380);
-		mailingPanel.add(scrollPane);
+		mn_ScrollPane = new JScrollPane();
+		mn_ScrollPane.setBounds(371, 79, 688, 380);
+		mn_MainPanel.add(mn_ScrollPane);
 		
-		mailingTable = new JTable();
-		mailingTable.setModel(new DefaultTableModel(
+		mn_CandidatesTable = new JTable();
+		mn_CandidatesTable.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
 					"Id", "Status", "FName", "LName", "Age", "Gender", "Instrument", "Category", "Talnt", "Esy", "Rec", "Dps"
 			}
 		));
-		mailingTable.setFont(new Font("Calibri", Font.PLAIN, 16));
-		scrollPane.setViewportView(mailingTable);
-		mailingTable.setRowHeight(21);
-		mailingTable.getColumnModel().getColumn(0).setPreferredWidth(15);
-		mailingTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-		mailingTable.getColumnModel().getColumn(2).setPreferredWidth(60);
-		mailingTable.getColumnModel().getColumn(3).setPreferredWidth(60);
-		mailingTable.getColumnModel().getColumn(4).setPreferredWidth(20);
-		mailingTable.getColumnModel().getColumn(5).setPreferredWidth(40);
-		mailingTable.getColumnModel().getColumn(6).setPreferredWidth(80);
-		mailingTable.getColumnModel().getColumn(7).setPreferredWidth(100);
-		mailingTable.getColumnModel().getColumn(8).setPreferredWidth(30);
-		mailingTable.getColumnModel().getColumn(9).setPreferredWidth(30);
-		mailingTable.getColumnModel().getColumn(10).setPreferredWidth(30);
-		mailingTable.getColumnModel().getColumn(11).setPreferredWidth(30);
-		ListSelectionModel selMailingModel = mailingTable.getSelectionModel(); 
+		mn_CandidatesTable.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_ScrollPane.setViewportView(mn_CandidatesTable);
+		mn_CandidatesTable.setRowHeight(21);
+		mn_CandidatesTable.getColumnModel().getColumn(0).setPreferredWidth(15);
+		mn_CandidatesTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+		mn_CandidatesTable.getColumnModel().getColumn(2).setPreferredWidth(60);
+		mn_CandidatesTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+		mn_CandidatesTable.getColumnModel().getColumn(4).setPreferredWidth(20);
+		mn_CandidatesTable.getColumnModel().getColumn(5).setPreferredWidth(40);
+		mn_CandidatesTable.getColumnModel().getColumn(6).setPreferredWidth(80);
+		mn_CandidatesTable.getColumnModel().getColumn(7).setPreferredWidth(100);
+		mn_CandidatesTable.getColumnModel().getColumn(8).setPreferredWidth(30);
+		mn_CandidatesTable.getColumnModel().getColumn(9).setPreferredWidth(30);
+		mn_CandidatesTable.getColumnModel().getColumn(10).setPreferredWidth(30);
+		mn_CandidatesTable.getColumnModel().getColumn(11).setPreferredWidth(30);
+		ListSelectionModel selMailingModel = mn_CandidatesTable.getSelectionModel(); 
 		selMailingModel.addListSelectionListener(new ListSelectionListener(){
 	        @Override
 			public void valueChanged(ListSelectionEvent event) {
@@ -1543,597 +1556,597 @@ public class MainForm {
 	        }
 	    });
 		
+		mn_SelectDecisionLabel = new JLabel("Please Select the Decision for");
+		mn_SelectDecisionLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_SelectDecisionLabel.setBounds(16, 12, 202, 32);
+		mn_MainPanel.add(mn_SelectDecisionLabel);
 		
-		btnGenerateMail = new JButton("Generate Mail");
-		btnGenerateMail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				openWordMailTemplate();
-			}
-		});
-		btnGenerateMail.setForeground(Color.BLACK);
-		btnGenerateMail.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnGenerateMail.setBackground(SystemColor.menu);
-		btnGenerateMail.setBounds(103, 416, 158, 43);
-		mailingPanel.add(btnGenerateMail);
+		mn_FullnameLabel = new JLabel("");
+		mn_FullnameLabel.setFont(new Font("Calibri", Font.BOLD, 16));
+		mn_FullnameLabel.setBounds(214, 12, 146, 32);
+		mn_MainPanel.add(mn_FullnameLabel);
 		
-		lblNewLabel = new JLabel("Please Select the Decision for");
-		lblNewLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblNewLabel.setBounds(16, 12, 202, 32);
-		mailingPanel.add(lblNewLabel);
+		mn_DecisionLabel = new JLabel("Decision:");
+		mn_DecisionLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_DecisionLabel.setBackground(Color.WHITE);
+		mn_DecisionLabel.setBounds(16, 48, 90, 29);
+		mn_MainPanel.add(mn_DecisionLabel);
 		
-		lblMailingFname = new JLabel("");
-		lblMailingFname.setFont(new Font("Calibri", Font.BOLD, 16));
-		lblMailingFname.setBounds(214, 12, 146, 32);
-		mailingPanel.add(lblMailingFname);
+		mn_CategoryLabel = new JLabel("Category:");
+		mn_CategoryLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_CategoryLabel.setBackground(Color.WHITE);
+		mn_CategoryLabel.setBounds(16, 86, 90, 29);
+		mn_MainPanel.add(mn_CategoryLabel);
 		
-		JLabel lblDecision = new JLabel("Decision:");
-		lblDecision.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblDecision.setBackground(Color.WHITE);
-		lblDecision.setBounds(16, 48, 90, 29);
-		mailingPanel.add(lblDecision);
+		mn_SkillLevelLabel = new JLabel("Talent Ranking:");
+		mn_SkillLevelLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_SkillLevelLabel.setBackground(Color.WHITE);
+		mn_SkillLevelLabel.setBounds(16, 126, 116, 29);
+		mn_MainPanel.add(mn_SkillLevelLabel);
 		
-		dropdownCategory = new JComboBox<String>();
-		dropdownCategory.setEnabled(false);
-		dropdownCategory.setModel(new DefaultComboBoxModel(new String[] {"Not Assigned", "Singer", "Guitarist", "Drummer", "Bassist", "Keyboardist", "Instrumentalist"}));
-		dropdownCategory.setFont(new Font("Calibri", Font.PLAIN, 16));
-		dropdownCategory.setBackground(Color.WHITE);
-		dropdownCategory.setBounds(142, 86, 180, 29);
-		mailingPanel.add(dropdownCategory);
+		mn_CategoryBGLabel = new JLabel("(Category: Boy/Girl)");
+		mn_CategoryBGLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_CategoryBGLabel.setFont(new Font("Calibri", Font.ITALIC, 16));
+		mn_CategoryBGLabel.setBounds(371, 11, 165, 23);
+		mn_MainPanel.add(mn_CategoryBGLabel);
 		
-		JLabel lblCategory = new JLabel("Category:");
-		lblCategory.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblCategory.setBackground(Color.WHITE);
-		lblCategory.setBounds(16, 86, 90, 29);
-		mailingPanel.add(lblCategory);
+		mn_AcceptGirlLabel = new JLabel("Accepted Girls:");
+		mn_AcceptGirlLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		mn_AcceptGirlLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_AcceptGirlLabel.setBounds(684, 12, 120, 23);
+		mn_MainPanel.add(mn_AcceptGirlLabel);
 		
-		btnMailingSave = new JButton("Save");
-		btnMailingSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				saveCamperStatus();
-			}
-		});
-		btnMailingSave.setForeground(Color.BLACK);
-		btnMailingSave.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnMailingSave.setBackground(SystemColor.menu);
-		btnMailingSave.setBounds(16, 416, 77, 43);
-		mailingPanel.add(btnMailingSave);
+		mn_TotalGirlLabel = new JLabel("0/24");
+		mn_TotalGirlLabel.setFont(new Font("Calibri", Font.BOLD, 16));
+		mn_TotalGirlLabel.setBounds(814, 12, 65, 23);
+		mn_MainPanel.add(mn_TotalGirlLabel);
 		
-		JLabel lblSkillLevel = new JLabel("Talent Ranking:");
-		lblSkillLevel.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblSkillLevel.setBackground(Color.WHITE);
-		lblSkillLevel.setBounds(16, 126, 116, 29);
-		mailingPanel.add(lblSkillLevel);
+		mn_AcceptBoysLabel = new JLabel("Accepted Boys:");
+		mn_AcceptBoysLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		mn_AcceptBoysLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_AcceptBoysLabel.setBounds(869, 12, 115, 23);
+		mn_MainPanel.add(mn_AcceptBoysLabel);
 		
-		spinnerTelentLvl = new JSpinner();
-		spinnerTelentLvl.setFont(new Font("Calibri", Font.PLAIN, 16));
-		spinnerTelentLvl.setModel(new SpinnerNumberModel(0, 0, 10, 1));
-		spinnerTelentLvl.setBounds(142, 126, 65, 29);
-		mailingPanel.add(spinnerTelentLvl);
+		mn_TotalBoyLabel = new JLabel("0/24");
+		mn_TotalBoyLabel.setFont(new Font("Calibri", Font.BOLD, 16));
+		mn_TotalBoyLabel.setBounds(994, 12, 65, 23);
+		mn_MainPanel.add(mn_TotalBoyLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("Accepted Grils:");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel_1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblNewLabel_1.setBounds(684, 12, 120, 23);
-		mailingPanel.add(lblNewLabel_1);
+		mn_SingerNumLabel = new JLabel("Singer: 0/0");
+		mn_SingerNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_SingerNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_SingerNumLabel.setBounds(371, 48, 90, 23);
+		mn_MainPanel.add(mn_SingerNumLabel);
 		
-		labelMailingTotalGril = new JLabel("0/24");
-		labelMailingTotalGril.setFont(new Font("Calibri", Font.BOLD, 16));
-		labelMailingTotalGril.setBounds(814, 12, 65, 23);
-		mailingPanel.add(labelMailingTotalGril);
+		mn_GuitaristNumLabel = new JLabel("Guitarist: 0/0");
+		mn_GuitaristNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_GuitaristNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_GuitaristNumLabel.setBounds(457, 48, 99, 23);
+		mn_MainPanel.add(mn_GuitaristNumLabel);
 		
-		JLabel lblAcceptedBoys = new JLabel("Accepted Boys:");
-		lblAcceptedBoys.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblAcceptedBoys.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblAcceptedBoys.setBounds(869, 12, 115, 23);
-		mailingPanel.add(lblAcceptedBoys);
+		mn_DrummerNumLabel = new JLabel("Drummer: 0/0");
+		mn_DrummerNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_DrummerNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_DrummerNumLabel.setBounds(554, 48, 99, 23);
+		mn_MainPanel.add(mn_DrummerNumLabel);
 		
-		labelMailingTotalBoy = new JLabel("0/24");
-		labelMailingTotalBoy.setFont(new Font("Calibri", Font.BOLD, 16));
-		labelMailingTotalBoy.setBounds(994, 12, 65, 23);
-		mailingPanel.add(labelMailingTotalBoy);
+		mn_BassistNumLabel = new JLabel("Bassist: 0/0");
+		mn_BassistNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_BassistNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_BassistNumLabel.setBounds(654, 48, 90, 23);
+		mn_MainPanel.add(mn_BassistNumLabel);
 		
-		JPanel panel_14 = new JPanel();
-		panel_14.setBorder(new TitledBorder(null, "Mail Content", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_14.setBounds(15, 166, 346, 239);
-		mailingPanel.add(panel_14);
-		panel_14.setLayout(null);
+		mn_KeyboardistNumLabel = new JLabel("Keyboardist: 0/0");
+		mn_KeyboardistNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_KeyboardistNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_KeyboardistNumLabel.setBounds(751, 48, 120, 23);
+		mn_MainPanel.add(mn_KeyboardistNumLabel);
 		
-		txtpnMail = new JTextPane();
-		txtpnMail.setText("");
-		txtpnMail.setBounds(6, 16, 330, 212);
-		panel_14.add(txtpnMail);
-		txtpnMail.setFont(new Font("Calibri", Font.PLAIN, 14));
+		mn_InstrumentalistNumLabel = new JLabel("Instrumentalist: 0/0");
+		mn_InstrumentalistNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_InstrumentalistNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_InstrumentalistNumLabel.setBounds(879, 48, 152, 23);
+		mn_MainPanel.add(mn_InstrumentalistNumLabel);
 		
-		statusDropdown = new JComboBox<String>();
-		statusDropdown.setEnabled(false);
-		statusDropdown.setModel(new DefaultComboBoxModel(new String[] {"Undecided", "Accept", "Deny"}));
-		statusDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
-		statusDropdown.setBackground(Color.WHITE);
-		statusDropdown.setBounds(142, 50, 180, 29);
-		statusDropdown.addActionListener (new ActionListener () {
+		mn_StatusDropdown = new JComboBox<String>();
+		mn_StatusDropdown.setEnabled(false);
+		mn_StatusDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"Undecided", "Accept", "Deny"}));
+		mn_StatusDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_StatusDropdown.setBackground(Color.WHITE);
+		mn_StatusDropdown.setBounds(142, 50, 180, 29);
+		mn_StatusDropdown.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
 		        mailingStatusChange();
 		    }
 		});
 		
-		mailingPanel.add(statusDropdown);
+		mn_MainPanel.add(mn_StatusDropdown);
 		
-		btnMailingCancel = new JButton("Cancel");
-		btnMailingCancel.addActionListener(new ActionListener() {
+		mn_CategoryDropdown = new JComboBox<String>();
+		mn_CategoryDropdown.setEnabled(false);
+		mn_CategoryDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"Not Assigned", "Singer", "Guitarist", "Drummer", "Bassist", "Keyboardist", "Instrumentalist"}));
+		mn_CategoryDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_CategoryDropdown.setBackground(Color.WHITE);
+		mn_CategoryDropdown.setBounds(142, 86, 180, 29);
+		mn_MainPanel.add(mn_CategoryDropdown);
+		
+		mn_TelentLevelSpinner = new JSpinner();
+		mn_TelentLevelSpinner.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_TelentLevelSpinner.setModel(new SpinnerNumberModel(0, 0, 10, 1));
+		mn_TelentLevelSpinner.setBounds(142, 126, 65, 29);
+		mn_MainPanel.add(mn_TelentLevelSpinner);
+		
+		mn_MailTextPanePanel = new JPanel();
+		mn_MailTextPanePanel.setBorder(new TitledBorder(null, "Mail Content", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		mn_MailTextPanePanel.setBounds(15, 166, 346, 239);
+		mn_MainPanel.add(mn_MailTextPanePanel);
+		mn_MailTextPanePanel.setLayout(null);
+		
+		mn_MailTextPane = new JTextPane();
+		mn_MailTextPane.setText("");
+		mn_MailTextPane.setBounds(6, 16, 330, 212);
+		mn_MailTextPanePanel.add(mn_MailTextPane);
+		mn_MailTextPane.setFont(new Font("Calibri", Font.PLAIN, 14));
+		
+		mn_CancelButton = new JButton("Cancel");
+		mn_CancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				clearMailingFields(false);
 			}
 		});
-		btnMailingCancel.setForeground(Color.BLACK);
-		btnMailingCancel.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnMailingCancel.setBackground(SystemColor.menu);
-		btnMailingCancel.setBounds(271, 416, 90, 43);
-		mailingPanel.add(btnMailingCancel);
 		
-		lblCategoryboygirl = new JLabel("(Category: Boy/Girl)");
-		lblCategoryboygirl.setHorizontalAlignment(SwingConstants.LEFT);
-		lblCategoryboygirl.setFont(new Font("Calibri", Font.ITALIC, 16));
-		lblCategoryboygirl.setBounds(371, 11, 165, 23);
-		mailingPanel.add(lblCategoryboygirl);
 		
-		labelGuitaristNum = new JLabel("Guitarist: 0/0");
-		labelGuitaristNum.setHorizontalAlignment(SwingConstants.LEFT);
-		labelGuitaristNum.setFont(new Font("Calibri", Font.PLAIN, 16));
-		labelGuitaristNum.setBounds(457, 48, 99, 23);
-		mailingPanel.add(labelGuitaristNum);
-		
-		lblDrummerNum = new JLabel("Drummer: 0/0");
-		lblDrummerNum.setHorizontalAlignment(SwingConstants.LEFT);
-		lblDrummerNum.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblDrummerNum.setBounds(554, 48, 99, 23);
-		mailingPanel.add(lblDrummerNum);
-		
-		lblBassistNum = new JLabel("Bassist: 0/0");
-		lblBassistNum.setHorizontalAlignment(SwingConstants.LEFT);
-		lblBassistNum.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblBassistNum.setBounds(654, 48, 90, 23);
-		mailingPanel.add(lblBassistNum);
-		
-		lblKeyboardistNum = new JLabel("Keyboardist: 0/0");
-		lblKeyboardistNum.setHorizontalAlignment(SwingConstants.LEFT);
-		lblKeyboardistNum.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblKeyboardistNum.setBounds(751, 48, 120, 23);
-		mailingPanel.add(lblKeyboardistNum);
-		
-		lblInstrumentalistNum = new JLabel("Instrumentalist: 0/0");
-		lblInstrumentalistNum.setHorizontalAlignment(SwingConstants.LEFT);
-		lblInstrumentalistNum.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblInstrumentalistNum.setBounds(879, 48, 152, 23);
-		mailingPanel.add(lblInstrumentalistNum);
-		
-		labelSingerNum = new JLabel("Singer: 0/0");
-		labelSingerNum.setHorizontalAlignment(SwingConstants.LEFT);
-		labelSingerNum.setFont(new Font("Calibri", Font.PLAIN, 16));
-		labelSingerNum.setBounds(371, 48, 90, 23);
-		mailingPanel.add(labelSingerNum);
-		
-		checkinPanel = new JPanel();
-		checkinPanel.setBackground(SystemColor.window);
-		tabbedPane.addTab("Camper Checkin", null, checkinPanel, null);
-		checkinPanel.setLayout(null);
-		
-		lblCheckinName = new JLabel("");
-		lblCheckinName.setFont(new Font("Calibri", Font.BOLD, 16));
-		lblCheckinName.setBounds(10, 41, 286, 29);
-		checkinPanel.add(lblCheckinName);
-		
-		JLabel lblCheckinInformation = new JLabel("Checkin Information");
-		lblCheckinInformation.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblCheckinInformation.setBounds(10, 84, 157, 16);
-		checkinPanel.add(lblCheckinInformation);
-		
-		chckbxArrivalpack = new JCheckBox("Arrival Packet");
-		chckbxArrivalpack.setBackground(Color.WHITE);
-		chckbxArrivalpack.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxArrivalpack.setBounds(6, 107, 128, 23);
-		checkinPanel.add(chckbxArrivalpack);
-		
-		chckbxMusicalInstrument = new JCheckBox("Musical Instrument");
-		chckbxMusicalInstrument.setBackground(Color.WHITE);
-		chckbxMusicalInstrument.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxMusicalInstrument.setBounds(6, 133, 170, 23);
-		checkinPanel.add(chckbxMusicalInstrument);
-		
-		chckbxEquipmentSupplies = new JCheckBox("Equipment Supplies");
-		chckbxEquipmentSupplies.setBackground(Color.WHITE);
-		chckbxEquipmentSupplies.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxEquipmentSupplies.setBounds(6, 159, 170, 23);
-		checkinPanel.add(chckbxEquipmentSupplies);
-		
-		JLabel lblCloth = new JLabel("Cloth");
-		lblCloth.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblCloth.setBounds(10, 223, 61, 26);
-		checkinPanel.add(lblCloth);
-		
-		chckbxLeather = new JCheckBox("Leather");
-		chckbxLeather.setBackground(Color.WHITE);
-		chckbxLeather.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxLeather.setBounds(10, 256, 92, 23);
-		checkinPanel.add(chckbxLeather);
-		
-		chckbxSpandex = new JCheckBox("Spandex");
-		chckbxSpandex.setBackground(Color.WHITE);
-		chckbxSpandex.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxSpandex.setBounds(10, 282, 96, 23);
-		checkinPanel.add(chckbxSpandex);
-		
-		chckbxGlittered = new JCheckBox("Glittered");
-		chckbxGlittered.setBackground(Color.WHITE);
-		chckbxGlittered.setFont(new Font("Calibri", Font.PLAIN, 16));
-		chckbxGlittered.setBounds(10, 308, 109, 23);
-		checkinPanel.add(chckbxGlittered);
-		
-		btnCheckinSave = new JButton("Save");
-		btnCheckinSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				saveCheckinStatus();
-			}
-		});
-		btnCheckinSave.setBackground(SystemColor.control);
-		btnCheckinSave.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnCheckinSave.setBounds(10, 418, 117, 41);
-		btnCheckinSave.setVisible(false);
-		checkinPanel.add(btnCheckinSave);
-		
-		btnCheckinCancel = new JButton("Cancel");
-		btnCheckinCancel.addActionListener(new ActionListener() {
+		mn_GenerateMailButton = new JButton("Generate Mail");
+		mn_GenerateMailButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				clearCheckinFields();
+				openWordMailTemplate();
 			}
 		});
-		btnCheckinCancel.setBackground(SystemColor.control);
-		btnCheckinCancel.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnCheckinCancel.setBounds(185, 418, 117, 41);
-		btnCheckinCancel.setVisible(false);
-		checkinPanel.add(btnCheckinCancel);
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
+		mn_SaveButton = new JButton("Save");
+		mn_SaveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveCamperStatus();
+			}
+		});
+		mn_SaveButton.setForeground(Color.BLACK);
+		mn_SaveButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		mn_SaveButton.setBackground(SystemColor.menu);
+		mn_SaveButton.setBounds(16, 416, 77, 43);
+		mn_MainPanel.add(mn_SaveButton);
+		mn_GenerateMailButton.setForeground(Color.BLACK);
+		mn_GenerateMailButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		mn_GenerateMailButton.setBackground(SystemColor.menu);
+		mn_GenerateMailButton.setBounds(103, 416, 158, 43);
+		mn_MainPanel.add(mn_GenerateMailButton);
+		mn_CancelButton.setForeground(Color.BLACK);
+		mn_CancelButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		mn_CancelButton.setBackground(SystemColor.menu);
+		mn_CancelButton.setBounds(271, 416, 90, 43);
+		mn_MainPanel.add(mn_CancelButton);
 		
-		scrollPane_1.setBounds(317, 12, 742, 447);
-		checkinPanel.add(scrollPane_1);
+		ci_MainPanel = new JPanel();
+		ci_MainPanel.setBackground(SystemColor.window);
+		main_TabPane.addTab("Camper Checkin", null, ci_MainPanel, null);
+		ci_MainPanel.setLayout(null);
 		
-		tableCheckin = new JTable();
+		ci_ScrollPane = new JScrollPane();
 		
-		tableCheckin.setModel(new DefaultTableModel(
+		ci_ScrollPane.setBounds(317, 12, 742, 447);
+		ci_MainPanel.add(ci_ScrollPane);
+		
+		ci_CheckinTable = new JTable();
+		
+		ci_CheckinTable.setModel(new DefaultTableModel(
 				new Object[][] {
 				},
 				new String[] {
 						"Id", "FName", "LName", "HasArvalPak", "HasIstrmt", "HasSply", "LeatherCloth", "SpdxCloth", "GlitterCloth", "CheckedIn"
 				}
 			));
-		tableCheckin.setFont(new Font("Calibri", Font.PLAIN, 16));
-		tableCheckin.getColumnModel().getColumn(0).setPreferredWidth(20);
-		tableCheckin.getColumnModel().getColumn(1).setPreferredWidth(80);
-		tableCheckin.getColumnModel().getColumn(2).setPreferredWidth(80);
-		tableCheckin.getColumnModel().getColumn(3).setPreferredWidth(50);
-		tableCheckin.getColumnModel().getColumn(4).setPreferredWidth(40);
-		tableCheckin.getColumnModel().getColumn(5).setPreferredWidth(30);
-		tableCheckin.getColumnModel().getColumn(6).setPreferredWidth(50);
-		tableCheckin.getColumnModel().getColumn(7).setPreferredWidth(40);
-		tableCheckin.getColumnModel().getColumn(8).setPreferredWidth(40);
-		tableCheckin.getColumnModel().getColumn(9).setPreferredWidth(40);
-		tableCheckin.setRowHeight(21);
-		ListSelectionModel selCheckinModel = tableCheckin.getSelectionModel(); 
+		ci_CheckinTable.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_CheckinTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		ci_CheckinTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+		ci_CheckinTable.getColumnModel().getColumn(2).setPreferredWidth(80);
+		ci_CheckinTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+		ci_CheckinTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+		ci_CheckinTable.getColumnModel().getColumn(5).setPreferredWidth(30);
+		ci_CheckinTable.getColumnModel().getColumn(6).setPreferredWidth(50);
+		ci_CheckinTable.getColumnModel().getColumn(7).setPreferredWidth(40);
+		ci_CheckinTable.getColumnModel().getColumn(8).setPreferredWidth(40);
+		ci_CheckinTable.getColumnModel().getColumn(9).setPreferredWidth(40);
+		ci_CheckinTable.setRowHeight(21);
+		ListSelectionModel selCheckinModel = ci_CheckinTable.getSelectionModel(); 
+		
+		ci_ScrollPane.setViewportView(ci_CheckinTable);
+		
+		ci_PleaseCheckinCamperLabel = new JLabel("Please Checkin for");
+		ci_PleaseCheckinCamperLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_PleaseCheckinCamperLabel.setBounds(10, 13, 130, 32);
+		ci_MainPanel.add(ci_PleaseCheckinCamperLabel);
+		
+		ci_CamperNameLabel = new JLabel("");
+		ci_CamperNameLabel.setFont(new Font("Calibri", Font.BOLD, 16));
+		ci_CamperNameLabel.setBounds(10, 41, 286, 29);
+		ci_MainPanel.add(ci_CamperNameLabel);
+		
+		ci_CheckinInfoLabel = new JLabel("Checkin Information");
+		ci_CheckinInfoLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_CheckinInfoLabel.setBounds(10, 84, 157, 16);
+		ci_MainPanel.add(ci_CheckinInfoLabel);
+		
+		ci_ClothLabel = new JLabel("Cloth");
+		ci_ClothLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_ClothLabel.setBounds(10, 223, 61, 26);
+		ci_MainPanel.add(ci_ClothLabel);
+		
+		ci_ArrivalpackCheckBox = new JCheckBox("Arrival Packet");
+		ci_ArrivalpackCheckBox.setBackground(Color.WHITE);
+		ci_ArrivalpackCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_ArrivalpackCheckBox.setBounds(6, 107, 128, 23);
+		ci_MainPanel.add(ci_ArrivalpackCheckBox);
+		
+		ci_MusicalInstrumentCheckBox = new JCheckBox("Musical Instrument");
+		ci_MusicalInstrumentCheckBox.setBackground(Color.WHITE);
+		ci_MusicalInstrumentCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_MusicalInstrumentCheckBox.setBounds(6, 133, 170, 23);
+		ci_MainPanel.add(ci_MusicalInstrumentCheckBox);
+		
+		ci_EquipmentSuppliesCheckBox = new JCheckBox("Equipment Supplies");
+		ci_EquipmentSuppliesCheckBox.setBackground(Color.WHITE);
+		ci_EquipmentSuppliesCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_EquipmentSuppliesCheckBox.setBounds(6, 159, 170, 23);
+		ci_MainPanel.add(ci_EquipmentSuppliesCheckBox);
+		
+		ci_LeatherCheckBox = new JCheckBox("Leather");
+		ci_LeatherCheckBox.setBackground(Color.WHITE);
+		ci_LeatherCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_LeatherCheckBox.setBounds(10, 256, 92, 23);
+		ci_MainPanel.add(ci_LeatherCheckBox);
+		
+		ci_SpandexCheckBox = new JCheckBox("Spandex");
+		ci_SpandexCheckBox.setBackground(Color.WHITE);
+		ci_SpandexCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_SpandexCheckBox.setBounds(10, 282, 96, 23);
+		ci_MainPanel.add(ci_SpandexCheckBox);
+		
+		ci_GlitteredCheckBox = new JCheckBox("Glittered");
+		ci_GlitteredCheckBox.setBackground(Color.WHITE);
+		ci_GlitteredCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_GlitteredCheckBox.setBounds(10, 308, 109, 23);
+		ci_MainPanel.add(ci_GlitteredCheckBox);
+		
+		ci_SaveButton = new JButton("Save");
+		ci_SaveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveCheckinStatus();
+			}
+		});
+		ci_SaveButton.setBackground(SystemColor.control);
+		ci_SaveButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_SaveButton.setBounds(10, 418, 117, 41);
+		ci_SaveButton.setVisible(false);
+		
+		ci_CheckInCamperCheckBox = new JCheckBox("Check in Camper");
+		ci_CheckInCamperCheckBox.setFont(new Font("Calibri", Font.PLAIN, 18));
+		ci_CheckInCamperCheckBox.setBackground(Color.WHITE);
+		ci_CheckInCamperCheckBox.setBounds(10, 366, 217, 23);
+		ci_MainPanel.add(ci_CheckInCamperCheckBox);
+		ci_MainPanel.add(ci_SaveButton);
+		
+		ci_CancelButton = new JButton("Cancel");
+		ci_CancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearCheckinFields();
+			}
+		});
+		ci_CancelButton.setBackground(SystemColor.control);
+		ci_CancelButton.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_CancelButton.setBounds(185, 418, 117, 41);
+		ci_CancelButton.setVisible(false);
+		ci_MainPanel.add(ci_CancelButton);
 		selCheckinModel.addListSelectionListener(new ListSelectionListener(){
 	        @Override
 			public void valueChanged(ListSelectionEvent event) {
 	            if(!selCheckinModel.isSelectionEmpty()) {populateCheckinFields();}
 	        }
 	    });
-		scrollPane_1.setViewportView(tableCheckin);
 		
-		chckbxCheckInCamper = new JCheckBox("Check in Camper");
-		chckbxCheckInCamper.setFont(new Font("Calibri", Font.PLAIN, 18));
-		chckbxCheckInCamper.setBackground(Color.WHITE);
-		chckbxCheckInCamper.setBounds(10, 366, 217, 23);
-		checkinPanel.add(chckbxCheckInCamper);
+		da_MainPanel = new JPanel();
+		da_MainPanel.setBackground(SystemColor.window);
+		main_TabPane.addTab("Dorm Assignment", null, da_MainPanel, null);
+		da_MainPanel.setLayout(null);
 		
-		lblPleaseCheckinCamper = new JLabel("Please Checkin for");
-		lblPleaseCheckinCamper.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblPleaseCheckinCamper.setBounds(10, 13, 130, 32);
-		checkinPanel.add(lblPleaseCheckinCamper);
+		da_GirlDorm1Panel = new JPanel();
+		da_GirlDorm1Panel.setBorder(new TitledBorder(null, "Girls Dorm #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		da_GirlDorm1Panel.setBounds(20, 17, 207, 203);
+		da_MainPanel.add(da_GirlDorm1Panel);
+		da_GirlDorm1Panel.setLayout(null);
 		
-		dormAsnPanel = new JPanel();
-		dormAsnPanel.setBackground(SystemColor.window);
-		tabbedPane.addTab("Dorm Assignment", null, dormAsnPanel, null);
-		dormAsnPanel.setLayout(null);
+		da_GirlDorm1List = new JList<DormItem>(da_GirlDorm1Model);
+		da_GirlDorm1List.setFont(new Font("Calibri", Font.PLAIN, 14));
+		da_GirlDorm1List.setBounds(6, 16, 191, 176);
+		da_GirlDorm1List.setCellRenderer(new DormItemCellRenderer());
+		da_GirlDorm1Panel.add(da_GirlDorm1List);
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(null, "Grils Dorm #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(20, 17, 207, 203);
-		dormAsnPanel.add(panel);
-		panel.setLayout(null);
+		da_GirlDorm2Panel = new JPanel();
+		da_GirlDorm2Panel.setLayout(null);
+		da_GirlDorm2Panel.setBorder(new TitledBorder(null, "Girls Dorm #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		da_GirlDorm2Panel.setBounds(248, 17, 207, 203);
+		da_MainPanel.add(da_GirlDorm2Panel);
 		
-		listGirlDorm1 = new JList<DormItem>(girlDorm1Model);
-		listGirlDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listGirlDorm1.setBounds(6, 16, 191, 176);
-		listGirlDorm1.setCellRenderer(new DormItemCellRenderer());
-		panel.add(listGirlDorm1);
+		da_GirlDorm2List = new JList<DormItem>(da_GirlDorm2Model);
+		da_GirlDorm2List.setFont(new Font("Calibri", Font.PLAIN, 14));
+		da_GirlDorm2List.setBounds(6, 16, 191, 176);
+		da_GirlDorm2List.setCellRenderer(new DormItemCellRenderer());
+		da_GirlDorm2Panel.add(da_GirlDorm2List);
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setLayout(null);
-		panel_1.setBorder(new TitledBorder(null, "Grils Dorm #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(248, 17, 207, 203);
-		dormAsnPanel.add(panel_1);
+		da_GirlDorm3Panel = new JPanel();
+		da_GirlDorm3Panel.setLayout(null);
+		da_GirlDorm3Panel.setBorder(new TitledBorder(null, "Girls Dorm #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		da_GirlDorm3Panel.setBounds(478, 17, 207, 203);
+		da_MainPanel.add(da_GirlDorm3Panel);
 		
-		listGirlDorm2 = new JList<DormItem>(girlDorm2Model);
-		listGirlDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listGirlDorm2.setBounds(6, 16, 191, 176);
-		listGirlDorm2.setCellRenderer(new DormItemCellRenderer());
-		panel_1.add(listGirlDorm2);
+		da_GirlDorm3List = new JList<DormItem>(da_GirlDorm3Model);
+		da_GirlDorm3List.setFont(new Font("Calibri", Font.PLAIN, 14));
+		da_GirlDorm3List.setBounds(6, 16, 191, 176);
+		da_GirlDorm3List.setCellRenderer(new DormItemCellRenderer());
+		da_GirlDorm3Panel.add(da_GirlDorm3List);
 		
-		JPanel panel_2 = new JPanel();
-		panel_2.setLayout(null);
-		panel_2.setBorder(new TitledBorder(null, "Grils Dorm #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_2.setBounds(478, 17, 207, 203);
-		dormAsnPanel.add(panel_2);
+		da_BoyDorm1Panel = new JPanel();
+		da_BoyDorm1Panel.setLayout(null);
+		da_BoyDorm1Panel.setBorder(new TitledBorder(null, "Boys Dorm #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		da_BoyDorm1Panel.setBounds(20, 238, 207, 203);
+		da_MainPanel.add(da_BoyDorm1Panel);
 		
-		listGirlDorm3 = new JList<DormItem>(girlDorm3Model);
-		listGirlDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listGirlDorm3.setBounds(6, 16, 191, 176);
-		listGirlDorm3.setCellRenderer(new DormItemCellRenderer());
-		panel_2.add(listGirlDorm3);
+		da_BoyDorm1List = new JList<DormItem>(da_BoyDorm1Model);
+		da_BoyDorm1List.setFont(new Font("Calibri", Font.PLAIN, 14));
+		da_BoyDorm1List.setBounds(6, 16, 191, 176);
+		da_BoyDorm1List.setCellRenderer(new DormItemCellRenderer());
+		da_BoyDorm1Panel.add(da_BoyDorm1List);
 		
-		JPanel panel_3 = new JPanel();
-		panel_3.setLayout(null);
-		panel_3.setBorder(new TitledBorder(null, "Boys Dorm #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_3.setBounds(20, 238, 207, 203);
-		dormAsnPanel.add(panel_3);
+		da_BoyDorm2Panel = new JPanel();
+		da_BoyDorm2Panel.setLayout(null);
+		da_BoyDorm2Panel.setBorder(new TitledBorder(null, "Boys Dorm #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		da_BoyDorm2Panel.setBounds(248, 238, 207, 203);
+		da_MainPanel.add(da_BoyDorm2Panel);
 		
-		listBoyDorm1 = new JList<DormItem>(boyDorm1Model);
-		listBoyDorm1.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listBoyDorm1.setBounds(6, 16, 191, 176);
-		listBoyDorm1.setCellRenderer(new DormItemCellRenderer());
-		panel_3.add(listBoyDorm1);
+		da_BoyDorm2List = new JList<DormItem>(da_BoyDorm2Model);
+		da_BoyDorm2List.setFont(new Font("Calibri", Font.PLAIN, 14));
+		da_BoyDorm2List.setBounds(6, 16, 191, 176);
+		da_BoyDorm2List.setCellRenderer(new DormItemCellRenderer());
+		da_BoyDorm2Panel.add(da_BoyDorm2List);
 		
-		JPanel panel_4 = new JPanel();
-		panel_4.setLayout(null);
-		panel_4.setBorder(new TitledBorder(null, "Boys Dorm #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_4.setBounds(248, 238, 207, 203);
-		dormAsnPanel.add(panel_4);
+		da_BoyDorm3Panel = new JPanel();
+		da_BoyDorm3Panel.setLayout(null);
+		da_BoyDorm3Panel.setBorder(new TitledBorder(null, "Boys Dorm #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		da_BoyDorm3Panel.setBounds(478, 238, 207, 203);
+		da_MainPanel.add(da_BoyDorm3Panel);
 		
-		listBoyDorm2 = new JList<DormItem>(boyDorm2Model);
-		listBoyDorm2.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listBoyDorm2.setBounds(6, 16, 191, 176);
-		listBoyDorm2.setCellRenderer(new DormItemCellRenderer());
-		panel_4.add(listBoyDorm2);
+		da_BoyDorm3List = new JList<DormItem>(da_BoyDorm3Model);
+		da_BoyDorm3List.setFont(new Font("Calibri", Font.PLAIN, 14));
+		da_BoyDorm3List.setBounds(6, 16, 191, 176);
+		da_BoyDorm3List.setCellRenderer(new DormItemCellRenderer());
+		da_BoyDorm3Panel.add(da_BoyDorm3List);
 		
-		JPanel panel_5 = new JPanel();
-		panel_5.setLayout(null);
-		panel_5.setBorder(new TitledBorder(null, "Boys Dorm #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_5.setBounds(478, 238, 207, 203);
-		dormAsnPanel.add(panel_5);
+		da_RequestSwitchDormLabel = new JLabel("Dorm Switch Request");
+		da_RequestSwitchDormLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		da_RequestSwitchDormLabel.setBounds(714, 322, 168, 32);
+		da_MainPanel.add(da_RequestSwitchDormLabel);
 		
-		listBoyDorm3 = new JList<DormItem>(boyDorm3Model);
-		listBoyDorm3.setFont(new Font("Calibri", Font.PLAIN, 14));
-		listBoyDorm3.setBounds(6, 16, 191, 176);
-		listBoyDorm3.setCellRenderer(new DormItemCellRenderer());
-		panel_5.add(listBoyDorm3);
+		da_Swaper1Dropdown = new JComboBox<DormItem>(da_Swaper1Model);
+		da_Swaper1Dropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		da_Swaper1Dropdown.setBackground(Color.WHITE);
+		da_Swaper1Dropdown.setBounds(714, 365, 191, 29);
+		//da_Swaper1Dropdown.setRenderer(new SwaperComboItem());
+		da_MainPanel.add(da_Swaper1Dropdown);
 		
-		btnAutoAssignDorm = new JButton("Auto Dorm Assign");
-		btnAutoAssignDorm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				autoAssnDorm();
-			}
-		});
-		btnAutoAssignDorm.setForeground(Color.BLACK);
-		btnAutoAssignDorm.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnAutoAssignDorm.setBackground(SystemColor.menu);
-		btnAutoAssignDorm.setBounds(714, 17, 191, 43);
-		dormAsnPanel.add(btnAutoAssignDorm);
+		da_Swaper2Dropdown = new JComboBox<DormItem>(da_Swaper2Model);
+		da_Swaper2Dropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		da_Swaper2Dropdown.setBackground(Color.WHITE);
+		da_Swaper2Dropdown.setBounds(714, 412, 191, 29);
+		//da_Swaper2Dropdown.setRenderer(new SwaperComboItem());
+		da_MainPanel.add(da_Swaper2Dropdown);
 		
-		JLabel lblRequestSwitchDorm = new JLabel("Dorm Switch Request");
-		lblRequestSwitchDorm.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblRequestSwitchDorm.setBounds(714, 322, 168, 32);
-		dormAsnPanel.add(lblRequestSwitchDorm);
-		
-		camperDropdownSwaper1 = new JComboBox<DormItem>(dormSwaper1Model);
-		camperDropdownSwaper1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		camperDropdownSwaper1.setBackground(Color.WHITE);
-		camperDropdownSwaper1.setBounds(714, 365, 191, 29);
-		//camperDropdownSwaper1.setRenderer(new SwaperComboItem());
-		dormAsnPanel.add(camperDropdownSwaper1);
-		
-		camperDropdownSwaper2 = new JComboBox<DormItem>(dormSwaper2Model);
-		camperDropdownSwaper2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		camperDropdownSwaper2.setBackground(Color.WHITE);
-		camperDropdownSwaper2.setBounds(714, 412, 191, 29);
-		//camperDropdownSwaper2.setRenderer(new SwaperComboItem());
-		dormAsnPanel.add(camperDropdownSwaper2);
-		
-		btnRequest = new JButton("Request");
-		btnRequest.addActionListener(new ActionListener() {
+		da_RequestButton = new JButton("Request");
+		da_RequestButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				swapCampersDormRequest();
 			}
 		});
-		btnRequest.setForeground(Color.BLACK);
-		btnRequest.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnRequest.setBackground(SystemColor.menu);
-		btnRequest.setBounds(928, 398, 119, 43);
-		dormAsnPanel.add(btnRequest);
 		
-		bandAsnPanel = new JPanel();
-		bandAsnPanel.setBackground(SystemColor.window);
-		tabbedPane.addTab("Band Assignment", null, bandAsnPanel, null);
-		bandAsnPanel.setLayout(null);
-		
-		JPanel panel_6 = new JPanel();
-		panel_6.setLayout(null);
-		panel_6.setBorder(new TitledBorder(null, "Band #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_6.setBounds(25, 22, 236, 144);
-		bandAsnPanel.add(panel_6);
-		
-		listBand1 = new JList<BandItem>(band1Model);
-		listBand1.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand1.setCellRenderer(new BandItemCellRenderer());
-		listBand1.setBounds(6, 16, 224, 120);
-		panel_6.add(listBand1);
-		
-		JPanel panel_7 = new JPanel();
-		panel_7.setLayout(null);
-		panel_7.setBorder(new TitledBorder(null, "Band #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_7.setBounds(286, 22, 236, 144);
-		bandAsnPanel.add(panel_7);
-		
-		listBand2 = new JList<BandItem>(band2Model);
-		listBand2.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand2.setCellRenderer(new BandItemCellRenderer());
-		listBand2.setBounds(6, 16, 224, 120);
-		panel_7.add(listBand2);
-		
-		JPanel panel_8 = new JPanel();
-		panel_8.setLayout(null);
-		panel_8.setBorder(new TitledBorder(null, "Band #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_8.setBounds(547, 22, 236, 144);
-		bandAsnPanel.add(panel_8);
-		
-		listBand3 = new JList<BandItem>(band3Model);
-		listBand3.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand3.setCellRenderer(new BandItemCellRenderer());
-		listBand3.setBounds(6, 16, 224, 120);
-		panel_8.add(listBand3);
-		
-		JPanel panel_9 = new JPanel();
-		panel_9.setLayout(null);
-		panel_9.setBorder(new TitledBorder(null, "Band #5", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_9.setBounds(25, 190, 236, 144);
-		bandAsnPanel.add(panel_9);
-		
-		listBand5 = new JList<BandItem>(band5Model);
-		listBand5.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand5.setCellRenderer(new BandItemCellRenderer());
-		listBand5.setBounds(6, 16, 224, 120);
-		panel_9.add(listBand5);
-		
-		JPanel panel_10 = new JPanel();
-		panel_10.setLayout(null);
-		panel_10.setBorder(new TitledBorder(null, "Band #6", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_10.setBounds(286, 190, 236, 144);
-		bandAsnPanel.add(panel_10);
-		
-		listBand6 = new JList<BandItem>(band6Model);
-		listBand6.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand6.setCellRenderer(new BandItemCellRenderer());
-		listBand6.setBounds(6, 16, 224, 120);
-		panel_10.add(listBand6);
-		
-		JPanel panel_11 = new JPanel();
-		panel_11.setLayout(null);
-		panel_11.setBorder(new TitledBorder(null, "Band #7", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_11.setBounds(547, 190, 236, 144);
-		bandAsnPanel.add(panel_11);
-		
-		listBand7 = new JList<BandItem>(band7Model);
-		listBand7.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand7.setCellRenderer(new BandItemCellRenderer());
-		listBand7.setBounds(6, 16, 224, 120);
-		panel_11.add(listBand7);
-		
-		JPanel panel_12 = new JPanel();
-		panel_12.setLayout(null);
-		panel_12.setBorder(new TitledBorder(null, "Band #4", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_12.setBounds(808, 22, 236, 144);
-		bandAsnPanel.add(panel_12);
-		
-		listBand4 = new JList<BandItem>(band4Model);
-		listBand4.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand4.setCellRenderer(new BandItemCellRenderer());
-		listBand4.setBounds(6, 16, 224, 120);
-		panel_12.add(listBand4);
-		
-		JPanel panel_13 = new JPanel();
-		panel_13.setLayout(null);
-		panel_13.setBorder(new TitledBorder(null, "Band #8", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_13.setBounds(808, 190, 236, 144);
-		bandAsnPanel.add(panel_13);
-		
-		listBand8 = new JList<BandItem>(band8Model);
-		listBand8.setFont(new Font("Calibri", Font.PLAIN, 12));
-		listBand8.setCellRenderer(new BandItemCellRenderer());
-		listBand8.setBounds(6, 16, 224, 120);
-		panel_13.add(listBand8);
-		
-		JButton btnAutoAssignBand = new JButton("Auto Assign");
-		btnAutoAssignBand.addActionListener(new ActionListener() {
+		da_AutoAssignDormButton = new JButton("Auto Dorm Assign");
+		da_AutoAssignDormButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				autoAssnBand();
+				autoAssnDorm();
 			}
 		});
-		btnAutoAssignBand.setForeground(Color.BLACK);
-		btnAutoAssignBand.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnAutoAssignBand.setBackground(SystemColor.menu);
-		btnAutoAssignBand.setBounds(884, 403, 160, 43);
-		bandAsnPanel.add(btnAutoAssignBand);
+		da_AutoAssignDormButton.setForeground(Color.BLACK);
+		da_AutoAssignDormButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		da_AutoAssignDormButton.setBackground(SystemColor.menu);
+		da_AutoAssignDormButton.setBounds(714, 17, 191, 43);
+		da_MainPanel.add(da_AutoAssignDormButton);
+		da_RequestButton.setForeground(Color.BLACK);
+		da_RequestButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		da_RequestButton.setBackground(SystemColor.menu);
+		da_RequestButton.setBounds(928, 398, 119, 43);
+		da_MainPanel.add(da_RequestButton);
 		
-		JLabel lblSwitchBand = new JLabel("Switch Band");
-		lblSwitchBand.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lblSwitchBand.setBounds(34, 369, 100, 32);
-		bandAsnPanel.add(lblSwitchBand);
+		bd_MainPanel = new JPanel();
+		bd_MainPanel.setBackground(SystemColor.window);
+		main_TabPane.addTab("Band Assignment", null, bd_MainPanel, null);
+		bd_MainPanel.setLayout(null);
 		
-		bandDropdownSwaper1 = new JComboBox<BandItem>(bandSwaper1Model);
-		bandDropdownSwaper1.setFont(new Font("Calibri", Font.PLAIN, 16));
-		bandDropdownSwaper1.setBackground(Color.WHITE);
-		bandDropdownSwaper1.setBounds(149, 371, 191, 29);
-		bandAsnPanel.add(bandDropdownSwaper1);
+		bd_Band1Panel = new JPanel();
+		bd_Band1Panel.setLayout(null);
+		bd_Band1Panel.setBorder(new TitledBorder(null, "Band #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band1Panel.setBounds(25, 22, 236, 144);
+		bd_MainPanel.add(bd_Band1Panel);
 		
-		bandDropdownSwaper2 = new JComboBox<BandItem>(bandSwaper2Model);
-		bandDropdownSwaper2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		bandDropdownSwaper2.setBackground(Color.WHITE);
-		bandDropdownSwaper2.setBounds(149, 411, 191, 29);
-		bandAsnPanel.add(bandDropdownSwaper2);
+		bd_Band1List = new JList<BandItem>(bd_Band1Model);
+		bd_Band1List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band1List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band1List.setBounds(6, 16, 224, 120);
+		bd_Band1Panel.add(bd_Band1List);
 		
-		JButton btnBandSwapRequest = new JButton("Request");
-		btnBandSwapRequest.addActionListener(new ActionListener() {
+		bd_Band2Panel = new JPanel();
+		bd_Band2Panel.setLayout(null);
+		bd_Band2Panel.setBorder(new TitledBorder(null, "Band #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band2Panel.setBounds(286, 22, 236, 144);
+		bd_MainPanel.add(bd_Band2Panel);
+		
+		bd_Band2List = new JList<BandItem>(bd_Band2Model);
+		bd_Band2List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band2List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band2List.setBounds(6, 16, 224, 120);
+		bd_Band2Panel.add(bd_Band2List);
+		
+		bd_Band3Panel = new JPanel();
+		bd_Band3Panel.setLayout(null);
+		bd_Band3Panel.setBorder(new TitledBorder(null, "Band #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band3Panel.setBounds(547, 22, 236, 144);
+		bd_MainPanel.add(bd_Band3Panel);
+		
+		bd_Band3List = new JList<BandItem>(bd_Band3Model);
+		bd_Band3List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band3List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band3List.setBounds(6, 16, 224, 120);
+		bd_Band3Panel.add(bd_Band3List);
+		
+		bd_Band4Panel = new JPanel();
+		bd_Band4Panel.setLayout(null);
+		bd_Band4Panel.setBorder(new TitledBorder(null, "Band #4", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band4Panel.setBounds(808, 22, 236, 144);
+		bd_MainPanel.add(bd_Band4Panel);
+		
+		bd_Band4List = new JList<BandItem>(bd_Band4Model);
+		bd_Band4List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band4List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band4List.setBounds(6, 16, 224, 120);
+		bd_Band4Panel.add(bd_Band4List);
+		
+		bd_Band5Panel = new JPanel();
+		bd_Band5Panel.setLayout(null);
+		bd_Band5Panel.setBorder(new TitledBorder(null, "Band #5", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band5Panel.setBounds(25, 190, 236, 144);
+		bd_MainPanel.add(bd_Band5Panel);
+		
+		bd_Band5List = new JList<BandItem>(bd_Band5Model);
+		bd_Band5List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band5List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band5List.setBounds(6, 16, 224, 120);
+		bd_Band5Panel.add(bd_Band5List);
+		
+		bd_Band6Panel = new JPanel();
+		bd_Band6Panel.setLayout(null);
+		bd_Band6Panel.setBorder(new TitledBorder(null, "Band #6", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band6Panel.setBounds(286, 190, 236, 144);
+		bd_MainPanel.add(bd_Band6Panel);
+		
+		bd_Band6List = new JList<BandItem>(bd_Band6Model);
+		bd_Band6List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band6List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band6List.setBounds(6, 16, 224, 120);
+		bd_Band6Panel.add(bd_Band6List);
+		
+		bd_Band7Panel = new JPanel();
+		bd_Band7Panel.setLayout(null);
+		bd_Band7Panel.setBorder(new TitledBorder(null, "Band #7", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band7Panel.setBounds(547, 190, 236, 144);
+		bd_MainPanel.add(bd_Band7Panel);
+		
+		bd_Band7List = new JList<BandItem>(bd_Band7Model);
+		bd_Band7List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band7List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band7List.setBounds(6, 16, 224, 120);
+		bd_Band7Panel.add(bd_Band7List);
+		
+		bd_Band8Panel = new JPanel();
+		bd_Band8Panel.setLayout(null);
+		bd_Band8Panel.setBorder(new TitledBorder(null, "Band #8", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd_Band8Panel.setBounds(808, 190, 236, 144);
+		bd_MainPanel.add(bd_Band8Panel);
+		
+		bd_Band8List = new JList<BandItem>(bd_Band8Model);
+		bd_Band8List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd_Band8List.setCellRenderer(new BandItemCellRenderer());
+		bd_Band8List.setBounds(6, 16, 224, 120);
+		bd_Band8Panel.add(bd_Band8List);
+		
+		bd_SwitchBandLabel = new JLabel("Switch Band");
+		bd_SwitchBandLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bd_SwitchBandLabel.setBounds(34, 369, 100, 32);
+		bd_MainPanel.add(bd_SwitchBandLabel);
+		
+		bd_Swaper1Dropdown = new JComboBox<BandItem>(bd_Swaper1Model);
+		bd_Swaper1Dropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bd_Swaper1Dropdown.setBackground(Color.WHITE);
+		bd_Swaper1Dropdown.setBounds(149, 371, 191, 29);
+		bd_MainPanel.add(bd_Swaper1Dropdown);
+		
+		bd_Swaper2Dropdown = new JComboBox<BandItem>(bd_Swaper2Model);
+		bd_Swaper2Dropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bd_Swaper2Dropdown.setBackground(Color.WHITE);
+		bd_Swaper2Dropdown.setBounds(149, 411, 191, 29);
+		bd_MainPanel.add(bd_Swaper2Dropdown);
+		
+		bd_RequestButton = new JButton("Request");
+		bd_RequestButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				swapCampersBandRequest();
 			}
 		});
-		btnBandSwapRequest.setForeground(Color.BLACK);
-		btnBandSwapRequest.setFont(new Font("Calibri", Font.PLAIN, 18));
-		btnBandSwapRequest.setBackground(SystemColor.menu);
-		btnBandSwapRequest.setBounds(363, 403, 119, 43);
-		bandAsnPanel.add(btnBandSwapRequest);
+		
+		bd_AutoAssignBandButton = new JButton("Auto Assign");
+		bd_AutoAssignBandButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				autoAssnBand();
+			}
+		});
+		bd_AutoAssignBandButton.setForeground(Color.BLACK);
+		bd_AutoAssignBandButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		bd_AutoAssignBandButton.setBackground(SystemColor.menu);
+		bd_AutoAssignBandButton.setBounds(884, 403, 160, 43);
+		bd_MainPanel.add(bd_AutoAssignBandButton);
+		bd_RequestButton.setForeground(Color.BLACK);
+		bd_RequestButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		bd_RequestButton.setBackground(SystemColor.menu);
+		bd_RequestButton.setBounds(363, 403, 119, 43);
+		bd_MainPanel.add(bd_RequestButton);
 				
-		welcomeLabel = new JLabel("Welcome, "+appUser);
-		welcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		welcomeLabel.setFont(new Font("Calibri", Font.BOLD, 18));
-		welcomeLabel.setBounds(664, 31, 130, 20);
+		main_WelcomeLabel = new JLabel("Welcome, " + appUser);
+		main_WelcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		main_WelcomeLabel.setFont(new Font("Calibri", Font.BOLD, 18));
+		main_WelcomeLabel.setBounds(664, 31, 130, 20);
 		
-		frmSmartFursCamper.getContentPane().add(welcomeLabel);
+		main_Frame.getContentPane().add(main_WelcomeLabel);
 		
-		campDateDropdown = new JComboBox<String>();
-		campDateDropdown.setBackground(Color.WHITE);
-		campDateDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"2017 Jun", "2017 July", "2017 Augest"}));
-		campDateDropdown.setFont(new Font("Calibri", Font.PLAIN, 18));
-		campDateDropdown.setBounds(917, 27, 158, 29);
-		campDateDropdown.setSelectedIndex(2);
-		frmSmartFursCamper.getContentPane().add(campDateDropdown);
+		main_CampDateDropdown = new JComboBox<String>();
+		main_CampDateDropdown.setBackground(Color.WHITE);
+		main_CampDateDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"2017 Jun", "2017 July", "2017 Augest"}));
+		main_CampDateDropdown.setFont(new Font("Calibri", Font.PLAIN, 18));
+		main_CampDateDropdown.setBounds(917, 27, 158, 29);
+		main_CampDateDropdown.setSelectedIndex(2);
+		main_Frame.getContentPane().add(main_CampDateDropdown);
+			
+		main_SetCampLabel = new JLabel("Set Camp:");
+		main_SetCampLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		main_SetCampLabel.setFont(new Font("Calibri", Font.PLAIN, 18));
+		main_SetCampLabel.setBounds(804, 31, 88, 20);
+		main_Frame.getContentPane().add(main_SetCampLabel);
 		
+		main_MainTitleLabel = new JLabel("Campers Management System");
+		main_MainTitleLabel.setForeground(Color.DARK_GRAY);
+		main_MainTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		main_MainTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		main_MainTitleLabel.setBounds(280, 16, 312, 40);
+		main_Frame.getContentPane().add(main_MainTitleLabel);
 		
-		JLabel lblSetCamp = new JLabel("Set Camp:");
-		lblSetCamp.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSetCamp.setFont(new Font("Calibri", Font.PLAIN, 18));
-		lblSetCamp.setBounds(804, 31, 88, 20);
-		frmSmartFursCamper.getContentPane().add(lblSetCamp);
-		
-		JLabel lblCampersManagementSystem = new JLabel("Campers Management System");
-		lblCampersManagementSystem.setForeground(Color.DARK_GRAY);
-		lblCampersManagementSystem.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCampersManagementSystem.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		lblCampersManagementSystem.setBounds(280, 16, 312, 40);
-		frmSmartFursCamper.getContentPane().add(lblCampersManagementSystem);
-		
-		lblTopImg = new JLabel("");
+		main_TopImageLabel = new JLabel("");
 		Image img = new ImageIcon(this.getClass().getResource("resources/topbg-main.png")).getImage();
-		lblTopImg.setIcon(new ImageIcon(img));
-		lblTopImg.setBounds(10, 0, 282, 69);
-		frmSmartFursCamper.getContentPane().add(lblTopImg);
+		main_TopImageLabel.setIcon(new ImageIcon(img));
+		main_TopImageLabel.setBounds(10, 0, 282, 69);
+		main_Frame.getContentPane().add(main_TopImageLabel);
 		
 		
 		reloadApplicationTable();
@@ -2144,4 +2157,19 @@ public class MainForm {
 		loadDormSwapDropdowns();
 		loadBandSwapDropdowns();
 	}
+	
+	//Main method for testing
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainForm window = new MainForm();
+					window.main_Frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 }
