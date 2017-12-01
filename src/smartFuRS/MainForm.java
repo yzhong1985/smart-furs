@@ -68,6 +68,7 @@ public class MainForm {
 	private JPanel ci_MainPanel;
 	private JPanel da_MainPanel;
 	private JPanel bd_MainPanel;
+	private JPanel bd2_MainPanel;
 	
 	//########################################################
 	//## US1 components on Application Panel prefix - 'ap'
@@ -210,15 +211,51 @@ public class MainForm {
 	private DefaultComboBoxModel<BandItem> bd_Swaper1Model = new DefaultComboBoxModel<BandItem>();
 	private DefaultComboBoxModel<BandItem> bd_Swaper2Model = new DefaultComboBoxModel<BandItem>();
 	
+	//#############################################################
+	//## US6 components on 2nd Band Assignment Panel prefix - 'bd2'
+	//#############################################################
+	
+	private JLabel bd2_SwitchBandLabel;
+	private JButton bd2_AutoAssign2ndBandButton;
+	private JButton bd2_RequestButton;
+	private JComboBox<BandItem> bd2_Swaper1Dropdown;
+	private JComboBox<BandItem> bd2_Swaper2Dropdown;
+	private JPanel bd2_Band1Panel;
+	private JPanel bd2_Band2Panel;
+	private JPanel bd2_Band3Panel;
+	private JPanel bd2_Band4Panel;
+	private JPanel bd2_Band5Panel;
+	private JPanel bd2_Band6Panel;
+	private JPanel bd2_Band7Panel;
+	private JPanel bd2_Band8Panel;
+	private JList<BandItem> bd2_Band1List;
+	private JList<BandItem> bd2_Band2List;
+	private JList<BandItem> bd2_Band3List;
+	private JList<BandItem> bd2_Band4List;
+	private JList<BandItem> bd2_Band5List;
+	private JList<BandItem> bd2_Band6List;
+	private JList<BandItem> bd2_Band7List;
+	private JList<BandItem> bd2_Band8List;
+	private DefaultListModel<BandItem> bd2_Band1Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band2Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band3Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band4Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band5Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band6Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band7Model = new DefaultListModel<BandItem>();
+	private DefaultListModel<BandItem> bd2_Band8Model = new DefaultListModel<BandItem>();
+	private DefaultComboBoxModel<BandItem> bd2_Swaper1Model = new DefaultComboBoxModel<BandItem>();
+	private DefaultComboBoxModel<BandItem> bd2_Swaper2Model = new DefaultComboBoxModel<BandItem>();
+	
 	//## Global Variables	
 	private boolean isDormAssigned = false;
 	private boolean isBandAssigned = false;	
+	private boolean is2ndBandAssigned = false;
 	private boolean isApplicationEditMode = false;
 	private String appUser = "user";
 	private ArrayList<Camper> allAptCampers = new ArrayList<Camper>();
 	
 	//## Global Methods
-	
 	public void SetAppUser(String user) {
 		appUser = user;
 		main_WelcomeLabel.setText("Welcome, "+ appUser);
@@ -257,12 +294,6 @@ public class MainForm {
 	    	rowData[9] = applicationCampers.get(i).getHasDepositPayment();
 	    	model.addRow(rowData);
 	    }
-	    
-	    //firstname, lastname, birthday, gender, instrument,
-		//ap_applicationTable.setModel( DbUtils.resultSetToTableModel(applicationRs));
-	    
-	    //ResultSet mailingRs =FuRSDBUtility.getMailingCampers();
-	    //mn_CandidatesTable.setModel( DbUtils.resultSetToTableModel(mailingRs));
 	}
 	
 	private void cleanApplicationInputs() {
@@ -627,7 +658,7 @@ public class MainForm {
     	
     	//set to controls
     	mn_FullnameLabel.setText(fname);
-    	if(status.equals("Accept")||status.equals("Deny")) {
+    	if(status.equals("Accept")||status.equals("Deny")||status.equals("WaitingList")) {
     		mn_StatusDropdown.setSelectedItem(status);
     	} else {
     		mn_StatusDropdown.setSelectedItem("Undecided");
@@ -658,7 +689,10 @@ public class MainForm {
 			content = String.format(FuRSDBUtility.AcceptMailContent, fname, lname);
 		} else if(selStatus.equals("Deny")) {
 			content = String.format(FuRSDBUtility.DenyMailContent, fname, lname);
-		} else {
+		} else if(selStatus.equals("WaitingList")) {
+			content = String.format(FuRSDBUtility.WaitingListMailContent, fname, lname);
+		}
+		else {
 			content = "";
 		}
 		mn_MailTextPane.setText(content);
@@ -1059,7 +1093,15 @@ public class MainForm {
 			bd_Swaper2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
 		}
 	}
-		
+	
+	private void load2ndBandSwapDropdowns() {
+		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
+		for(Camper c: allAcceptCampers) {
+			bd2_Swaper1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+			bd2_Swaper2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+		}
+	}
+	
 	private void swapCampersDormRequest() {
 	    DormItem camp1 = (DormItem)da_Swaper1Dropdown.getSelectedItem();
 	    DormItem camp2 = (DormItem)da_Swaper2Dropdown.getSelectedItem();
@@ -1286,11 +1328,176 @@ public class MainForm {
 	    	//reload the group
 	    	
 	    	reloadBand();
-	    	JOptionPane.showMessageDialog(null, "The dorm swap request has been performed.\r\n"+ fullname1 + " has moved to Band #" + b2 + " and\r\n"+fullname2+ " has moved to Band #" + b1);
+	    	JOptionPane.showMessageDialog(null, "The Band swap request has been performed.\r\n"+ fullname1 + " has moved to Band #" + b2 + " and\r\n"+fullname2+ " has moved to Band #" + b1);
 	    	return;
 	    }
     }
 	
+    private void autoAssn2ndBand() {
+    	ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
+		//Group them into 6 category
+		ArrayList<Camper> singers = CalculationUtility.getCampersByCategory("Singer", allAcceptCampers);
+		ArrayList<Camper> guitarists = CalculationUtility.getCampersByCategory("Guitarist", allAcceptCampers);
+		ArrayList<Camper> drummers = CalculationUtility.getCampersByCategory("Drummer", allAcceptCampers);
+		ArrayList<Camper> bassists = CalculationUtility.getCampersByCategory("Bassist", allAcceptCampers);
+		ArrayList<Camper> keyboardists = CalculationUtility.getCampersByCategory("Keyboardist", allAcceptCampers);
+		ArrayList<Camper> instrumentalists = CalculationUtility.getCampersByCategory("Instrumentalist", allAcceptCampers);
+		//Sort each of them based on talentlevel and gender
+		Collections.sort(singers);
+		Collections.sort(guitarists);
+		Collections.sort(drummers);
+		Collections.sort(bassists);
+		Collections.sort(keyboardists);
+		Collections.sort(instrumentalists);
+		
+	    ArrayList<ArrayList<Camper>> allCat = new ArrayList<ArrayList<Camper>>();
+	    allCat.add(singers);
+	    allCat.add(guitarists);
+	    allCat.add(drummers);
+	    allCat.add(bassists);
+	    allCat.add(keyboardists);
+	    allCat.add(instrumentalists);
+	    Collections.shuffle(allCat);
+	    
+	    //6 cats each assign number
+	    boolean order = true;
+	    //for random assign
+	    int advIndx = 0;   
+	    for(int i=1; i<=allCat.size();i++) {   	
+	    	ArrayList<Camper> thisCat = allCat.get(i-1);
+	    	//System.out.println("-------------Group"+i);
+	    	for(int j=1; j<=thisCat.size(); j++) {
+	    		Camper c = thisCat.get(j-1);
+	    		int bnum = 0;
+	    		int base = 0;
+	    		if(j<4) {
+	    			base = j;
+	    		} else {
+	    			base = j-4;
+	    		}
+	    		bnum = (base + advIndx)%4;
+	    		if(bnum==0) {
+	    			bnum=4;
+	    		}
+	    		//calculate base
+	    		if(!order) {
+	    			bnum = 5-bnum;
+	    		} 
+	    		
+	    		if(j>4) {
+	    			bnum +=4;
+	    		}
+
+	    		//System.out.println(""+bnum);
+	    		c.setBand2Num(bnum);
+	    	}
+	    	//reverse order
+	    	if(!order) {
+	    		advIndx+=2;
+	    	}
+	    	order = !order;
+	    }
+	    
+	    //update the main camper list
+	    allAptCampers = allAcceptCampers;
+	    reload2ndBand();
+	    is2ndBandAssigned = true;
+    }
+    
+    private void reload2ndBand() {
+    	bd2_Band1Model.clear();
+	    bd2_Band2Model.clear();
+	    bd2_Band3Model.clear();
+	    bd2_Band4Model.clear();
+	    bd2_Band5Model.clear();
+	    bd2_Band6Model.clear();
+	    bd2_Band7Model.clear();
+	    bd2_Band8Model.clear();
+	    
+	    for(Camper c:allAptCampers) {			
+			int band2num = c.getBand2Num();
+			switch (band2num) {
+            case 1:  bd2_Band1Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 2:  bd2_Band2Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 3:  bd2_Band3Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 4:  bd2_Band4Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 5:  bd2_Band5Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 6:  bd2_Band6Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 7:  bd2_Band7Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+            case 8:  bd2_Band8Model.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+                     break;
+			}
+	    }
+    }
+    
+private void swapCampers2ndBandRequest() {
+    	
+    	BandItem camp1 = (BandItem)bd2_Swaper1Dropdown.getSelectedItem();
+    	BandItem camp2 = (BandItem)bd2_Swaper2Dropdown.getSelectedItem();
+		
+	    if(!is2ndBandAssigned) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe haven't assigned band yet.");
+	    	return;
+	    }
+	    
+	    if(!camp1.getGender().equals(camp2.getGender())) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe can't make a band swap between a boy and a girl.");
+	    	return;
+	    }
+	    
+	    if(!camp1.getCategory().equals(camp2.getCategory())) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nWe can't make a band swap between different instrument categories.");
+	    	return;
+	    }
+	    
+	    if(camp1.getId()==camp2.getId()) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nPlease select different campers.");
+	    	return;
+	    }
+	    
+	    Camper cmp1=null;
+	    Camper cmp2=null;
+	    for(Camper c: allAptCampers) {
+	    	if(c.getId()==camp1.getId()) {
+	    		cmp1 = c;
+	    	}
+	    	if(c.getId()==camp2.getId()) {
+	    		cmp2 = c;
+	    	}
+	    	if(cmp1!=null&&cmp2!=null) {
+	    		break;
+	    	}
+	    }
+
+	    //should check talent level here
+	    boolean istalentmatch = true;
+	    if(!istalentmatch) {
+	    	JOptionPane.showMessageDialog(null, "The request cannot be performed.\r\nAge group rule violation! We want to keep age distributed evenly.");
+	    	return;
+	    } else {
+	    	//swap band
+	    	int b1 = cmp1.getBand2Num();
+	    	int b2 = cmp2.getBand2Num();
+	    	cmp1.setBand2Num(b2);
+	    	cmp2.setBand2Num(b1);
+	    	String fullname1 = cmp1.getFirstname() + cmp1.getLastname();
+	    	String fullname2 = cmp2.getFirstname() + cmp2.getLastname();
+	    	//reload the group
+	    	
+	    	reload2ndBand();
+	    	JOptionPane.showMessageDialog(null, "The 2nd Band swap request has been performed.\r\n"+ fullname1 + " has moved to 2nd Band #" + b2 + " and\r\n"+fullname2+ " has moved to 2nd Band #" + b1);
+	    	return;
+	    }
+    }
+    
+    
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -1650,7 +1857,7 @@ public class MainForm {
 		
 		mn_StatusDropdown = new JComboBox<String>();
 		mn_StatusDropdown.setEnabled(false);
-		mn_StatusDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"Undecided", "Accept", "Deny"}));
+		mn_StatusDropdown.setModel(new DefaultComboBoxModel<String>(new String[] {"Undecided", "Accept", "Deny", "WaitingList"}));
 		mn_StatusDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
 		mn_StatusDropdown.setBackground(Color.WHITE);
 		mn_StatusDropdown.setBounds(142, 50, 180, 29);
@@ -2113,6 +2320,148 @@ public class MainForm {
 		bd_RequestButton.setBackground(SystemColor.menu);
 		bd_RequestButton.setBounds(363, 403, 119, 43);
 		bd_MainPanel.add(bd_RequestButton);
+		
+		bd2_MainPanel = new JPanel();
+		bd2_MainPanel.setLayout(null);
+		bd2_MainPanel.setBackground(Color.WHITE);
+		main_TabPane.addTab("2nd Band Assignment", null, bd2_MainPanel, null);
+		
+		bd2_Band1Panel = new JPanel();
+		bd2_Band1Panel.setLayout(null);
+		bd2_Band1Panel.setBorder(new TitledBorder(null, "Band #1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band1Panel.setBounds(25, 22, 236, 144);
+		bd2_MainPanel.add(bd2_Band1Panel);
+		
+		bd2_Band1List = new JList<BandItem>(bd2_Band1Model);
+		bd2_Band1List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band1List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band1List.setBounds(6, 16, 224, 120);
+		bd2_Band1Panel.add(bd2_Band1List);
+		
+		bd2_Band2Panel = new JPanel();
+		bd2_Band2Panel.setLayout(null);
+		bd2_Band2Panel.setBorder(new TitledBorder(null, "Band #2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band2Panel.setBounds(286, 22, 236, 144);
+		bd2_MainPanel.add(bd2_Band2Panel);
+		
+		bd2_Band2List = new JList<BandItem>(bd2_Band2Model);
+		bd2_Band2List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band2List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band2List.setBounds(6, 16, 224, 120);
+		bd2_Band2Panel.add(bd2_Band2List);
+		
+		bd2_Band3Panel = new JPanel();
+		bd2_Band3Panel.setLayout(null);
+		bd2_Band3Panel.setBorder(new TitledBorder(null, "Band #3", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band3Panel.setBounds(547, 22, 236, 144);
+		bd2_MainPanel.add(bd2_Band3Panel);
+		
+		bd2_Band3List = new JList<BandItem>(bd2_Band3Model);
+		bd2_Band3List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band3List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band3List.setBounds(6, 16, 224, 120);
+		bd2_Band3Panel.add(bd2_Band3List);
+		
+		bd2_Band4Panel = new JPanel();
+		bd2_Band4Panel.setLayout(null);
+		bd2_Band4Panel.setBorder(new TitledBorder(null, "Band #4", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band4Panel.setBounds(808, 22, 236, 144);
+		bd2_MainPanel.add(bd2_Band4Panel);
+		
+		bd2_Band4List = new JList<BandItem>(bd2_Band4Model);
+		bd2_Band4List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band4List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band4List.setBounds(6, 16, 224, 120);
+		bd2_Band4Panel.add(bd2_Band4List);
+		
+		bd2_Band5Panel = new JPanel();
+		bd2_Band5Panel.setLayout(null);
+		bd2_Band5Panel.setBorder(new TitledBorder(null, "Band #5", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band5Panel.setBounds(25, 190, 236, 144);
+		bd2_MainPanel.add(bd2_Band5Panel);
+		
+		bd2_Band5List = new JList<BandItem>(bd2_Band5Model);
+		bd2_Band5List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band5List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band5List.setBounds(6, 16, 224, 120);
+		bd2_Band5Panel.add(bd2_Band5List);
+		
+		bd2_Band6Panel = new JPanel();
+		bd2_Band6Panel.setLayout(null);
+		bd2_Band6Panel.setBorder(new TitledBorder(null, "Band #6", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band6Panel.setBounds(286, 190, 236, 144);
+		bd2_MainPanel.add(bd2_Band6Panel);
+		
+		bd2_Band6List = new JList<BandItem>(bd2_Band6Model);
+		bd2_Band6List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band6List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band6List.setBounds(6, 16, 224, 120);
+		bd2_Band6Panel.add(bd2_Band6List);
+		
+		bd2_Band7Panel = new JPanel();
+		bd2_Band7Panel.setLayout(null);
+		bd2_Band7Panel.setBorder(new TitledBorder(null, "Band #7", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band7Panel.setBounds(547, 190, 236, 144);
+		bd2_MainPanel.add(bd2_Band7Panel);
+		
+		bd2_Band7List = new JList<BandItem>(bd2_Band7Model);
+		bd2_Band7List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band7List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band7List.setBounds(6, 16, 224, 120);
+		bd2_Band7Panel.add(bd2_Band7List);
+		
+		bd2_Band8Panel = new JPanel();
+		bd2_Band8Panel.setLayout(null);
+		bd2_Band8Panel.setBorder(new TitledBorder(null, "Band #8", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		bd2_Band8Panel.setBounds(808, 190, 236, 144);
+		bd2_MainPanel.add(bd2_Band8Panel);
+		
+		bd2_Band8List = new JList<BandItem>(bd2_Band8Model);
+		bd2_Band8List.setFont(new Font("Calibri", Font.PLAIN, 12));
+		bd2_Band8List.setCellRenderer(new BandItemCellRenderer());
+		bd2_Band8List.setBounds(6, 16, 224, 120);
+		bd2_Band8Panel.add(bd2_Band8List);
+		
+		bd2_SwitchBandLabel = new JLabel("Switch Band");
+		bd2_SwitchBandLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bd2_SwitchBandLabel.setBounds(34, 369, 100, 32);
+		bd2_MainPanel.add(bd2_SwitchBandLabel);
+		
+		bd2_Swaper1Dropdown = new JComboBox<BandItem>(bd2_Swaper1Model);
+		bd2_Swaper1Dropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bd2_Swaper1Dropdown.setBackground(Color.WHITE);
+		bd2_Swaper1Dropdown.setBounds(149, 371, 191, 29);
+		bd2_MainPanel.add(bd2_Swaper1Dropdown);
+		
+		bd2_Swaper2Dropdown = new JComboBox<BandItem>(bd2_Swaper2Model);
+		bd2_Swaper2Dropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		bd2_Swaper2Dropdown.setBackground(Color.WHITE);
+		bd2_Swaper2Dropdown.setBounds(149, 411, 191, 29);
+		bd2_MainPanel.add(bd2_Swaper2Dropdown);
+		
+		bd2_AutoAssign2ndBandButton = new JButton("Auto Assign 2nd Band");
+		bd2_AutoAssign2ndBandButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				autoAssn2ndBand();
+			}
+		});
+		bd2_AutoAssign2ndBandButton.setForeground(Color.BLACK);
+		bd2_AutoAssign2ndBandButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		bd2_AutoAssign2ndBandButton.setBackground(SystemColor.menu);
+		bd2_AutoAssign2ndBandButton.setBounds(792, 403, 252, 43);
+		bd2_MainPanel.add(bd2_AutoAssign2ndBandButton);
+		
+		bd2_RequestButton = new JButton("Request");
+		bd2_RequestButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				swapCampers2ndBandRequest();
+			}
+		});
+		bd2_RequestButton.setForeground(Color.BLACK);
+		bd2_RequestButton.setFont(new Font("Calibri", Font.PLAIN, 18));
+		bd2_RequestButton.setBackground(SystemColor.menu);
+		bd2_RequestButton.setBounds(363, 403, 119, 43);
+		bd2_MainPanel.add(bd2_RequestButton);
 				
 		main_WelcomeLabel = new JLabel("Welcome, " + appUser);
 		main_WelcomeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -2156,6 +2505,8 @@ public class MainForm {
 		//FOR US #4
 		loadDormSwapDropdowns();
 		loadBandSwapDropdowns();
+		//FOR US #5
+		load2ndBandSwapDropdowns();
 	}
 	
 	//Main method for testing

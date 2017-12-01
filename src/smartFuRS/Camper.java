@@ -45,7 +45,16 @@ public class Camper implements Comparable<Camper> {
 	private int dormNum=0;
 	//0 means no band assigned
 	private int bandNum=0;
+	//the 2nd band assignment -> 0 means no band assigned
+	private int band2Num=0;
 
+	public int getBand2Num() {
+		return band2Num;
+	}
+	public void setBand2Num(int band2Num) {
+		this.band2Num = band2Num;
+	}
+	
 	public int getId() {
 		return id;
 	}

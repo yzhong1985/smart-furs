@@ -328,6 +328,7 @@ public static ArrayList<Camper> getCheckinCampers(){
 	
 	public static String AcceptMailContent = "CONGRATULATIONS!\r\nDear %s %s,\r\n\r\nYou have been accepted as a CAMPER to attend Our Future Rock Star Camp! We are looking forward to having a meaningful and fun experience with you this summer! Let the memories begin!\r\n\r\nThank you!\r\nFuture Rock Star Camp Director";
 	public static String DenyMailContent = "Dear %s %s,\r\n\r\nThank you for your application for the Future Rock Star Camp. After very careful consideration, I regret to inform you that, on this occasion, your application has not been successful.\r\n\r\nMay I take this opportunity to thank you for the interest you have shown and we are welcome you to apply our future camps.\r\n\r\nFuture Rock Star Camp Director";
+	public static String WaitingListMailContent = "Dear %s %s,\r\n\r\nThank you for your application for the Future Rock Star Camp. At this time, the Camp is full.\r\n\r\nBased on the information, we want to place your name on our waiting list. If space becomes avaiable, you will be informed.\r\n\r\nFuture Rock Star Camp Director";
 	
 
 }
