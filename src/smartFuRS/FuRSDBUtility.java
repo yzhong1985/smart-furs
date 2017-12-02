@@ -325,6 +325,48 @@ public static ArrayList<Camper> getCheckinCampers(){
 		}
 	}
 	
+	public static ArrayList<Camper> getAllWaitingListCampers(){
+		
+		Connection con = getConnection();
+		String sql = "SELECT id, firstname, lastname, birthday, gender, talentLevel, category, arrivalpack, musicalinstrument, equipmentsupplies, clothleather, clothglitter, clothspandex, checkinStatus FROM Camper WHERE applicationStatus='WaitingList'";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ArrayList<Camper> camperlist = new ArrayList<Camper>();
+		try {
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				Camper camp = new Camper();
+				camp.setId(rs.getInt("id"));
+				camp.setFirstname(rs.getString("firstname"));
+				camp.setLastname(rs.getString("lastname"));
+				camp.setBirthday(rs.getString("birthday"));
+				camp.setGender(rs.getString("gender"));
+				camp.setTalentLevel(rs.getString("talentLevel"));
+				camp.setCategory(rs.getString("category"));
+				camp.setApplicationStatus("Accept");
+			    camp.setHasArrivalPack(rs.getString("arrivalpack"));
+			    camp.setHasMusicalInstrument(rs.getString("musicalinstrument"));
+			    camp.setHasEquipmentSupplies(rs.getString("equipmentsupplies"));
+			    camp.setHasClothLeather(rs.getString("clothleather"));
+			    camp.setHasClothGlitter(rs.getString("clothglitter"));
+			    camp.setHasClothSpandex(rs.getString("clothspandex"));
+			    camp.setCheckinStatus(rs.getString("checkinStatus"));
+				camperlist.add(camp);		
+			}
+			return camperlist;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		finally {
+			if (rs != null) {try { rs.close(); } catch (Exception e) { e.printStackTrace(); }}
+		    if (ps != null) {try { ps.close(); } catch (Exception e) { e.printStackTrace(); }}
+		    if (con != null) {try { con.close(); } catch (Exception e) { e.printStackTrace(); }}
+		}
+	}
+	
 	
 	public static String AcceptMailContent = "CONGRATULATIONS!\r\nDear %s %s,\r\n\r\nYou have been accepted as a CAMPER to attend Our Future Rock Star Camp! We are looking forward to having a meaningful and fun experience with you this summer! Let the memories begin!\r\n\r\nThank you!\r\nFuture Rock Star Camp Director";
 	public static String DenyMailContent = "Dear %s %s,\r\n\r\nThank you for your application for the Future Rock Star Camp. After very careful consideration, I regret to inform you that, on this occasion, your application has not been successful.\r\n\r\nMay I take this opportunity to thank you for the interest you have shown and we are welcome you to apply our future camps.\r\n\r\nFuture Rock Star Camp Director";

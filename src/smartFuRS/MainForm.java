@@ -50,6 +50,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JList;
+import javax.swing.ComboBoxModel;
 
 public class MainForm {
 
@@ -122,6 +123,7 @@ public class MainForm {
 	private JLabel mn_BassistNumLabel;
 	private JLabel mn_DrummerNumLabel;
 	private JLabel mn_GuitaristNumLabel;
+	private JLabel mn_WaitinglistNumLabel;
 	private JSpinner mn_TelentLevelSpinner;
 	private JTextPane mn_MailTextPane;
 	private JTable mn_CandidatesTable;
@@ -136,6 +138,7 @@ public class MainForm {
 	private JLabel ci_ClothLabel;
 	private JLabel ci_PleaseCheckinCamperLabel;
 	private JLabel ci_CamperNameLabel;
+	private JLabel ci_CallWaitingListLabel;
 	private JCheckBox ci_ArrivalpackCheckBox;
 	private JCheckBox ci_MusicalInstrumentCheckBox;
 	private JCheckBox ci_EquipmentSuppliesCheckBox;
@@ -145,7 +148,12 @@ public class MainForm {
 	private JCheckBox ci_CheckInCamperCheckBox;	
 	private JButton ci_SaveButton;
 	private JButton ci_CancelButton;
+	private JButton ci_SetFromWLButton;
 	private JTable ci_CheckinTable;
+	private JComboBox<BandItem> ci_WaitingListDropdown;
+	private DefaultComboBoxModel<BandItem> ci_WaitingListModel = new DefaultComboBoxModel<BandItem>();
+	private ListSelectionModel selCheckinModel;
+	
 	
 	//########################################################
 	//## US4 components on Dorm Assignment Panel prefix - 'da'
@@ -621,16 +629,19 @@ public class MainForm {
 	    int numinstrumentalistboy = getAcceptCategoryByGender("Boy", "Instrumentalist", mailCampers);
 	    int numinstrumentalistgirl = getAcceptCategoryByGender("Girl", "Instrumentalist", mailCampers);
 	    
+	    int numwaitinglistboy = getWaitingListGender("Boy", mailCampers);
+	    int numwaitinglistgirl = getWaitingListGender("Girl", mailCampers);
+	    
 	    mn_SingerNumLabel.setText("Singer: "+numsingerboy+"/"+numsingergirl);
 	    mn_GuitaristNumLabel.setText("Guitarist: "+numguitaristboy+"/"+numguitaristgirl);
 	    mn_DrummerNumLabel.setText("Drummer: "+numdrummerboy+"/"+numdrummergirl);
 	    mn_BassistNumLabel.setText("Bassist: "+numbassistboy+"/"+numbassistgirl);
 	    mn_KeyboardistNumLabel.setText("Keyboardist: "+numkeyboardistboy+"/"+numkeyboardistgirl);
 	    mn_InstrumentalistNumLabel.setText("Instrumentalist: "+numinstrumentalistboy+"/"+numinstrumentalistgirl);
+	    mn_WaitinglistNumLabel.setText("WaitingList: "+numwaitinglistboy+"/"+numwaitinglistgirl);
 	    mn_TotalGirlLabel.setText(totalgirls + "/24");
 	    mn_TotalBoyLabel.setText(totalboys + "/24");
-	    
-	    
+	     
 	}
 	
 	@SuppressWarnings("null")
@@ -730,6 +741,22 @@ public class MainForm {
 		return total;
 	}
 	
+	private int getWaitingListGender(String boyorgirl, ArrayList<Camper> campers) {
+		int total = 0;
+		for (Camper camp:campers){
+			String status = camp.getApplicationStatus();
+			String gender = camp.getGender();
+			if(status==null ||status.isEmpty()) {
+				continue;
+			}
+				
+			if(status.equals("WaitingList") && gender.equals(boyorgirl)) {
+				total ++;
+			}
+		}
+		return total;
+	}
+	
 	private int getAcceptCategoryByGender(String boyorgirl, String category, ArrayList<Camper> campers) {
 		int total = 0;
 		for (Camper camp:campers){
@@ -767,13 +794,31 @@ public class MainForm {
 			reloadMailingCampersTable();
 			//clean the inputs
 			clearMailingFields(true);
+			
+			//reload waitinglist dropdown
+			loadCIWaitingListDropdowns();
 		}
 		
 	}
 	
 	//#### USER STORY 3 ###
 	
-	private void  saveCheckinStatus() {
+	private void setFromWaitingList() {
+		BandItem waitingListCamper = (BandItem)ci_WaitingListDropdown.getSelectedItem();
+		//update label
+		String fname = waitingListCamper.getFname();
+		String lname = waitingListCamper.getLname();
+		int id = waitingListCamper.getId();
+		
+		DefaultTableModel model = (DefaultTableModel)ci_CheckinTable.getModel();
+		model.setValueAt(id, ci_CheckinTable.getSelectedRow(), 0);
+		model.setValueAt(fname, ci_CheckinTable.getSelectedRow(), 1);	
+		model.setValueAt(lname, ci_CheckinTable.getSelectedRow(), 2);	
+		ci_CamperNameLabel.setText(fname+" "+lname);
+	} 
+	
+	
+	private void saveCheckinStatus() {
 		Camper camperToCheckin = new Camper();
 		String idstr = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 0).toString();
 	    int id =Integer.parseInt(idstr);
@@ -857,6 +902,8 @@ public class MainForm {
 		ci_CamperNameLabel.setText("");
 		ci_SaveButton.setVisible(false);
 		ci_CancelButton.setVisible(false);
+		ci_SetFromWLButton.setVisible(false);
+		ci_WaitingListDropdown.setEnabled(false);
 		ci_ArrivalpackCheckBox.setSelected(false);
 		ci_MusicalInstrumentCheckBox.setSelected(false);
 		ci_EquipmentSuppliesCheckBox.setSelected(false);
@@ -893,7 +940,9 @@ public class MainForm {
 		
     	ci_SaveButton.setVisible(true);
 		ci_CancelButton.setVisible(true);
-    	
+		ci_WaitingListDropdown.setEnabled(true);
+		ci_SetFromWLButton.setVisible(true);
+		
     	String fname = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 1).toString();
     	String lname = ci_CheckinTable.getValueAt(ci_CheckinTable.getSelectedRow(), 2).toString();
     	ci_CamperNameLabel.setText(fname+" "+lname);
@@ -1077,7 +1126,15 @@ public class MainForm {
 			}
 		}
 	}
-		
+	
+	private void loadCIWaitingListDropdowns() {
+		ci_WaitingListModel.removeAllElements();
+		ArrayList<Camper> allWaitingListCampers = FuRSDBUtility.getAllWaitingListCampers(); 
+		for(Camper c: allWaitingListCampers) {
+			ci_WaitingListModel.addElement(new BandItem(c.getFirstname(), c.getLastname(), c.getGender(), c.getId(), c.getCategory(), c.getTalentLevel()));
+		}
+	}
+	
 	private void loadDormSwapDropdowns() {
 		ArrayList<Camper> allAcceptCampers = FuRSDBUtility.getAllAcceptedCampers(); 
 		for(Camper c: allAcceptCampers) {
@@ -1794,29 +1851,29 @@ private void swapCampers2ndBandRequest() {
 		mn_CategoryBGLabel = new JLabel("(Category: Boy/Girl)");
 		mn_CategoryBGLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		mn_CategoryBGLabel.setFont(new Font("Calibri", Font.ITALIC, 16));
-		mn_CategoryBGLabel.setBounds(371, 11, 165, 23);
+		mn_CategoryBGLabel.setBounds(371, 11, 146, 23);
 		mn_MainPanel.add(mn_CategoryBGLabel);
 		
 		mn_AcceptGirlLabel = new JLabel("Accepted Girls:");
 		mn_AcceptGirlLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		mn_AcceptGirlLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
-		mn_AcceptGirlLabel.setBounds(684, 12, 120, 23);
+		mn_AcceptGirlLabel.setBounds(531, 12, 120, 23);
 		mn_MainPanel.add(mn_AcceptGirlLabel);
 		
 		mn_TotalGirlLabel = new JLabel("0/24");
 		mn_TotalGirlLabel.setFont(new Font("Calibri", Font.BOLD, 16));
-		mn_TotalGirlLabel.setBounds(814, 12, 65, 23);
+		mn_TotalGirlLabel.setBounds(661, 12, 65, 23);
 		mn_MainPanel.add(mn_TotalGirlLabel);
 		
 		mn_AcceptBoysLabel = new JLabel("Accepted Boys:");
 		mn_AcceptBoysLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		mn_AcceptBoysLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
-		mn_AcceptBoysLabel.setBounds(869, 12, 115, 23);
+		mn_AcceptBoysLabel.setBounds(716, 12, 115, 23);
 		mn_MainPanel.add(mn_AcceptBoysLabel);
 		
 		mn_TotalBoyLabel = new JLabel("0/24");
 		mn_TotalBoyLabel.setFont(new Font("Calibri", Font.BOLD, 16));
-		mn_TotalBoyLabel.setBounds(994, 12, 65, 23);
+		mn_TotalBoyLabel.setBounds(841, 12, 65, 23);
 		mn_MainPanel.add(mn_TotalBoyLabel);
 		
 		mn_SingerNumLabel = new JLabel("Singer: 0/0");
@@ -1866,6 +1923,12 @@ private void swapCampers2ndBandRequest() {
 		        mailingStatusChange();
 		    }
 		});
+		
+		mn_WaitinglistNumLabel = new JLabel("WaitingList: 0/0");
+		mn_WaitinglistNumLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		mn_WaitinglistNumLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		mn_WaitinglistNumLabel.setBounds(913, 12, 146, 23);
+		mn_MainPanel.add(mn_WaitinglistNumLabel);
 		
 		mn_MainPanel.add(mn_StatusDropdown);
 		
@@ -1963,7 +2026,7 @@ private void swapCampers2ndBandRequest() {
 		ci_CheckinTable.getColumnModel().getColumn(8).setPreferredWidth(40);
 		ci_CheckinTable.getColumnModel().getColumn(9).setPreferredWidth(40);
 		ci_CheckinTable.setRowHeight(21);
-		ListSelectionModel selCheckinModel = ci_CheckinTable.getSelectionModel(); 
+		selCheckinModel = ci_CheckinTable.getSelectionModel(); 
 		
 		ci_ScrollPane.setViewportView(ci_CheckinTable);
 		
@@ -1978,13 +2041,13 @@ private void swapCampers2ndBandRequest() {
 		ci_MainPanel.add(ci_CamperNameLabel);
 		
 		ci_CheckinInfoLabel = new JLabel("Checkin Information");
-		ci_CheckinInfoLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_CheckinInfoLabel.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 16));
 		ci_CheckinInfoLabel.setBounds(10, 84, 157, 16);
 		ci_MainPanel.add(ci_CheckinInfoLabel);
 		
 		ci_ClothLabel = new JLabel("Cloth");
-		ci_ClothLabel.setFont(new Font("Calibri", Font.PLAIN, 16));
-		ci_ClothLabel.setBounds(10, 223, 61, 26);
+		ci_ClothLabel.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 16));
+		ci_ClothLabel.setBounds(10, 185, 61, 26);
 		ci_MainPanel.add(ci_ClothLabel);
 		
 		ci_ArrivalpackCheckBox = new JCheckBox("Arrival Packet");
@@ -2008,19 +2071,19 @@ private void swapCampers2ndBandRequest() {
 		ci_LeatherCheckBox = new JCheckBox("Leather");
 		ci_LeatherCheckBox.setBackground(Color.WHITE);
 		ci_LeatherCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-		ci_LeatherCheckBox.setBounds(10, 256, 92, 23);
+		ci_LeatherCheckBox.setBounds(10, 218, 80, 23);
 		ci_MainPanel.add(ci_LeatherCheckBox);
 		
 		ci_SpandexCheckBox = new JCheckBox("Spandex");
 		ci_SpandexCheckBox.setBackground(Color.WHITE);
 		ci_SpandexCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-		ci_SpandexCheckBox.setBounds(10, 282, 96, 23);
+		ci_SpandexCheckBox.setBounds(93, 218, 90, 23);
 		ci_MainPanel.add(ci_SpandexCheckBox);
 		
 		ci_GlitteredCheckBox = new JCheckBox("Glittered");
 		ci_GlitteredCheckBox.setBackground(Color.WHITE);
 		ci_GlitteredCheckBox.setFont(new Font("Calibri", Font.PLAIN, 16));
-		ci_GlitteredCheckBox.setBounds(10, 308, 109, 23);
+		ci_GlitteredCheckBox.setBounds(185, 218, 109, 23);
 		ci_MainPanel.add(ci_GlitteredCheckBox);
 		
 		ci_SaveButton = new JButton("Save");
@@ -2052,6 +2115,30 @@ private void swapCampers2ndBandRequest() {
 		ci_CancelButton.setBounds(185, 418, 117, 41);
 		ci_CancelButton.setVisible(false);
 		ci_MainPanel.add(ci_CancelButton);
+		
+		ci_WaitingListDropdown = new JComboBox<BandItem>(ci_WaitingListModel);
+		ci_WaitingListDropdown.setFont(new Font("Calibri", Font.PLAIN, 16));
+		ci_WaitingListDropdown.setBackground(Color.WHITE);
+		ci_WaitingListDropdown.setBounds(10, 319, 191, 29);
+		ci_WaitingListDropdown.setEnabled(false);
+		ci_MainPanel.add(ci_WaitingListDropdown);
+		
+		ci_CallWaitingListLabel = new JLabel("Call Applicant from WaitingList ");
+		ci_CallWaitingListLabel.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 16));
+		ci_CallWaitingListLabel.setBounds(10, 281, 234, 26);
+		ci_MainPanel.add(ci_CallWaitingListLabel);
+		
+		ci_SetFromWLButton = new JButton("Set");
+		ci_SetFromWLButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				setFromWaitingList();
+			}
+		});
+		ci_SetFromWLButton.setBackground(SystemColor.menu);
+		ci_SetFromWLButton.setFont(new Font("Calibri", Font.PLAIN, 14));
+		ci_SetFromWLButton.setBounds(211, 319, 89, 32);
+		ci_SetFromWLButton.setVisible(false);
+		ci_MainPanel.add(ci_SetFromWLButton);
 		selCheckinModel.addListSelectionListener(new ListSelectionListener(){
 	        @Override
 			public void valueChanged(ListSelectionEvent event) {
@@ -2502,6 +2589,8 @@ private void swapCampers2ndBandRequest() {
 		reloadMailingCampersTable();
 		reloadCheckinTable();
 		clearMailingFields(true);
+		//FOR US #3
+		loadCIWaitingListDropdowns();
 		//FOR US #4
 		loadDormSwapDropdowns();
 		loadBandSwapDropdowns();
@@ -2522,5 +2611,4 @@ private void swapCampers2ndBandRequest() {
 			}
 		});
 	}
-
 }
